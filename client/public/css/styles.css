@@ -1,0 +1,232 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Aug 21, 2017, 4:18:16 PM
+    Author     : cpt2geh
+*/
+/*
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 99;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+
+    &-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    &-content {
+      box-sizing: border-box;
+      background-color: #fefefe;
+      padding: 20px;
+      border: 1px solid #888;
+      min-width: 450px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      .close {
+        float: right;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: 'red';
+          cursor: pointer;
+        }
+      }
+
+      .button-row {
+        max-width: 100%;
+        margin-top: 20px;
+      }
+    }
+
+    &.is-open {
+      display: block;
+    }
+}
+*/
+
+body {
+  background: #EFEFEF;
+  padding-top: 0px;
+}
+
+.navbar img {
+  padding-top: 10px;
+
+}
+
+.nounderline{
+	text-decoration: none !important
+}
+
+.grouplink{
+	text-decoration: none !important;
+    color: #008489;
+}
+
+.btnborder {
+    margin-top: 10px;
+    margin-bottom: 10px;  
+}
+
+.linche {
+    border-bottom: 1px solid #DBDBDB !important;
+    border-top: 1px solid #DBDBDB !important;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.slider {
+    width: 40px
+}
+
+.blockcolor {
+    background-color: #999;
+}
+
+.entryfloor {
+    margin-bottom: 0px;
+}
+
+.blockche {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border-radius: 0px;
+}
+.center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+ }
+ 
+.bigshit {
+    font-size: 30px;
+} 
+
+.dropdown-menu li:hover {
+    cursor: pointer;
+} 
+
+
+#myNavbar > ul > li > a > span {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	margin-left: 3px;
+}
+/*
+.navbar-default .navbar-nav>li>a:hover {
+  color: #555;
+  background-color: #E7E7E7;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+ul.footer-nav {
+  padding:0;
+  margin: 0;
+
+  >li {
+    display:inline-block;
+    padding-right:5px;
+  }
+}
+
+.footer-nav li::after {
+  content: " |";
+}
+
+.footer-nav li:last-of-type::after {
+  content: "";
+}
+*/
+p.copyright>span {
+  color: #777;
+}
+
+
+.loader {
+  font-size: 10px;
+  margin: 50px auto;
+  text-indent: -9999em;
+  width: 11em;
+  height: 11em;
+  border-radius: 50%;
+  background: #808080;
+  background: -moz-linear-gradient(left, #808080 10%, rgba(128,128,128, 0) 42%);
+  background: -webkit-linear-gradient(left, #808080 10%, rgba(128,128,128, 0) 42%);
+  background: -o-linear-gradient(left, #808080 10%, rgba(128,128,128, 0) 42%);
+  background: -ms-linear-gradient(left, #808080 10%, rgba(128,128,128, 0) 42%);
+  background: linear-gradient(to right, #808080 10%, rgba(128,128,128, 0) 42%);
+  position: relative;
+  -webkit-animation: load3 1.4s infinite linear;
+  animation: load3 1.4s infinite linear;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.loader:before {
+  width: 50%;
+  height: 50%;
+  background: #808080;
+  border-radius: 100% 0 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+}
+.loader:after {
+  background: #ffffff;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  content: '';
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+@-webkit-keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+
+
+  
