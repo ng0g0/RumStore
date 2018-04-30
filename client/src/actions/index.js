@@ -41,6 +41,7 @@ export const API_URL = returnApiUrl() ;
 export const CLIENT_ROOT_URL = returnClientUrl();
 export const API_WALMART_URL = 'http://api.walmartlabs.com';
 export const WALMART_API_KEY = 'upxrg7rpj4hjew5jbjwqhwkf';
+export const WALMART_MAX_ITEMS = 10;
 
 export function setLang(lang) {
 	cookie.save('i18n', lang);
@@ -104,9 +105,9 @@ export function deleteUser(uid) {
 	};
 }
 
-export function updateUser({ email, firstName, lastName, password, uid }) {
+export function updateUser({ email, firstName, lastName, password, uid, refresh }) {
 	return function (dispatch) {
-    axios.post(`${API_URL}/user/${uid}`, { email, firstName, lastName, password, uid })
+    axios.post(`${API_URL}/user/${uid}`, { email, firstName, lastName, password, uid, refresh })
     .then((response) => {
 		console.log(response);
 		if (!response.data.error) {

@@ -21,7 +21,7 @@ function updateItemInArray(array, itemId, updateItemCallback) {
         if(result) {
             obj = Object.assign(item, {
                     name: result.name,
-                    thumbnailImage: result.thumbnailImage,
+                    thumbnailimage: result.thumbnailimage,
                     upc: result.upc,
                     salePrice: result.salePrice,
                     shortDescription: result.shortDescription,

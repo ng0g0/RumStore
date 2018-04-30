@@ -1,5 +1,6 @@
 const TRANSLATIONS = {
   en: {
+    'Refresh' : 'Refresh',
     'Reports': 'Reports',
     'FirstName': 'First Name',
 	'LastName': 'Last Name',
@@ -64,7 +65,8 @@ const TRANSLATIONS = {
     'Walmart': 'Walmart',
     'AllItems': 'All Items',
     'WalmarItemAction': 'Action ..',
-    'selectedItems': 'Selected Items',
+    'RefreshSelected': 'Refresh Selected',
+    'DeleteSeleected': 'Delete Selected',
     'WalmartItems' : 'Products',
     'WalmartAction' : 'Action',
     'WalmartRefresh': 'Refresh',
@@ -72,6 +74,7 @@ const TRANSLATIONS = {
     
   },
   bg: {
+    'Refresh' : 'Обновяване',
 	'Reports': 'Справки',
 	'FirstName': 'Лично име',
 	'LastName': 'Фамилия',
@@ -137,6 +140,8 @@ const TRANSLATIONS = {
     'AllItems': 'Всички',
     'WalmarItemAction': 'Направи ..',
     'selectedItems': 'Избраните',
+    'RefreshSelected': 'Обнови избраните',
+    'DeleteSeleected': 'Изтрии избраните',
     'WalmartItems' : 'Продукти',
     'WalmartAction' : 'Напрвари' ,
     'WalmartRefresh': 'Обнови',

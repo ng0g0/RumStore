@@ -86,7 +86,8 @@ const apiRoutes = express.Router(),
   userRoutes.delete('/:userId', UserController.userDelete);
 
     apiRoutes.use('/walmart', walmartRouter);
-    walmartRouter.get('/item/:itemId', WalmartController.getWalmartItems);	
+    walmartRouter.get('/item/:itemId', requireAuth, WalmartController.getWalmartItems);	
+    walmartRouter.delete('/:itemId', requireAuth, WalmartController.deleteWalmartItems);	
 
   
   // Test protected route

@@ -13,7 +13,7 @@ import {
  } 
 from './types';
 
-import {API_URL, CLIENT_ROOT_URL, API_WALMART_URL, WALMART_API_KEY} from './index'; 
+import {API_URL, CLIENT_ROOT_URL, API_WALMART_URL, WALMART_API_KEY, WALMART_MAX_ITEMS} from './index'; 
 
 //= ===============================
 // Customer actions
@@ -47,13 +47,46 @@ function receiveWalmartAPI(json) {
 
 //http://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=17201599,469836497
 
+export function deleteWalmarItem(items) {
+    console.log(`deleteWalmarItem:${items}`);
+return function (dispatch) {
+	dispatch(requestWalmartList());
+	return axios({ url: `${API_URL}/walmart/${items}`,
+			timeout: 2000,
+			method: 'delete',
+			headers: { Authorization: cookie.load('token') }
+    })
+    .then((response) => {
+        dispatch(fetchWalmarUserList());
+    })
+    .catch((error) => {
+		console.log(error)
+        dispatch(fetchWalmarUserList());
+	});
+  };
+}
+
 export function fetchFromWalmarAPI(items) {
     console.log(`Items:${items}`);
     return function (dispatch) {
-        dispatch(requestWalmartAPI());
-        return axios({ url: `${API_URL}/walmart/item/${items}`,
+        var sentItems;
+        var leftItems;
+        var itemArray = items.split(",");
+        var cnt = Math.ceil(itemArray.length/WALMART_MAX_ITEMS);
+        console.log(`Pages:${cnt}`);
+        if (cnt > 1) {
+            sentItems =  itemArray.splice(0,WALMART_MAX_ITEMS).join();
+            leftItems = items.split(",").splice(WALMART_MAX_ITEMS).join();
+            setTimeout(function() { dispatch(fetchFromWalmarAPI(leftItems)); }, 500);
+            
+        } else {
+            sentItems = items;
+        }
+        console.log(`Sent Items:${sentItems}`);
+        return axios({ url: `${API_URL}/walmart/item/${sentItems}`,
 			timeout: 2000,
 			method: 'get',
+			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
             console.log(response.data);
@@ -82,25 +115,6 @@ export function fetchWalmarUserList() {
 		//dispatch(errorHandler(error));
 	});
   };
-}
-
-export function fetchBlockInfo(bid) {
-   console.log(bid); 
-  return function (dispatch) {
-	dispatch(requestBlockInfo());  
-	return axios({ url: `${API_URL}/block/${bid}`,
-			timeout: 2000,
-			method: 'get',
-			headers: { Authorization: cookie.load('token') }
-    })
-    .then((response) => {
-        console.log(response);
-        dispatch(receiveBlockInfo(response.data));
-    })
-	.catch((error) => {
-		console.log(error)
-	});
-  };  
 }
 
 

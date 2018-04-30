@@ -20,7 +20,7 @@ function generateToken(user) {
 };
 
 exports.findUser = function(userName, callback) {
-	let finUserSql = "select usrid,username as email, password, firstname, lastname " + 
+	let finUserSql = "select usrid,username as email, password, firstname, lastname, ursrefresh as refresh" + 
 	                 " from rbm_user where username = $1 and active = 1";
 	var obj;
 	
@@ -31,7 +31,8 @@ exports.findUser = function(userName, callback) {
 			email: user.email,
 			password: user.password,
 			firstName: user.firstname,
-			lastName: user.lastname
+			lastName: user.lastname,
+            refresh: user.refresh
 		};
 		callback(null, obj);
 	})
@@ -60,7 +61,8 @@ exports.login = function (req, res, next) {
     uid: req.user.uid,
 	email: req.user.email,
 	firstName: req.user.firstName,
-	lastName: req.user.lastName
+	lastName: req.user.lastName,
+    refresh: req.user.refresh,
   };
   console.log('login');
   console.log(userInfo);
@@ -105,7 +107,8 @@ exports.register = function (req, res, next) {
 				uid: user.usrid,
 				email: email,
 				firstName: firstName,
-				lastName: lastName
+				lastName: lastName,
+                refresh: refresh
 				};
 			//console.log(obj);	
 			res.status(201).json({
@@ -236,7 +239,7 @@ exports.viewProfile = function (req, res, next) {
   console.log('viewProfile');
   console.log(req.params);	
   const userId = req.params.userId;
-  let finUserSql = "select usrid,username as email, password, firstname, lastname " + 
+  let finUserSql = "select usrid,username as email, password, firstname, lastname, ursrefresh as refresh " + 
 					" from rbm_user where usrid = $1 ";
 	var obj;
 	db.one(finUserSql, [userId])
@@ -250,7 +253,8 @@ exports.viewProfile = function (req, res, next) {
 				email: user.email,
 				password: null,
 				firstName: user.firstname,
-				lastName: user.lastname
+				lastName: user.lastname,
+                refresh: user.refresh
 			};
 			return res.status(200).json({ user: obj });
 		}
@@ -277,6 +281,7 @@ exports.userUpdate = function (req, res, next) {
 	const firstName = req.body.firstName;
 	const lastName = req.body.lastName;
 	const password = req.body.password;
+    const refresh = req.body.refresh;
 	const uid = req.body.uid;
 	let hashPassword = '123';
 	const SALT_FACTOR = 5;
@@ -294,15 +299,16 @@ exports.userUpdate = function (req, res, next) {
 		bcrypt.hash(password, salt, null, (err, hash) => {
 		if (err) return next(err);
 		hashPassword = hash;
-		let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4 " + 
+		let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4,  ursrefresh=$6" + 
 						  " WHERE usrid = $5";
-		db.none(registerSql, [email, hashPassword, firstName, lastName, uid] )
+		db.none(registerSql, [email, hashPassword, firstName, lastName, uid, refresh] )
 			.then((user) => {
 				obj = {
 					uid: uid,
 					email: email,
 					firstName: firstName,
-					lastName: lastName
+					lastName: lastName, 
+                    refresh: refresh
 					};
 				res.status(200).json({ user: obj });	
 			})

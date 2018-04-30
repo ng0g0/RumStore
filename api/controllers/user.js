@@ -9,7 +9,7 @@ exports.viewProfile = function (req, res, next) {
   console.log('viewProfile input:');
   console.log(req.params);	
   const userId = req.params.userId;
-  let finUserSql = "select usrid,username as email, password, firstname, lastname from rbm_user where usrid = $1 ";
+  let finUserSql = "select usrid,username as email, password, firstname, lastname, ursrefresh as refresh from rbm_user where usrid = $1 ";
 	var obj;
 	db.one(finUserSql, [userId])
 	.then(user=> {
@@ -23,7 +23,8 @@ exports.viewProfile = function (req, res, next) {
 				email: user.email,
 				password: null,
 				firstName: user.firstname,
-				lastName: user.lastname
+				lastName: user.lastname,
+                refresh: user.refresh
 			};
 			return res.status(200).json({ user: obj });
 		}
@@ -68,6 +69,7 @@ exports.userUpdate = function (req, res, next) {
 	const firstName = req.body.firstName;
 	const lastName = req.body.lastName;
 	const password = req.body.password;
+    const refresh = req.body.refresh;
 	const uid = req.body.uid;
 	let hashPassword = '123';
 	const SALT_FACTOR = 5;
@@ -112,10 +114,10 @@ exports.userUpdate = function (req, res, next) {
 			hashPassword = hash;
 			console.log('Validating password');
 			
-			let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4 WHERE usrid = $5";
-			db.none(registerSql, [email, hashPassword, firstName, lastName, uid] )
+			let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4, ursrefresh =$6 WHERE usrid = $5";
+			db.none(registerSql, [email, hashPassword, firstName, lastName, uid, refresh] )
 				.then((user) => {
-					obj = {
+					var obj = {
 						uid: uid,
 						email: email,
 						firstName: firstName,

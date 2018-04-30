@@ -112,6 +112,12 @@ class ViewProfile extends Component {
 				<Field name="email" className="form-control" component={renderField} type="text" />
 			  </div>
 			</div>
+            <div className="row">
+			  <div className="col-md-12">
+				<label><Translation text="Refresh" /></label>
+				<Field name="refresh" className="form-control" component={renderField} type="text" />
+			  </div>
+			</div>
 			<div className="row">
 			  <div className="col-md-12">
 				<label><Translation text="Password" /></label>
