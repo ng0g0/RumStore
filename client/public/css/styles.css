@@ -158,6 +158,13 @@ p.copyright>span {
   color: #777;
 }
 
+.green {
+    color: #5CB85C;
+}
+.red {
+    color: #FF0000;
+}
+
 
 .loader {
   font-size: 10px;
@@ -286,5 +293,13 @@ input:checked + .slider:before {
 }
 
 .sliderWrapper div{display: inline-block;line-height:20px;}
+
+.red {
+    color: 	FF0000;
+}
+
+.green {
+    color: 	008000;
+}
 
   

@@ -1,6 +1,7 @@
 const TRANSLATIONS = {
   en: {
     'Refresh' : 'Refresh',
+    'Save': 'Save',
     'Reports': 'Reports',
     'FirstName': 'First Name',
 	'LastName': 'Last Name',
@@ -37,6 +38,7 @@ const TRANSLATIONS = {
 	'BLOCK_NUMBER': 'Block Number',
 	'ENTRY_NUMBER': 'Entry Number',
 	'Accomucation': 'Accomucation',
+    'ADD_ITEM': 'Add Item',
 	'FLOOR': 'Floor',
     'country': 'Country',
     'city': 'City',
@@ -51,6 +53,7 @@ const TRANSLATIONS = {
     'DELETE_BLOCK_QUESTION': 'Do you want to delete the block?',
     'DELETE_ENTRY_QUESTION': 'Do you want to delete the entrance?',
     'DELETE_QUESTION': 'Do you want to delete?',
+    'DELETE_ANSWER': 'Do you want to delete item with number $1',
     'FIELD_NAME_MISSING': 'Please enter a name',
     'addBlockNumber': ' Block Number',
     'addBlockAddress': 'Block address',
@@ -70,11 +73,14 @@ const TRANSLATIONS = {
     'WalmartItems' : 'Products',
     'WalmartAction' : 'Action',
     'WalmartRefresh': 'Refresh',
-    'WalmartDescription': 'Description'
+    'WalmartDescription': 'Description',
+    'WalmartInfo': 'Info'
+    
     
   },
   bg: {
     'Refresh' : 'Обновяване',
+    'Save': 'Запази',
 	'Reports': 'Справки',
 	'FirstName': 'Лично име',
 	'LastName': 'Фамилия',
@@ -111,6 +117,7 @@ const TRANSLATIONS = {
 	'BLOCK_NUMBER': 'Блок номер',
 	'ENTRY_NUMBER': 'Вход',
 	'Accomucation': 'Разходи',
+    'ADD_ITEM': 'Добави продукт',
 	'FLOOR': 'Етаж',
     'country': 'Държава',
     'city': 'Град',
@@ -125,6 +132,7 @@ const TRANSLATIONS = {
     'DELETE_BLOCK_QUESTION': 'Желаете ли да изтриете избрания блок?',
     'DELETE_ENTRY_QUESTION': 'Желаете ли да изтриете избрания вход?',
     'DELETE_QUESTION': 'Желаете ли да го изтриете?',
+    'DELETE_ANSWER': 'Желаете ли да изтриете продуктите с номера $1?',
     'FIELD_NAME_MISSING': 'Моля попълнете име',
     'addBlockNumber': 'Блок Номер' ,
     'addBlockAddress': 'Блок Адрес',
@@ -145,7 +153,8 @@ const TRANSLATIONS = {
     'WalmartItems' : 'Продукти',
     'WalmartAction' : 'Напрвари' ,
     'WalmartRefresh': 'Обнови',
-    'WalmartDescription': 'Описание'
+    'WalmartDescription': 'Описание',
+    'WalmartInfo': 'Отвори'
   }
 };
 

@@ -11,6 +11,8 @@ export const ENTRANCE = 'ENTRANCE';
 export const AddApartmentConst = 'AddApartment';
 export const APARTMENT = 'APARTMENT';
 
+export const AddItem = 'AddItem';
+
 export const icons = [
 	{
 		name: 'BLOCK' , 

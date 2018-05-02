@@ -5,7 +5,8 @@ import { fetchWalmarUserList, fetchFromWalmarAPI, deleteWalmarItem } from '../..
 import {bindActionCreators} from 'redux';
 import AccGroup from '../accordion/accordiongroup';
 import Translation from '../locale/translate';
-import ToggleSwitch from '../template/toggleSwitch';
+import LayerMask from '../layerMask/layermask';
+import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
 
 
@@ -18,13 +19,17 @@ class UserWalmartList extends Component {
 		super(props);
         this.handleRefreshItem = this.handleRefreshItem.bind(this);
         this.handleCheckBoxItem = this.handleCheckBoxItem.bind(this);
-        this.handleScheduleItem = this.handleScheduleItem.bind(this);
+     //   this.handleScheduleItem = this.handleScheduleItem.bind(this);
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
+        //this.handleAddItem = this.handleAddItem.bind(this);
+        //this.renderAddItemLayer = this.renderAddItemLayer.bind(this);
         
         this.state = {
             allChecked: false,
-            checkedCount: 0,
-            currentValues: []
+            checkedCount: 2,
+            currentValues: [],
+            clickedItem: ''
         }
 	}
   
@@ -32,12 +37,11 @@ class UserWalmartList extends Component {
 		if (!this.props.items) {
 			this.props.dispatch(fetchWalmarUserList());
 		} 
+        setInterval(
+            this.handleRefreshItem(this.props.items), 
+            300000
+        );
 	}
-    
-    handleScheduleItem() {
-        var item = event.target.value;
-          console.log(`checked -> ${item}`);
-    }
     
     handleCheckBoxItem(event) {
         var item = event.target.value;
@@ -84,40 +88,84 @@ class UserWalmartList extends Component {
                 
             }
         }
-        console.log(this.state.currentValues);
+        //console.log(this.state.currentValues);
     }
     
-    handleDeleteItem(items) {
+    handleCancelClick(item) {
+        this.setState({clickedItem: ''});
+    }
+    
+    handleDeleteClick(item) {
+        this.setState({clickedItem: item});
+    }        
+    
+    handleDeleteItem() {
+        //console.log(`handleDeleteItem:${this.state.currentValues}`);
+        //console.log(`handleDeleteItem:${this.state.clickedItem}`);
         var newX = this.state.currentValues;
         var selAll = false;
-        this.props.dispatch(deleteWalmarItem(items.join())); 
-            if (Array.isArray(items)) {
+        if (this.state.clickedItem.length > 0 ) {
+            console.log('Item');
+            this.props.dispatch(deleteWalmarItem(this.state.clickedItem)); 
                 newX = newX.filter(function(e) { 
-                    return !items.some(function(s) { 
-                        return s === e; 
-                    });
-                }); 
-            } else {
-                 newX = newX.filter(function(e) { 
-                    return e !== items; 
+                return e !== this.state.clickedItem; 
                 });
-            }
-            
-            if (this.props.itemList.length === newX.length) {
-                     selAll = true;
-                 }
-            this.setState({
-                    allChecked : selAll,
-                    checkedCount: newX.length,
-                    currentValues: newX
+        } else {
+            console.log('Array');
+            this.props.dispatch(deleteWalmarItem(this.state.currentValues.join())); 
+            newX = newX.filter(function(e) { 
+                return !newX.some(function(s) { 
+                    return s === e; 
                 });
-            console.log(this.state.currentValues);
+            }); 
+           
+        }
+        this.setState({
+            allChecked : (this.props.itemList.length === newX.length)? true : false,
+            checkedCount: newX.length,
+            currentValues: newX
+        });
+        //console.log(this.state.currentValues);
     }
 	
     handleRefreshItem(items) {
-        this.props.dispatch(fetchFromWalmarAPI(items)); 
+        if (items) {
+            this.props.dispatch(fetchFromWalmarAPI(items)); 
+        } else {
+            console.log('Items not found');
+        }
+            
+        
     }
     
+    renderDeleteLayer() {
+       let layerid = 'deleteItem'
+       let label = 'DELETE_QUESTION';
+            console.log(this.state.currentValues);
+        	return (<LayerMask layerid={layerid} header={label} key={layerid} 
+                    onOkClick={this.handleDeleteItem.bind(this)} 
+                    onCancelClick={this.handleCancelClick.bind(this)}
+                    actionbtn="Delete" >
+                    <DeleteItem deleteItems={this.state.clickedItem || this.state.currentValues.join()} />    
+               </LayerMask>);
+   }
+
+   handleAddItem() {
+        console.log('Add Items');
+    }
+   
+    renderAddItemLayer() {
+        let layerid = 'addItem'
+        let label = 'ADD_ITEM';
+		return (<LayerMask layerid={layerid} header={label} key={layerid}
+                    onOkClick={this.handleAddItem.bind(this)}
+                    onCancelClick={this.handleCancelClick.bind(this)}                    
+                    actionbtn="Save">
+                    TEST
+            </LayerMask>);
+   }  
+//                          <BlockLayer layercalled={butname.label} objid={this.props.id} type={this.props.type}/>
+  
     renderMessage(msg) {
         if (msg) {
                     return (<div className="row"> 
@@ -125,6 +173,23 @@ class UserWalmartList extends Component {
                     </div>);
         } else {
             return(<div></div>);
+        }
+    }
+   
+   
+    renderDetail(itdetail) {
+        if (itdetail) {
+            console.log(itdetail);    
+/*            if (itdetail.length > 0 ) {
+                var flags = [], output = [], l = array.length, i;
+                itdetail.forEach(function(detail) {
+                    if( detail.dettype) continue;
+                    flags[detail.dettype] = true;
+                    output.push(detail.dettype);
+                });
+                console.log(output);
+            }
+  */          
         }
     }
 
@@ -152,12 +217,18 @@ class UserWalmartList extends Component {
                 <div className="row"> 
                     <div className="col-sm-6">Price: {item.salePrice} </div>  
                 </div>
-                <AccGroup title="WalmartDescription" key={item.itemid} collapsed="Y">  
-                    {item.shortDescription}
-                 </AccGroup>
-            </div>     
+            </div>  
+            <div className="col-sm-12">             
+            {this.renderDetail(item.itemdetails)}
+            </div>  
+            
         </div>);
     }
+    //<AccGroup title="WalmartDescription" key={item.itemid} collapsed="Y">  
+    //                {item.shortDescription}
+    //             </AccGroup>
+    
+
     
 	renderListContent(items) {
         const { currentValues } = this.state
@@ -172,10 +243,15 @@ class UserWalmartList extends Component {
                 <td> {this.renderCellContent(item)}
                 
                 </td>
-                <td><button type="button" className="btn" onClick={()=> this.handleRefreshItem(item.itemid) }>
-                    <Translation text="WalmartRefresh" /></button> 
-                    <button type="button" className="btn" onClick={()=> this.handleDeleteItem(item.itemid) }>
-                    <Translation text="Delete" /></button> 
+                <td><a className="btn-sm btn-default" href="#" role="button" onClick={()=> this.handleRefreshItem(item.itemid) }>
+                    <Translation text="WalmartRefresh"  /></a> 
+                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#deleteItem"
+                    onClick={()=> this.handleDeleteClick(item.itemid) }
+                    ><Translation text="Delete" /></a>                      
+                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#viewItem">
+                        <Translation text="WalmartInfo" />
+                    </a>
+                    
                     </td>
                 </tr>)
             })} 
@@ -185,6 +261,7 @@ class UserWalmartList extends Component {
 			return(<tbody><tr><td colspan="3"><Translation text="NO_DATE_FOUND" /></td></tr></tbody>);
 		}
 	}
+    
     renderRefreshAll(items) {
         var checked = true;
         return(<div className="btn-group pull-right">
@@ -193,21 +270,28 @@ class UserWalmartList extends Component {
 				<Translation text="WalmarItemAction" />
 			</a>
             <ul className="dropdown-menu">
-            <li key="Selected"><Link  className="dropdown-item" 
-                onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> <Translation text="RefreshSelected" /></Link></li>
-            <li key="del"><Link  className="dropdown-item" 
-                onClick={()=> this.handleDeleteItem(this.state.currentValues) }> <Translation text="DeleteSeleected" /></Link></li>
+                <li key="add"> 
+                    <Link className="dropdown-item" data-toggle="modal" data-target="#addItem"> <Translation text="ADD_ITEM" /></Link>
+                </li>
+                <li key="Selected">
+                    <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> <Translation text="RefreshSelected" /></Link>
+                </li>
+                <li key="del">
+                    <a className="dropdown-item" href="#" data-toggle="modal" data-target="#deleteItem"><Translation text="DeleteSeleected" /></a>
+                </li>
             </ul>            
         </div>);
     } 
-    //<ToggleSwitch text="AutoRefresh" checked={checked} onChange={this.handleScheduleItem()} /> 
     
-  render() {
-	  if ( this.props.loadingSpinner ) {
-		return (<div className='loader'><Translation text="Loading" />...</div>);
-	} else {
-        const { itemList, items} = this.props;
-		return (<div>{this.renderRefreshAll(items)}
+    render() {
+        console.log(this.state);
+        if ( this.props.loadingSpinner ) {
+            return (<div className='loader'><Translation text="Loading" />...</div>);
+        } else {
+            const { itemList, items} = this.props;
+            return (<div>{this.renderRefreshAll(items)}
+                    {this.renderAddItemLayer()}
+                    {(this.state.clickedItem !== '' || this.state.currentValues.length > 0) && this.renderDeleteLayer()}
                     <table className="table">
                     <thead className="thead-dark">
                         <tr>
@@ -252,4 +336,5 @@ const mapDispatchToProps = (dispatch) =>
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserWalmartList);
+
 

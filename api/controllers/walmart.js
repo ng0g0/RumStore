@@ -50,9 +50,9 @@ exports.deleteWalmartItems = function (req, res, next) {
     console.log(`Items pages:${cnt}`);	
     const queries = [];
     db.tx(t => { // automatic BEGIN
-        let deleteWalmartSql = "DELETE FROM rbm_usr_items WHERE itemid IN ($1:csv)";
+        let deleteWalmartSql = "DELETE FROM rs_items WHERE webid IN ($1:csv)";
         for (i = 0; i < cnt; i++) {
-            console.log(`Deleting frpm page:${i+1}`);	
+            console.log(`Deleting from page:${i+1}`);	
             var sentItems =  itemArray.slice(0+maxDelete*i,maxDelete+ maxDelete*i);
             console.log(`Items in page ${i+1}:${sentItems}`);	
             queries.push(t.none(deleteWalmartSql,[ sentItems ]));

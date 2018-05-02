@@ -7,7 +7,21 @@ import  * as lang2 from './locale';
 class Translation extends Component {
 	
   render() {
-    return (<span>{lang2.default.TRANSLATIONS[this.props.locale][this.props.text]}</span>);
+    var str = lang2.default.TRANSLATIONS[this.props.locale][this.props.text];
+    var res = str;
+    if (this.props.items) {
+        if (Array.isArray(this.props.items)) {
+            this.props.items.forEach(function(it, index) {
+            console.log(it);
+            var srch = `$${index}`;
+            console.log(srch);
+            res = res.replace(srch, it);
+        });
+        } else {
+            res = res.replace('$1', this.props.items);
+        }        
+    }    
+    return (<span>{res}</span>);
   }
 }
 

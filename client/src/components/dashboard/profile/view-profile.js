@@ -5,6 +5,8 @@ import { Field, reduxForm } from 'redux-form';
 import {bindActionCreators} from 'redux';
 import { fetchUser, updateUser, deleteUser} from '../../../actions/index';
 import Translation from '../../locale/translate';
+//import ToggleSwitch from '../../template/toggleSwitch';
+
 
 const form = reduxForm({
   form: 'ViewProfile',
@@ -114,6 +116,7 @@ class ViewProfile extends Component {
 			</div>
             <div className="row">
 			  <div className="col-md-12">
+              //  <ToggleSwitch text="AutoRefresh" checked={checked} onChange={this.handleScheduleItem()} /> 
 				<label><Translation text="Refresh" /></label>
 				<Field name="refresh" className="form-control" component={renderField} type="text" />
 			  </div>

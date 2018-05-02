@@ -15,17 +15,20 @@ function updateObject(oldObject, newValues) {
 function updateItemInArray(array, itemId, updateItemCallback) {
     if (itemId) {
         console.log(itemId);
+        
        const updatedItems = array.map(item => {
-        var result = itemId.find(function(it) { return  it.itemId == item.itemid ;  });
-        var obj = {};item;
+            var result = itemId.find(function(it) { return  it.itemId == item.itemid ;  });
+        var obj = {};//item;
+        console.log(item);
         if(result) {
             obj = Object.assign(item, {
                     name: result.name,
-                    thumbnailimage: result.thumbnailimage,
+                    thumbnailimage: result.thumbnailImage,
                     upc: result.upc,
                     salePrice: result.salePrice,
                     shortDescription: result.shortDescription,
-                    message: result.message
+                    message: result.message,
+                    itemdetails: (item) ? item.itemdetails : []
             });
 
         } else {

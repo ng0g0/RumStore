@@ -52,7 +52,6 @@ export function deleteWalmarItem(items) {
 return function (dispatch) {
 	dispatch(requestWalmartList());
 	return axios({ url: `${API_URL}/walmart/${items}`,
-			timeout: 2000,
 			method: 'delete',
 			headers: { Authorization: cookie.load('token') }
     })
@@ -84,7 +83,6 @@ export function fetchFromWalmarAPI(items) {
         }
         console.log(`Sent Items:${sentItems}`);
         return axios({ url: `${API_URL}/walmart/item/${sentItems}`,
-			timeout: 2000,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
             })
@@ -102,13 +100,14 @@ export function fetchWalmarUserList() {
   return function (dispatch) {
 	dispatch(requestWalmartList());
 	return axios({ url: `${API_URL}/user/walmartList`,
-			timeout: 2000,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
     })
     .then((response) => {
         console.log(response.data)
         dispatch(receiveWalmartList(response.data));
+        console.log(response.data);
+        dispatch(fetchFromWalmarAPI(response.data.items.list));
     })
     .catch((error) => {
 		console.log(error)
