@@ -74,7 +74,8 @@ const TRANSLATIONS = {
     'WalmartAction' : 'Action',
     'WalmartRefresh': 'Refresh',
     'WalmartDescription': 'Description',
-    'WalmartInfo': 'Info'
+    'WalmartInfo': 'Info',
+    'WALMAR_ITEM_DETAIL': 'Select detail'
     
     
   },
@@ -154,7 +155,8 @@ const TRANSLATIONS = {
     'WalmartAction' : 'Напрвари' ,
     'WalmartRefresh': 'Обнови',
     'WalmartDescription': 'Описание',
-    'WalmartInfo': 'Отвори'
+    'WalmartInfo': 'Отвори',
+    'WALMAR_ITEM_DETAIL': 'Избери '
   }
 };
 

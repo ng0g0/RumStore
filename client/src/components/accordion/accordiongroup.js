@@ -16,12 +16,12 @@ class AccGroup extends Component {
 		}));
 	}
 	render() {
-		const { title, collapsed } = this.props;
-		let panel = `col-col${title}`;
+		const { title, collapsed, item } = this.props;
+		let panel = `col-col${item}`;
         let coltype = (collapsed) ? "collapse" : "collapse in";
 		return(<div className="linche">
                 <div className="btn-group pull-right">
-					<a className="grouplink" href={`#col-col${title}`} data-toggle="collapse" 
+					<a className="grouplink" href={`#col-col${item}`} data-toggle="collapse" 
 					onClick={() => this.handleClick()}><b>
                         <Translation text={title} /></b>
 						{this.state.isToggleOn ? 

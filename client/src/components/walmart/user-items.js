@@ -8,6 +8,10 @@ import Translation from '../locale/translate';
 import LayerMask from '../layerMask/layermask';
 import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
+import ItemChart from './chart-items'; 
+
+//import {LineChart} from 'react-easy-chart';
+
 
 
 class UserWalmartList extends Component {
@@ -92,11 +96,15 @@ class UserWalmartList extends Component {
     }
     
     handleCancelClick(item) {
-        this.setState({clickedItem: ''});
+        this.setState({clickedItem: ''},() => { 
+            console.log('new state', this.state); 
+        });
     }
     
     handleDeleteClick(item) {
-        this.setState({clickedItem: item});
+        this.setState({clickedItem: item},() => { 
+            console.log('new state', this.state); 
+        });
     }        
     
     handleDeleteItem() {
@@ -177,21 +185,7 @@ class UserWalmartList extends Component {
     }
    
    
-    renderDetail(itdetail) {
-        if (itdetail) {
-            console.log(itdetail);    
-/*            if (itdetail.length > 0 ) {
-                var flags = [], output = [], l = array.length, i;
-                itdetail.forEach(function(detail) {
-                    if( detail.dettype) continue;
-                    flags[detail.dettype] = true;
-                    output.push(detail.dettype);
-                });
-                console.log(output);
-            }
-  */          
-        }
-    }
+
 
     renderCellContent(item) {
         const { currentValues } = this.state;
@@ -219,14 +213,16 @@ class UserWalmartList extends Component {
                 </div>
             </div>  
             <div className="col-sm-12">             
-            {this.renderDetail(item.itemdetails)}
+                <AccGroup title="WalmartDescription" key={item.itemid} collapsed="Y" item={item.itemid} >  
+                <ItemChart itemDetails={item.itemdetails} />
+                 </AccGroup>        
             </div>  
             
         </div>);
     }
-    //<AccGroup title="WalmartDescription" key={item.itemid} collapsed="Y">  
     //                {item.shortDescription}
-    //             </AccGroup>
+//    {this.renderDetail(item.itemdetails)}
+    
     
 
     
@@ -291,7 +287,7 @@ class UserWalmartList extends Component {
             const { itemList, items} = this.props;
             return (<div>{this.renderRefreshAll(items)}
                     {this.renderAddItemLayer()}
-                    {(this.state.clickedItem !== '' || this.state.currentValues.length > 0) && this.renderDeleteLayer()}
+                    {this.renderDeleteLayer()}
                     <table className="table">
                     <thead className="thead-dark">
                         <tr>
