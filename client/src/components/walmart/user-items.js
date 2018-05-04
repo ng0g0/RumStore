@@ -9,6 +9,8 @@ import LayerMask from '../layerMask/layermask';
 import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
 import ItemChart from './chart-items'; 
+import AddItem from './add-items';
+
 
 //import {LineChart} from 'react-easy-chart';
 
@@ -113,13 +115,13 @@ class UserWalmartList extends Component {
         var newX = this.state.currentValues;
         var selAll = false;
         if (this.state.clickedItem.length > 0 ) {
-            console.log('Item');
+            //console.log('Item');
             this.props.dispatch(deleteWalmarItem(this.state.clickedItem)); 
                 newX = newX.filter(function(e) { 
                 return e !== this.state.clickedItem; 
                 });
         } else {
-            console.log('Array');
+            //console.log('Array');
             this.props.dispatch(deleteWalmarItem(this.state.currentValues.join())); 
             newX = newX.filter(function(e) { 
                 return !newX.some(function(s) { 
@@ -149,7 +151,7 @@ class UserWalmartList extends Component {
     renderDeleteLayer() {
        let layerid = 'deleteItem'
        let label = 'DELETE_QUESTION';
-            console.log(this.state.currentValues);
+            //console.log(this.state.currentValues);
         	return (<LayerMask layerid={layerid} header={label} key={layerid} 
                     onOkClick={this.handleDeleteItem.bind(this)} 
                     onCancelClick={this.handleCancelClick.bind(this)}
@@ -169,7 +171,8 @@ class UserWalmartList extends Component {
                     onOkClick={this.handleAddItem.bind(this)}
                     onCancelClick={this.handleCancelClick.bind(this)}                    
                     actionbtn="Save">
-                    TEST
+                    <AddItem /> 
+                    
             </LayerMask>);
    }  
 //                          <BlockLayer layercalled={butname.label} objid={this.props.id} type={this.props.type}/>
@@ -280,7 +283,7 @@ class UserWalmartList extends Component {
     } 
     
     render() {
-        console.log(this.state);
+        //console.log(this.state);
         if ( this.props.loadingSpinner ) {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
@@ -312,7 +315,7 @@ class UserWalmartList extends Component {
 
 
 function mapStateToProps(state) {
-    console.log(state);
+    //console.log(state);
   return {
     items: state.walmart.items,  
     itemList: state.walmart.itemList,

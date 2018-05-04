@@ -86,7 +86,10 @@ const apiRoutes = express.Router(),
   userRoutes.delete('/:userId', UserController.userDelete);
 
     apiRoutes.use('/walmart', walmartRouter);
+    walmartRouter.post('/item', requireAuth, WalmartController.WalmartAddItems);	
     walmartRouter.get('/item/:itemId', requireAuth, WalmartController.getWalmartItems);	
+    walmartRouter.get('/item/search/:sType/:itemId', requireAuth, WalmartController.getWalmartSearchedItems);	
+    
     walmartRouter.delete('/:itemId', requireAuth, WalmartController.deleteWalmartItems);	
 
   

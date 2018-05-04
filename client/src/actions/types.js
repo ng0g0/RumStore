@@ -41,6 +41,8 @@ export const REQ_WALMART_LIST = 'REQ_WALMART_LIST';
 export const RECV_WALMART_LIST = 'RECV_WALMART_LIST';
 export const REQ_WALMART_INFO = 'REQ_WALMART_INFO';
 export const RECV_WALMART_INFO = 'RECV_WALMART_INFO';
+export const REQ_ITEM_INFO = 'REQ_ITEM_INFO';
+export const RECV_ITEM_INFO = 'RECV_ITEM_INFO';
 
 
 //= =====================

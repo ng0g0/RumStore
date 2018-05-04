@@ -2,10 +2,12 @@ import {
 	REQ_WALMART_LIST,
     RECV_WALMART_LIST,
     REQ_WALMART_INFO,
-    RECV_WALMART_INFO
+    RECV_WALMART_INFO,
+    RECV_ITEM_INFO,
+    REQ_ITEM_INFO,
 } from '../actions/types';
 
-const INITIAL_STATE = { message: '', error: '', loadingSpinner: true };
+const INITIAL_STATE = { message: '', error: '', loadingSpinner: true, loadingSpinnerInfo: false };
 
 
 function updateObject(oldObject, newValues) {
@@ -14,12 +16,12 @@ function updateObject(oldObject, newValues) {
 
 function updateItemInArray(array, itemId, updateItemCallback) {
     if (itemId) {
-        console.log(itemId);
+       // console.log(itemId);
         
        const updatedItems = array.map(item => {
             var result = itemId.find(function(it) { return  it.itemId == item.itemid ;  });
         var obj = {};//item;
-        console.log(item);
+       // console.log(item);
         if(result) {
             obj = Object.assign(item, {
                     name: result.name,
@@ -43,6 +45,19 @@ function updateItemInArray(array, itemId, updateItemCallback) {
     
 }
 
+function updateItemInfo(oldInfo, newInfo ) {
+    return Object.assign(oldInfo, {
+                    webid: newInfo.itemId,
+                    webstore: 'walmart',
+                    itemname: newInfo.name,
+                    itemimgurl: newInfo.thumbnailImage,
+                    itemupc: newInfo.upc,
+                    itemPrice: newInfo.salePrice,
+                    itemstock: newInfo.stock,
+                    itemsAttributes: newInfo.attributes
+            });
+}
+
 
 
 export default function (state = INITIAL_STATE, action) {
@@ -60,10 +75,20 @@ export default function (state = INITIAL_STATE, action) {
 				loadingSpinner: false
 			});
 			
-	case REQ_WALMART_INFO:
+	case REQ_ITEM_INFO:
 			return Object.assign({}, state, {
 			    loadingSpinnerInfo: true
 			});
+    case RECV_ITEM_INFO:
+            console.log(action.data.items);
+            //const newItems =  updateItemInArray(state.itemInfo, action.data.items[0]);
+            //return updateObject(state, {itemInfo : newItems, message: action.message
+            //,loadingSpinnerInfo: false
+            //});
+			return Object.assign({}, state, {
+				itemInfo: updateItemInfo({},action.data.items[0]),
+				loadingSpinnerInfo: false
+			});        
     
 	case RECV_WALMART_INFO: {
             //

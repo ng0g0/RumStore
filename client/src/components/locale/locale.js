@@ -75,7 +75,15 @@ const TRANSLATIONS = {
     'WalmartRefresh': 'Refresh',
     'WalmartDescription': 'Description',
     'WalmartInfo': 'Info',
-    'WALMAR_ITEM_DETAIL': 'Select detail'
+    'WALMAR_ITEM_DETAIL': 'Select detail',
+    'WALMAR_ITEM_ID': 'ItemId',
+    'WALMART_STORE': 'Web Store',
+    'WALMAR_ITEM_NAME': 'Item Name',
+    'WALMAR_ITEM_URL': 'Item Link',
+    'WALMAR_ITEM_UPC': 'UPC',
+    'WALMAR_ITEM_ASIN': 'ASIN',
+    'WALMAR_ITEM_REFRESH': 'Refresh Item',
+    'WALMAR_ITEM_SEARCH': 'Намери продукт'
     
     
   },
@@ -156,7 +164,15 @@ const TRANSLATIONS = {
     'WalmartRefresh': 'Обнови',
     'WalmartDescription': 'Описание',
     'WalmartInfo': 'Отвори',
-    'WALMAR_ITEM_DETAIL': 'Избери '
+    'WALMAR_ITEM_DETAIL': 'Избери ',
+    'WALMAR_ITEM_ID': 'Продукт Номер',
+    'WALMART_STORE': 'Магазин',
+    'WALMAR_ITEM_NAME': 'Име на продукт',
+    'WALMAR_ITEM_URL': 'Линк до продукт',
+    'WALMAR_ITEM_UPC': 'UPC',
+    'WALMAR_ITEM_ASIN': 'ASIN',
+    'WALMAR_ITEM_REFRESH': 'Обнови продукт',
+    'WALMAR_ITEM_SEARCH': 'Намери продукт'
   }
 };
 
