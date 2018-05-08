@@ -10,11 +10,8 @@ import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
 import ItemChart from './chart-items'; 
 import AddItem from './add-items';
-
-
-//import {LineChart} from 'react-easy-chart';
-
-
+import { WalmartItem } from '../../consts';
+import { submit } from 'redux-form'
 
 class UserWalmartList extends Component {
 	static contextTypes = {
@@ -25,11 +22,8 @@ class UserWalmartList extends Component {
 		super(props);
         this.handleRefreshItem = this.handleRefreshItem.bind(this);
         this.handleCheckBoxItem = this.handleCheckBoxItem.bind(this);
-     //   this.handleScheduleItem = this.handleScheduleItem.bind(this);
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
-        //this.handleAddItem = this.handleAddItem.bind(this);
-        //this.renderAddItemLayer = this.renderAddItemLayer.bind(this);
         
         this.state = {
             allChecked: false,
@@ -110,18 +104,14 @@ class UserWalmartList extends Component {
     }        
     
     handleDeleteItem() {
-        //console.log(`handleDeleteItem:${this.state.currentValues}`);
-        //console.log(`handleDeleteItem:${this.state.clickedItem}`);
         var newX = this.state.currentValues;
         var selAll = false;
         if (this.state.clickedItem.length > 0 ) {
-            //console.log('Item');
             this.props.dispatch(deleteWalmarItem(this.state.clickedItem)); 
                 newX = newX.filter(function(e) { 
                 return e !== this.state.clickedItem; 
                 });
         } else {
-            //console.log('Array');
             this.props.dispatch(deleteWalmarItem(this.state.currentValues.join())); 
             newX = newX.filter(function(e) { 
                 return !newX.some(function(s) { 
@@ -135,7 +125,6 @@ class UserWalmartList extends Component {
             checkedCount: newX.length,
             currentValues: newX
         });
-        //console.log(this.state.currentValues);
     }
 	
     handleRefreshItem(items) {
@@ -149,10 +138,9 @@ class UserWalmartList extends Component {
     }
     
     renderDeleteLayer() {
-       let layerid = 'deleteItem'
-       let label = 'DELETE_QUESTION';
-            //console.log(this.state.currentValues);
-        	return (<LayerMask layerid={layerid} header={label} key={layerid} 
+        let layerid = 'deleteItem'
+        let label = 'DELETE_QUESTION';
+      	return (<LayerMask layerid={layerid} header={label} key={layerid} 
                     onOkClick={this.handleDeleteItem.bind(this)} 
                     onCancelClick={this.handleCancelClick.bind(this)}
                     actionbtn="Delete" >
@@ -160,7 +148,8 @@ class UserWalmartList extends Component {
                </LayerMask>);
    }
 
-   handleAddItem() {
+   handleAddItem({ dispatch }) {
+       this.props.dispatch(submit(WalmartItem));
         console.log('Add Items');
     }
    
@@ -172,23 +161,18 @@ class UserWalmartList extends Component {
                     onCancelClick={this.handleCancelClick.bind(this)}                    
                     actionbtn="Save">
                     <AddItem /> 
-                    
-            </LayerMask>);
+                </LayerMask>);
    }  
-//                          <BlockLayer layercalled={butname.label} objid={this.props.id} type={this.props.type}/>
   
     renderMessage(msg) {
         if (msg) {
-                    return (<div className="row"> 
-                        <div className="col-sm-6">{msg} </div>  
-                    </div>);
+            return (<div className="row"> 
+                <div className="col-sm-6">{msg} </div>  
+            </div>);
         } else {
             return(<div></div>);
         }
     }
-   
-   
-
 
     renderCellContent(item) {
         const { currentValues } = this.state;
@@ -216,18 +200,13 @@ class UserWalmartList extends Component {
                 </div>
             </div>  
             <div className="col-sm-12">             
-                <AccGroup title="WalmartDescription" key={item.itemid} collapsed="Y" item={item.itemid} >  
+                <AccGroup title="WALMAR_ITEM_HISTORY" key={item.itemid} collapsed="Y" item={item.itemid} >  
                 <ItemChart itemDetails={item.itemdetails} />
                  </AccGroup>        
             </div>  
             
         </div>);
     }
-    //                {item.shortDescription}
-//    {this.renderDetail(item.itemdetails)}
-    
-    
-
     
 	renderListContent(items) {
         const { currentValues } = this.state
@@ -235,23 +214,26 @@ class UserWalmartList extends Component {
 			return (<tbody>
             {items.map((item) => {
                 return(<tr key={item.itemid}>
-                    <th scope="row">
+                <th scope="row">
                     <input type="checkbox" className="form-check-input" name={item.itemid} key={item.itemid} 
                         checked={currentValues.indexOf(item.itemid) !== -1}
-                        value={item.itemid} onClick={(event )=> this.handleCheckBoxItem(event) }/></th>
-                <td> {this.renderCellContent(item)}
-                
-                </td>
-                <td><a className="btn-sm btn-default" href="#" role="button" onClick={()=> this.handleRefreshItem(item.itemid) }>
-                    <Translation text="WalmartRefresh"  /></a> 
-                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#deleteItem"
-                    onClick={()=> this.handleDeleteClick(item.itemid) }
-                    ><Translation text="Delete" /></a>                      
-                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#viewItem">
+                        value={item.itemid} onClick={(event )=> this.handleCheckBoxItem(event) }/>
+                </th>
+                <td> {this.renderCellContent(item)} </td>
+                <td><a className="btn-sm btn-default" href="#" role="button" 
+                        onClick={()=> this.handleRefreshItem(item.itemid) }>
+                        <Translation text="WalmartRefresh"  />
+                    </a> 
+                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" 
+                        data-target="#deleteItem"
+                        onClick={()=> this.handleDeleteClick(item.itemid) }>
+                        <Translation text="Delete" />
+                    </a>                      
+                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" 
+                        data-target="#viewItem">
                         <Translation text="WalmartInfo" />
                     </a>
-                    
-                    </td>
+                </td>
                 </tr>)
             })} 
              </tbody>);	
@@ -261,25 +243,27 @@ class UserWalmartList extends Component {
 		}
 	}
     
-    renderRefreshAll(items) {
-        var checked = true;
+    renderItemMenuBar(items) {
+       // var checked = true;
         return(<div className="btn-group pull-right">
-             
-        <a className="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+            <a className="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
 				<Translation text="WalmarItemAction" />
 			</a>
+            
             <ul className="dropdown-menu">
                 <li key="add"> 
                     <Link className="dropdown-item" data-toggle="modal" data-target="#addItem"> <Translation text="ADD_ITEM" /></Link>
                 </li>
                 <li key="Selected">
-                    <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> <Translation text="RefreshSelected" /></Link>
+                    <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> 
+                        <Translation text="RefreshSelected" /></Link>
                 </li>
                 <li key="del">
-                    <a className="dropdown-item" href="#" data-toggle="modal" data-target="#deleteItem"><Translation text="DeleteSeleected" /></a>
+                    <Link  className="dropdown-item" data-toggle="modal" data-target="#deleteItem"><Translation text="DeleteSeleected" /></Link>
                 </li>
             </ul>            
         </div>);
+        
     } 
     
     render() {
@@ -288,7 +272,7 @@ class UserWalmartList extends Component {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
             const { itemList, items} = this.props;
-            return (<div>{this.renderRefreshAll(items)}
+            return (<div>{this.renderItemMenuBar(items)}
                     {this.renderAddItemLayer()}
                     {this.renderDeleteLayer()}
                     <table className="table">
@@ -305,34 +289,28 @@ class UserWalmartList extends Component {
                     </thead>
                     {this.renderListContent(itemList)}
                 </table>
-                
-                </div>);	
+            </div>);	
 	}
     
   }
 }
 
-
-
 function mapStateToProps(state) {
-    //console.log(state);
   return {
     items: state.walmart.items,  
     itemList: state.walmart.itemList,
-	//errorMessage: state.block.error,
+	errorMessage: state.walmart.error,
 	loadingSpinner: state.walmart.loadingSpinner
   };
 }
 
 const mapDispatchToProps = (dispatch) =>   
-  bindActionCreators({
-    fetchFromWalmarAPI,
-    deleteWalmarItem
-//	viewEntry,
-    //fetchBlockInfo,
-    //deleteBlock
-  }, dispatch);
-
+    bindActionCreators({
+            fetchFromWalmarAPI,
+            deleteWalmarItem
+        }, 
+        dispatch
+    );
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserWalmartList);
 

@@ -39,8 +39,6 @@ exports.getWalmartItems = function (req, res, next) {
 };
 
 exports.WalmartAddItems = function (req, res, next) {
-  console.log('req.user');
-  console.log(req.user);	
   const usrId = req.user.uid;
   const storeName = req.body.props.webstore;
   const webid = req.body.props.webid;
@@ -48,30 +46,34 @@ exports.WalmartAddItems = function (req, res, next) {
   const imgUrl = req.body.props.itemimgurl;
   const upc = req.body.props.itemupc;
   const asib = req.body.props.itemasib;
-  const refresh = (req.body.props.itemrefresh) ? 1 :0;
-  //var ItemChecks = req.body.props.checks;
-   var details = [];
-  console.log(req.body.props);
-    if (req.body.props.itemPrice) {
-        console.log('Adding Price');
-        details.push({type: 'salePrice', val: req.body.props.itemPrice})    
-    }
-    if (req.body.props.itemstock) {
-        console.log('Adding Stock');
-        var valStock = (req.body.props.itemstock === 'Available') ? 1 : 0;
-        details.push({type: 'stock', val: valStock})    
-    }
+  const notification = req.body.props.notification;
+  var details = [];
+  if (notification.length > 0 )  {
+      notification.forEach(function(elem) {
+        if (elem === "stock") {
+            var valStock = (req.body.props.itemstock === 'Available') ? 1 : 0;
+            details.push({type: 'stock', val: valStock, not: `{${elem}}`})
+        }
+        if (elem === "salePrice") {
+            details.push({type: 'salePrice', val: req.body.props.itemPrice, not: `{${elem}}`})    
+        }
+        
+    });
+  }
+    
    const queries = [];
    var obj;
    db.tx(t => { // automatic BEGIN
-        let addItemSql = "insert into rs_items(usrid, itemrefresh, webstore,webid,itemname, itemimgurl, itemupc, 	itemasib ) "+
-                          " values($1, $2 ,$3 ,$4, $5, $6, $7, $8) RETURNING itemid";
+        let addItemSql = "insert into rs_items(usrid, webstore,webid,itemname, itemimgurl, itemupc, 	itemasib ) "+
+                          " values($1, $2 ,$3 ,$4, $5, $6, $7) RETURNING itemid";
         queries.push(
-        t.one(addItemSql,[usrId, refresh, storeName, webid, name, imgUrl, upc, asib ])
+        t.one(addItemSql,[usrId, storeName, webid, name, imgUrl, upc, asib ])
         .then(data => {
             details.forEach((det) => {
-                let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) where itemid = $1";
-                queries.push(t.none(addDetaild, [data.itemid, det.type, det.val]));
+                let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) "+
+                    " , notification = array_cat(notification, $4) "+
+                    " where itemid = $1";
+                queries.push(t.none(addDetaild, [data.itemid, det.type, det.val, det.not]));
             });
         })
         );

@@ -98,7 +98,7 @@ export function saveItem(props) {
   };
 }
 export function searchFunc(props) {
-    console.log(props);
+    //console.log(props);
     return function (dispatch) {
         dispatch(requestItemInfo());
         return axios({ url: `${API_URL}/walmart/item/search/${props.stype}/${props.search}`,
@@ -106,7 +106,7 @@ export function searchFunc(props) {
 			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
-            console.log(response.data);
+            //console.log(response.data);
             dispatch(receiveItemInfo(response.data));
         })
         .catch((error) => {

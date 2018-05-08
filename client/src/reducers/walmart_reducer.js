@@ -80,7 +80,7 @@ export default function (state = INITIAL_STATE, action) {
 			    loadingSpinnerInfo: true
 			});
     case RECV_ITEM_INFO:
-            console.log(action.data.items);
+            //console.log(action.data.items);
             //const newItems =  updateItemInArray(state.itemInfo, action.data.items[0]);
             //return updateObject(state, {itemInfo : newItems, message: action.message
             //,loadingSpinnerInfo: false

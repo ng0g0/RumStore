@@ -83,7 +83,11 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_UPC': 'UPC',
     'WALMAR_ITEM_ASIN': 'ASIN',
     'WALMAR_ITEM_REFRESH': 'Refresh Item',
-    'WALMAR_ITEM_SEARCH': 'Намери продукт'
+    'WALMAR_ITEM_SEARCH': 'Search',
+    'WALMAR_ITEM_HISTORY': 'Product history',
+    'WALMAR_ITEM_PRICE': 'Price',
+    'WALMAR_ITEM_ONSTOCK': 'OnStock',
+    'WALMAR_ITEM_NOTIFICATION': 'Notifications'
     
     
   },
@@ -172,7 +176,12 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_UPC': 'UPC',
     'WALMAR_ITEM_ASIN': 'ASIN',
     'WALMAR_ITEM_REFRESH': 'Обнови продукт',
-    'WALMAR_ITEM_SEARCH': 'Намери продукт'
+    'WALMAR_ITEM_SEARCH': 'Намери продукт',
+    'WALMAR_ITEM_HISTORY': 'История на продукта',
+    'WALMAR_ITEM_PRICE': 'Цена',
+    'WALMAR_ITEM_ONSTOCK': 'Наличен',
+    'WALMAR_ITEM_NOTIFICATION': 'Аларми'
+    
   }
 };
 

@@ -35,7 +35,7 @@ class SearchItem extends Component {
 	}
    
     render () {
-        console.log(searchWalmart);
+        //console.log(searchWalmart);
         const { handleSubmit } = this.props;
         return(
             <AccGroup title="WALMAR_ITEM_SEARCH" key="searchArea" item="searchArea" > 
@@ -65,7 +65,7 @@ class SearchItem extends Component {
 }
 	
 function mapStateToProps(state) {
-    console.log(state.form);
+    //console.log(state.form);
    return {
 	//errorMessage: state.block.error,
     loadingSpinnerInfo: state.walmart.itemInfo,

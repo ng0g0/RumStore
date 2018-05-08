@@ -1,45 +1,36 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'; // ES6
 import { connect } from 'react-redux';
-import { Field, reduxForm, formValueSelector } from 'redux-form';
+import { Field, reduxForm, formValueSelector, FieldArray, change   } from 'redux-form';
 import Translation from '../locale/translate';
 import { searchFunc, saveItem} from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import { WalmartItem } from '../../consts';
-//import {required, maxLength15, minLength2} from '../../consts/validation';
 import SearchItem from './search-item';
-
+import AccGroup from '../accordion/accordiongroup';
+import Multiselect from 'react-widgets/lib/Multiselect'
 
 function validate(formProps) {
   const errors = {};
-  
   //errors.name = required(formProps.name);
   return errors;
 }
-/*
-const renderMuiltiSelect = ({
-input,
-  type,
-  meta: { touched, error, warning },
-}) =>
-  ( <div>
-      <input className="form-control" {...input} type={type} />
-      <select ref={name} value={value} onChange={this.onChange} multiple>
-      { emptyValue }
-      {(optionList) && optionList.map(current => (
-        <option key={current.value} value={current.value}>{current.name}</option>))
-      }
-</select>
-    </div>
-  );
-*/  
+
+
+const renderMultiselect = ({ input, ...rest }) => (
+  <Multiselect {...input}
+    onBlur={() => input.onBlur()}
+     onChange={input.onChange} 
+    value={input.value || []} // requires value to be an array
+    {...rest}/>)
+
 const renderField = ({
   input,
   type,
   meta: { touched, error, warning },
 }) =>
   ( <div>
-      <input className="form-control" {...input} type={type} />
+      <input className="form-control" {...input} type={type} disabled />
 	  {touched &&  error &&   <div className="error"><Translation text={error} /></div>}
     </div>
   );
@@ -48,13 +39,21 @@ const renderField = ({
 class AddItem extends Component {
     constructor(props) {
 		super(props);
+        this.state = {
+                result: ['salePrice', 'stock']
+        }
+        this.handleMultiChange = this.handleMultiChange.bind(this);
 	}
+    
+    handleMultiChange(val) {
+        //console.log(val);
+        this.props.dispatch(change(WalmartItem, 'notification', val));
+    }
     
     render () {
         const { handleSubmit ,itemURL} = this.props;
-        console.log(this.props.loadingSpinnerInfo);
-
-        var itemImage = itemURL || "/images/nopic.jpg" //value || ;
+        //console.log(this.props.loadingSpinnerInfo);
+        var itemImage = itemURL || "/images/nopic.jpg";
         if  (this.props.loadingSpinnerInfo) {
 		return (<div>
                 <SearchItem />
@@ -100,51 +99,44 @@ class AddItem extends Component {
                 </div>
             </div> 
             <div className="row">
-                <div className="col-md-12">
-                    <label><Translation text="WALMAR_ITEM_ASIN" /></label>
-                    <Field name="itemasib" className="form-control" component={renderField} type="text"/>
+                <div className="col-md-6">
+                    <label><Translation text="WALMAR_ITEM_PRICE" /></label>
+                    <Field name="itemPrice" className="form-control" component={renderField} type="text"/>
+                </div>
+                <div className="col-md-6">
+                    <label><Translation text="WALMAR_ITEM_ONSTOCK" /></label>
+                    <Field name="itemstock" className="form-control" component={renderField} type="text"/>
                 </div>
             </div> 
             <div className="row">
                 <div className="col-md-12">
-                    <label><Translation text="WALMAR_ITEM_REFRESH" /></label>
-                    <Field name="itemrefresh" id="itemrefresh" component="input" type="checkbox" />
+                    <label><Translation text="WALMAR_ITEM_ASIN" /></label>
+                    <Field name="itemasib" className="form-control" component="input" type="text"/>
+                </div>
+            </div> 
+            <AccGroup title="WALMAR_ITEM_NOTIFICATION" key="notificationArea" item="notificationArea" > 
+            <div className="row">
+                <div className="col-md-12">
+                <Field
+                    name="notification"
+                    component={renderMultiselect}
+                    data={this.state.result}
+                    onChange={(e) => this.handleMultiChange(e)}
+                    />
                 </div>
             </div>
-            <div className="row">
-             <div className="col-md-12">
-                <button type="submit">
-                    Submit
-                </button>
-            </div>
-            </div>
-          </form></div>); 
+            </AccGroup>
+          </form>
+          </div>); 
         }
 	
 	}
 }
-//<FieldArray name="" component={renderItemProps} /> 
-/*
-const renderItemProps = ({ fields, meta: { error, submitFailed } }) => (
-  <ul>
-    <li>
-      <button type="button" onClick={() => fields.push({})}> Add Props  </button>
-      {submitFailed && error && <span>{error}</span>}
-    </li>
-    {fields.map((member, index) => (
-      <li key={index}> 
-        <button type="button" title="Remove Prop" onClick={() => fields.remove(index)} />
-        <h4>Prop #{index + 1}</h4> 
-         <Field name="webstore" className="form-control" component={renderMuiltiSelect}>
-        <>
-      </li>
-    ))}
-  </ul>
-)
-*/
+//<FieldArray name="notifications" component={renderNotification} templateList={this.state.templateList}/>
+//<Field name="hobbies"  component={Multiselect}  defaultValue={[]}  onBlur={() => props.onBlur()}   data={this.state.result}/>
 	
 function mapStateToProps(state) {
-    console.log(state.walmart);
+    //console.log(state);
     const selector = formValueSelector(WalmartItem)
     const itemURL = selector(state, 'itemimgurl')
    return {
