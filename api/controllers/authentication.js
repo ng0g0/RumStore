@@ -5,12 +5,29 @@ const config = require('../../config/main');
 var pgp = require('pg-promise')(/*options*/);
 var async = require('async');
 const bcrypt = require('bcrypt-nodejs');
+const nodemailer = require('nodemailer');
 
 const db = require('../connection/postgres');
 var QRE = pgp.errors.QueryResultError;
 var qrec = pgp.errors.queryResultErrorCode;
 
 
+const smtpTransport = nodemailer.createTransport(
+        {
+            host: 'mail.kia-bg.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: 'dani@kia-bg.com',
+                pass: 'Rumostore%80'
+            },
+            tls: {
+                rejectUnauthorized:false
+            }
+        });    
+    
+    
+    
 // Generate JWT
 // TO-DO Add issuer and audience
 function generateToken(user) {
@@ -111,6 +128,26 @@ exports.register = function (req, res, next) {
                 refresh: refresh
 				};
 			//console.log(obj);	
+            
+            const message = {
+                to: user.usrid,
+                from: 'dani@kia-bg.com',
+				subject: 'Welcome to RumStore',
+				text: `Hi ${firstName}, Welcome to Rumstore.\n\n` +
+					   ` User name: ${email} \n `+
+                       ` password: ${password} \n `+
+					   ` ${config.clientUrl}\n` 
+				};
+                
+                smtpTransport.sendMail(message, function(err,info) {
+                    if(err)
+                        console.log(err)
+                        else
+                        console.log(info);
+                  });
+                
+                
+                
 			res.status(201).json({
 				token: `JWT ${generateToken(obj)}`,
 				user: obj
@@ -145,13 +182,21 @@ exports.forgotPassword = function (req, res, next) {
 			.then( () => {
 				
 				const message = {
+                    to: email,
+                    from: 'dani@kia-bg.com',
 					subject: 'Reset Password',
 					text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 						'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
 						' '}${config.clientUrl}/reset-password/${resetToken}\n\n` +
 						`If you did not request this, please ignore this email and your password will remain unchanged.\n`
 				};
-
+                
+                smtpTransport.sendMail(message, function(err,info) {
+                    if(err)
+                        console.log(err)
+                        else
+                        console.log(info);
+                  });
 			  // Otherwise, send user email via Mailgun
 			//mailgun.sendEmail(existingUser.email, message);
 				console.log(message.text);
@@ -206,6 +251,8 @@ exports.verifyToken = function (req, res, next) {
 					db.none(updatePassSQL, [hashPassword,userName])
 					.then( () => {
 					  const message = {
+                        to: userName,
+                        from: 'dani@kia-bg.com',
 						subject: 'Password Changed',
 						text: 'You are receiving this email because you changed your password. \n\n' +
 							  'If you did not request this change, please contact us immediately.'
@@ -213,6 +260,12 @@ exports.verifyToken = function (req, res, next) {
 						console.log(message.text);
 						// Otherwise, send user email confirmation of password change via Mailgun
 						//mailgun.sendEmail(resetUser.email, message);
+                        smtpTransport.sendMail(message, function(err,info) {
+                    if(err)
+                        console.log(err)
+                        else
+                        console.log(info);
+                  });
 						return res.status(200).json({ message: 'Password changed successfully. Please login with your new password.' });  
 					})
 					.catch(error=> {
@@ -341,11 +394,19 @@ exports.userDelete = function (req, res, next) {
 		.then((user) => {
 			console.log('Deleted');	
 			const message = {
+                to: userName,
+                from: 'dani@kia-bg.com',
 				subject: 'User Deleted',
 				text: 'You are receiving this email because you deleted your user. \n\n' +
 					  'If you did not request this change, please contact us immediately.'
 				};
 				console.log(message.text);
+                smtpTransport.sendMail(message, function(err,info) {
+                    if(err)
+                        console.log(err)
+                        else
+                        console.log(info);
+                  });
 				// Otherwise, send user email confirmation of password change via Mailgun
 				//mailgun.sendEmail(resetUser.email, message);
 				return res.status(200).json({ message: 'User Deleted successfully.' });  	

@@ -1,76 +1,36 @@
-const pgp = require('pg-promise')(/*options*/);
-const db = require('../connection/postgres');
-var request = require('request');
+var schedule = require('node-schedule');
 
-var QRE = pgp.errors.QueryResultError;
-var qrec = pgp.errors.queryResultErrorCode;
-var walmar_key = 'upxrg7rpj4hjew5jbjwqhwkf';
-
-
-exports.getWalmartSearchedItems = function (req, res, next) {
-  console.log(req.params);
- // :sType/::itemId
-  
-  const searchType = req.params.sType;
-  const itemId = req.params.itemId  || 0;
-  if (itemId.length >0) {
-    if (searchType === "upc") {
-        return request({
-                uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&upc=${itemId}`,
-            }).pipe(res);    
-        } else {
-        return request({
-                uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`,
-            }).pipe(res);  
-        }  
-  } else {
-      res.status(200).json({ message: 'NO_DATE_FOUND' });
-  }
-  
-   
-};    
-exports.getWalmartItems = function (req, res, next) {
-    console.log(req.params);
-   const itemId = req.params.itemId;
-   return request({
-            uri: `https://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=${itemId}`,
-        }).pipe(res);
+exports.runSchedure = function (req, res, next) {
+    console.log(req.user);
+    var job1 = new schedule.Job('cancelJob', function() {});
+      job1.schedule({
+        second: new schedule.Range(8, 22);	
+      });
     
-};
-
-exports.getWalmartItemRequest = function(itemId) {
-    console.log(itemId);
-   return request({
-            uri: `https://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=${itemId}`,
-        }).pipe(res);
-} 
-
-exports.WalmartNotification = function() {
-    let selectItemSql = "select webid, u.usrid, username, itemid,array_to_string(notification,',')  from rs_items i, rbm_user u " + 
-        " where notification is not null "+ 
-        " and i.usrid = u.usrid ";
-    var itemList = "";    
-    db.many(selectItemSql) 
-    .then(items=> {
-		console.log(items);	
-        itemList = itemList.concat(items.webid, ',');
-	});
-    itemList = itemList.slice(0, -1);
-    var responce = [];
-    var itemArray = itemList.split(",");
-        var cnt = Math.ceil(itemArray.length/10);
-        var i;
-        for (i = 0; i < cnt; i++) { 
-            sentItems =  itemArray.splice(0+i*10,10+i*10).join();
-            console.log(`Page ${i} =${sentItems}`);	
-            setTimeout(function() { responce.concat(getWalmartItemRequest(sentItems))}, 500);
-        }
-      console.log(responce);
-      
+    var rule = new schedule.RecurrenceRule();
+    rule.hour = 
+    rule.minute = 0;
+    var j = schedule.scheduleJob(scheduleId, rule, function(){
+        console.log('Schedule started');
+    });
     
+    return res.status(200).json({ message: `Schedule started ` });
 }
 
+exports.stopSchedure = function (req, res, next) {
+    console.log(req.user);	
+    var j = schedule.scheduleJob(scheduleId, rule, function(){
+        console.log('Schedule started');
+    });
+    j.cancel();
+    return res.status(200).json({ message: `Schedule stopped ` });
+} 
+
+
+
 exports.WalmartAddItems = function (req, res, next) {
+  console.log('req.user');
+  console.log(req.user);	
   const usrId = req.user.uid;
   const storeName = req.body.props.webstore;
   const webid = req.body.props.webid;
@@ -78,34 +38,30 @@ exports.WalmartAddItems = function (req, res, next) {
   const imgUrl = req.body.props.itemimgurl;
   const upc = req.body.props.itemupc;
   const asib = req.body.props.itemasib;
-  const notification = req.body.props.notification;
-  var details = [];
-  if (notification.length > 0 )  {
-      notification.forEach(function(elem) {
-        if (elem === "stock") {
-            var valStock = (req.body.props.itemstock === 'Available') ? 1 : 0;
-            details.push({type: 'stock', val: valStock, not: `{${elem}}`})
-        }
-        if (elem === "salePrice") {
-            details.push({type: 'salePrice', val: req.body.props.itemPrice, not: `{${elem}}`})    
-        }
-        
-    });
-  }
-    
+  const refresh = (req.body.props.itemrefresh) ? 1 :0;
+  //var ItemChecks = req.body.props.checks;
+   var details = [];
+  console.log(req.body.props);
+    if (req.body.props.itemPrice) {
+        console.log('Adding Price');
+        details.push({type: 'salePrice', val: req.body.props.itemPrice})    
+    }
+    if (req.body.props.itemstock) {
+        console.log('Adding Stock');
+        var valStock = (req.body.props.itemstock === 'Available') ? 1 : 0;
+        details.push({type: 'stock', val: valStock})    
+    }
    const queries = [];
    var obj;
    db.tx(t => { // automatic BEGIN
-        let addItemSql = "insert into rs_items(usrid, webstore,webid,itemname, itemimgurl, itemupc, 	itemasib ) "+
-                          " values($1, $2 ,$3 ,$4, $5, $6, $7) RETURNING itemid";
+        let addItemSql = "insert into rs_items(usrid, itemrefresh, webstore,webid,itemname, itemimgurl, itemupc, 	itemasib ) "+
+                          " values($1, $2 ,$3 ,$4, $5, $6, $7, $8) RETURNING itemid";
         queries.push(
-        t.one(addItemSql,[usrId, storeName, webid, name, imgUrl, upc, asib ])
+        t.one(addItemSql,[usrId, refresh, storeName, webid, name, imgUrl, upc, asib ])
         .then(data => {
             details.forEach((det) => {
-                let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) "+
-                    " , notification = array_cat(notification, $4) "+
-                    " where itemid = $1";
-                queries.push(t.none(addDetaild, [data.itemid, det.type, det.val, det.not]));
+                let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) where itemid = $1";
+                queries.push(t.none(addDetaild, [data.itemid, det.type, det.val]));
             });
         })
         );

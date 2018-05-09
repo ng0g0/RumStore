@@ -13,6 +13,7 @@ const bodyParser = require('body-parser');
 const config = require('./config/main');
 const favicon  = require('serve-favicon');
 
+
 app.use(express.static(path.join(__dirname, 'client/prod')));
 app.use(favicon(path.join(__dirname,'/client/prod/favicon.ico')));
 app.use(bodyParser.urlencoded({ extended: true }));
