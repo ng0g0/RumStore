@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import cookie from 'react-cookie';
 import { Link } from 'react-router';
 import Translation from '../locale/translate';
 import { ToastContainer } from 'react-toastify';
 
+
+
 class HeaderTemplate extends Component {
+  
     renderLinks() {
         if (this.props.authenticated) {
             return ( <ul className="nav navbar-nav">
@@ -25,8 +29,17 @@ class HeaderTemplate extends Component {
                     <Link to="/blocks"><Translation text="Building" /></Link>
                 </li>
 */
+
+    renderAdminMenu() {
+        const user = cookie.load('user');
+        console.log(user);
+        if (user.role === 1) { 
+            return(<li><Link to="register"><Translation text="AddUser" /></Link></li>)
+        }
+    }
     
 	renderUserMenu() {
+        
 		if (this.props.authenticated) {
 			return (<ul className="nav navbar-nav navbar-right">
 				<li className="dropdown">
@@ -35,6 +48,7 @@ class HeaderTemplate extends Component {
 					<ul className="dropdown-menu">
 						<li><Link to="profile"><Translation text="Profile" /></Link></li>
 						<li><Link to="logout"><Translation text="Logout" /></Link></li>
+                        { this.renderAdminMenu()}
                    </ul>
 				</li>
 			</ul>);
@@ -49,6 +63,7 @@ class HeaderTemplate extends Component {
 	  }
 	}
   /*
+  AddUser
   return (<ul className="nav navbar-nav navbar-right">
 					<li> <Link className="glyphicon glyphicon-user" to="register">
 					<span className="nav_menu">Register</span></Link></li>
@@ -80,6 +95,7 @@ class HeaderTemplate extends Component {
 }
 
 function mapStateToProps(state) {
+    console.log(state);
     return {
         authenticated: state.auth.authenticated,
         form: state.form

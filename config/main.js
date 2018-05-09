@@ -36,7 +36,3 @@ module.exports = {
   //test_db: 'mern-starter-test',
   test_env: 'test'
 };
-
-
-https://rumstore.herokuapp.com/
-https://runstore.herokuapp.com/

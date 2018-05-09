@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import { registerUser } from '../../actions/auth';
+import Translation from '../locale/translate';
 
 const form = reduxForm({
   form: 'register',
@@ -39,19 +40,22 @@ function validate(formProps) {
     errors.email = 'Please enter an email';
   }
 
+  
+  
+  errors.email = emailValidate(formProps.email);
+  
+  /* 
   if (!formProps.password) {
     errors.password = 'Please enter a password';
   }
   
-  errors.email = emailValidate(formProps.email);
-  
-   if (!formProps.passwordConfirm) {
+  if (!formProps.passwordConfirm) {
     errors.passwordConfirm = 'Please confirm new password';
   }
   
   if (formProps.password !== formProps.passwordConfirm) {
     errors.passwordConfirm = 'Passwords must match';
-  }
+  }*/
 
   return errors;
 }
@@ -94,6 +98,19 @@ class Register extends Component {
           </div>
         </div>
         <div className="row">
+			 <div className="col-md-12">
+				<label><Translation text="Administrator" /></label>
+				<Field name="role" className="form-control" id="role" component={renderField} type="checkbox" />
+			</div>
+		</div>
+        
+        <button type="submit" className="btn btn-primary">Register</button>
+      </form>
+    );
+  }
+}
+/*
+<div className="row">
           <div className="col-md-12">
             <label>Password</label>
             <Field name="password" className="form-control" component={renderField} type="password" />
@@ -105,12 +122,7 @@ class Register extends Component {
             <Field name="passwordConfirm" className="form-control" component={renderField} type="password" />
           </div>
         </div>
-        <button type="submit" className="btn btn-primary">Register</button>
-      </form>
-    );
-  }
-}
-
+*/
 function mapStateToProps(state) {
   return {
     errorMessage: state.auth.error,

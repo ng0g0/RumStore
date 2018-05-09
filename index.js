@@ -39,7 +39,7 @@ const apiRoutes = express.Router(),
   apiRoutes.use('/auth', authRoutes);
 
   // Registration route
-  authRoutes.post('/register', requireLogin, UserController.register);
+  authRoutes.post('/register', requireAuth, UserController.register);
 
   // Login route
   authRoutes.post('/login', requireLogin, UserController.login);

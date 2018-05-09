@@ -37,7 +37,7 @@ function generateToken(user) {
 };
 
 exports.findUser = function(userName, callback) {
-	let finUserSql = "select usrid,username as email, password, firstname, lastname, ursrefresh as refresh" + 
+	let finUserSql = "select usrid,username as email, password, firstname, lastname, usrrole as role" + 
 	                 " from rbm_user where username = $1 and active = 1";
 	var obj;
 	
@@ -49,7 +49,7 @@ exports.findUser = function(userName, callback) {
 			password: user.password,
 			firstName: user.firstname,
 			lastName: user.lastname,
-            refresh: user.refresh
+            role: user.role
 		};
 		callback(null, obj);
 	})
@@ -79,7 +79,7 @@ exports.login = function (req, res, next) {
 	email: req.user.email,
 	firstName: req.user.firstName,
 	lastName: req.user.lastName,
-    refresh: req.user.refresh,
+    role: req.user.role,
   };
   console.log('login');
   console.log(userInfo);
@@ -90,11 +90,12 @@ exports.login = function (req, res, next) {
 };
 
 exports.register = function (req, res, next) {
-
-	const email = req.body.email;
-	const firstName = req.body.firstName;
-	const lastName = req.body.lastName;
-	const password = req.body.password;
+    console.log(req.body.props);
+	const email = req.body.props.email;
+	const firstName = req.body.props.firstName;
+	const lastName = req.body.props.lastName;
+	const password = req.body.props.password || '123';
+    const role = (req.body.props.role)? 1 : 0 ;
 	let hashPassword = '123';
 	const SALT_FACTOR = 5;
 	if (!email) {
@@ -107,9 +108,9 @@ exports.register = function (req, res, next) {
 	}
 
 	// Return error if no password provided
-	if (!password) {
-		return res.status(422).send({ error: 'You must enter a password.' });
-	}
+	//if (!password) {
+//		return res.status(422).send({ error: 'You must enter a password.' });
+//	}
 	//console.log('Validation ok');
 	bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
 		if (err) return next(err);
@@ -117,20 +118,19 @@ exports.register = function (req, res, next) {
 		if (err) return next(err);
 		hashPassword = hash;
 		//console.log('Validating password');
-		let registerSql = "INSERT INTO rbm_user (username, password, firstname, lastname, active) VALUES( $1, $2, $3, $4, 1) RETURNING usrid";
-		db.one(registerSql, [email, hashPassword, firstName, lastName] )
+		let registerSql = "INSERT INTO rbm_user (username, password, firstname, lastname, active, usrrole) VALUES( $1, $2, $3, $4, 1, $5) RETURNING usrid";
+		db.one(registerSql, [email, hashPassword, firstName, lastName, role] )
 		.then((user) => {
 			obj = {
 				uid: user.usrid,
 				email: email,
 				firstName: firstName,
-				lastName: lastName,
-                refresh: refresh
+				lastName: lastName
 				};
 			//console.log(obj);	
             
             const message = {
-                to: user.usrid,
+                to: email,
                 from: 'dani@kia-bg.com',
 				subject: 'Welcome to RumStore',
 				text: `Hi ${firstName}, Welcome to Rumstore.\n\n` +
@@ -147,11 +147,11 @@ exports.register = function (req, res, next) {
                   });
                 
                 
-                
-			res.status(201).json({
-				token: `JWT ${generateToken(obj)}`,
-				user: obj
-			});	
+            return res.status(200).send({ message: 'User Added.' });    
+			//res.status(201).json({
+			//	token: `JWT ${generateToken(obj)}`,
+                //		user: obj
+            //		});	
 		})
 		.catch(error=> {
 			if (error.code === "23505") {
@@ -292,7 +292,7 @@ exports.viewProfile = function (req, res, next) {
   console.log('viewProfile');
   console.log(req.params);	
   const userId = req.params.userId;
-  let finUserSql = "select usrid,username as email, password, firstname, lastname, ursrefresh as refresh " + 
+  let finUserSql = "select usrid,username as email, password, firstname, lastname, usrrole as role " + 
 					" from rbm_user where usrid = $1 ";
 	var obj;
 	db.one(finUserSql, [userId])
@@ -307,7 +307,7 @@ exports.viewProfile = function (req, res, next) {
 				password: null,
 				firstName: user.firstname,
 				lastName: user.lastname,
-                refresh: user.refresh
+                role: (user.role === 1 )? true : false
 			};
 			return res.status(200).json({ user: obj });
 		}
@@ -334,7 +334,8 @@ exports.userUpdate = function (req, res, next) {
 	const firstName = req.body.firstName;
 	const lastName = req.body.lastName;
 	const password = req.body.password;
-    const refresh = req.body.refresh;
+   // const refresh = req.body.refresh;
+   const  role = (req.body.role) ? 1 : 0;
 	const uid = req.body.uid;
 	let hashPassword = '123';
 	const SALT_FACTOR = 5;
@@ -352,16 +353,16 @@ exports.userUpdate = function (req, res, next) {
 		bcrypt.hash(password, salt, null, (err, hash) => {
 		if (err) return next(err);
 		hashPassword = hash;
-		let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4,  ursrefresh=$6" + 
+		let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4,  usrrole=$6" + 
 						  " WHERE usrid = $5";
-		db.none(registerSql, [email, hashPassword, firstName, lastName, uid, refresh] )
+		db.none(registerSql, [email, hashPassword, firstName, lastName, uid, role] )
 			.then((user) => {
 				obj = {
 					uid: uid,
 					email: email,
 					firstName: firstName,
 					lastName: lastName, 
-                    refresh: refresh
+                    role: role
 					};
 				res.status(200).json({ user: obj });	
 			})
@@ -386,7 +387,6 @@ exports.userUpdate = function (req, res, next) {
 
 exports.userDelete = function (req, res, next) {
 	const email = req.body.email;
-	//const uid = req.body.uid;
 	const uid = req.params.userId;
 	console.log(req.params);
 	let deleteSql = "UPDATE rbm_user SET active = 0 WHERE usrid = $1";
@@ -394,7 +394,7 @@ exports.userDelete = function (req, res, next) {
 		.then((user) => {
 			console.log('Deleted');	
 			const message = {
-                to: userName,
+                to: email,
                 from: 'dani@kia-bg.com',
 				subject: 'User Deleted',
 				text: 'You are receiving this email because you deleted your user. \n\n' +
@@ -407,8 +407,6 @@ exports.userDelete = function (req, res, next) {
                         else
                         console.log(info);
                   });
-				// Otherwise, send user email confirmation of password change via Mailgun
-				//mailgun.sendEmail(resetUser.email, message);
 				return res.status(200).json({ message: 'User Deleted successfully.' });  	
 		})
 		.catch(error=> {

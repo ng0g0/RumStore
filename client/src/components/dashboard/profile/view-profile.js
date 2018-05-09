@@ -71,7 +71,7 @@ class ViewProfile extends Component {
 	this.props.deleteUser(this.props.data.uid);  
   }
   componentDidMount() {
-    console.log(this.props.data);
+   // console.log(this.props.data);
   // Fetch user data prior to component mounting
 	if (!this.props.data) {
 		const user = cookie.load('user');
@@ -109,18 +109,12 @@ class ViewProfile extends Component {
 			  </div>
 			</div>
 			<div className="row">
-			  <div className="col-md-12">
+                <div className="col-md-12">
 				<label><Translation text="Email" /></label>
 				<Field name="email" className="form-control" component={renderField} type="text" />
-			  </div>
+                </div>
 			</div>
-            <div className="row">
-			  <div className="col-md-12">
-              //  <ToggleSwitch text="AutoRefresh" checked={checked} onChange={this.handleScheduleItem()} /> 
-				<label><Translation text="Refresh" /></label>
-				<Field name="refresh" className="form-control" component={renderField} type="text" />
-			  </div>
-			</div>
+            
 			<div className="row">
 			  <div className="col-md-12">
 				<label><Translation text="Password" /></label>
@@ -131,6 +125,12 @@ class ViewProfile extends Component {
 			  <div className="col-md-12">
 				<label><Translation text="ConfirmPassword" /></label>
 				<Field name="passwordConfirm" className="form-control" component={renderField} type="password" />
+			  </div>
+			</div>
+            <div className="row">
+			  <div className="col-md-12">
+				<label><Translation text="Administrator" /></label>
+				<Field name="role" className="form-control" id="role" component={renderField} type="checkbox" />
 			  </div>
 			</div>
 			<button type="submit" className="btn btn-primary"><Translation text="Update" /></button>
@@ -145,6 +145,10 @@ class ViewProfile extends Component {
   }
 }
 
+//  <ToggleSwitch text="AutoRefresh" checked={checked} onChange={this.handleScheduleItem()} /> 
+
+            
+            
 function mapStateToProps(state) {
 	//	console.log(state);
   return {

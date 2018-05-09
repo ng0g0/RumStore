@@ -2,9 +2,9 @@ import axios from 'axios';
 import { browserHistory } from 'react-router';
 import cookie from 'react-cookie';
 import { API_URL, CLIENT_ROOT_URL, errorHandler } from './index';
-import { showNotify } from './toast'; 
 import { LANG_CHANGE, AUTH_USER, AUTH_ERROR, UNAUTH_USER, FORGOT_PASSWORD_REQUEST, RESET_PASSWORD_REQUEST, PROTECTED_TEST } from './types';
-
+import { showNotify } from './toast';
+import {SUCCESS_NOTIF, ERROR_NOTIF} from '../consts';
 
 //= ===============================
 // Authentication actions
@@ -26,6 +26,7 @@ export function loginUser({ email, password }) {
       cookie.save('token', response.data.token, { path: '/' });
       cookie.save('user', response.data.user, { path: '/' });
       dispatch({ type: AUTH_USER });
+      //console.log(`USEROD=${response.data.user.uid}`);
       window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
     })
     .catch((error) => {
@@ -35,19 +36,21 @@ export function loginUser({ email, password }) {
   };
 }
 
-export function registerUser({ email, firstName, lastName, password }) {
+export function registerUser(props) {
+ console.log(props)   
   return function (dispatch) {
-    axios.post(`${API_URL}/auth/register`, { email, firstName, lastName, password })
+    axios.post(`${API_URL}/auth/register`, { props }
+    ,{ headers: { Authorization: cookie.load('token') }})   
     .then((response) => {
-      cookie.save('token', response.data.token, { path: '/' });
-      cookie.save('user', response.data.user, { path: '/' });
-      dispatch({ type: AUTH_USER });
-      showNotify('KUR');
-      //window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
+      //cookie.save('token', response.data.token, { path: '/' });
+      //cookie.save('user', response.data.user, { path: '/' });
+      //dispatch({ type: AUTH_USER });
+      showNotify(response.message, SUCCESS_NOTIF);
+      window.location.href = `${CLIENT_ROOT_URL}/profile`;
     })
     .catch((error) => {
-	   console.log(error.response);	
-       errorHandler(dispatch, error.response, AUTH_ERROR);
+	   console.log(error);	
+       //errorHandler(dispatch, error, AUTH_ERROR);
     });
   };
 }

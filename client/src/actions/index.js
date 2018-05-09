@@ -105,9 +105,9 @@ export function deleteUser(uid) {
 	};
 }
 
-export function updateUser({ email, firstName, lastName, password, uid, refresh }) {
+export function updateUser({ email, firstName, lastName, password, uid,  role}) {
 	return function (dispatch) {
-    axios.post(`${API_URL}/user/${uid}`, { email, firstName, lastName, password, uid, refresh })
+    axios.post(`${API_URL}/user/${uid}`, { email, firstName, lastName, password, uid ,role })
     .then((response) => {
 		console.log(response);
 		if (!response.data.error) {

@@ -28,6 +28,7 @@ const TRANSLATIONS = {
 	'AddEntAcom': 'Add Entrance Acomudation',
 	'AddBlockAcom': 'Add Block Acomudation',
 	'AddPerson': 'Add Person',
+    'AddUser': 'Add User',
 	'AddApartment': 'Add Apartment',
 	'AddFloor': 'Add Floor',
     'viewFloor': 'Info',
@@ -87,7 +88,8 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_HISTORY': 'Product history',
     'WALMAR_ITEM_PRICE': 'Price',
     'WALMAR_ITEM_ONSTOCK': 'OnStock',
-    'WALMAR_ITEM_NOTIFICATION': 'Notifications'
+    'WALMAR_ITEM_NOTIFICATION': 'Notifications',
+    'Administrator': 'Administrator'
     
     
   },
@@ -121,6 +123,7 @@ const TRANSLATIONS = {
 	'AddBlockAcom': 'Добави Разход към Блока',
 	'AddPerson': 'Добави Живуш',
 	'AddApartment': 'Добави Апартамент',
+    'AddUser': 'Добави Потребител',
 	'AddFloor': 'Добави Етаж',
     'viewFloor': 'Информация',
     'viewAppartment': 'Детайли',
@@ -180,7 +183,8 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_HISTORY': 'История на продукта',
     'WALMAR_ITEM_PRICE': 'Цена',
     'WALMAR_ITEM_ONSTOCK': 'Наличен',
-    'WALMAR_ITEM_NOTIFICATION': 'Аларми'
+    'WALMAR_ITEM_NOTIFICATION': 'Аларми',
+    'Administrator': 'Администратор'
     
   }
 };
