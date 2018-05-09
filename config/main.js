@@ -7,7 +7,7 @@ var connectionString = (process.env.NODE_ENV === 'production') ?
      :'postgres://elink:elink123@192.168.56.101/rbm';
 console.log(`Postgress connection: ${connectionString}`);
 var clientUrl = (process.env.NODE_ENV === 'production') ? 
-     'https://runstore.herokuapp.com'
+     'https://rumstore.herokuapp.com/'
      :`http://localhost:${port}`; 
 console.log(`Client Url: ${clientUrl}`);
 	 //var db = pgp(connectionString);
@@ -36,3 +36,7 @@ module.exports = {
   //test_db: 'mern-starter-test',
   test_env: 'test'
 };
+
+
+https://rumstore.herokuapp.com/
+https://runstore.herokuapp.com/
