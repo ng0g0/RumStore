@@ -83,8 +83,8 @@ const apiRoutes = express.Router(),
   userRoutes.get('/:userId', requireAuth, UserController.viewProfile);
   //userRoutes.get('/items/:userId', requireAuth, WalmartController.getUserItems);
   
-  userRoutes.post('/:userId', UserController.userUpdate);
-  userRoutes.delete('/:userId', UserController.userDelete);
+  userRoutes.post('/:userId', requireAuth, UserController.userUpdate);
+  userRoutes.delete('/:userId', requireAuth, UserController.userDelete);
 
     apiRoutes.use('/walmart', walmartRouter);
     walmartRouter.post('/item', requireAuth, WalmartController.WalmartAddItems);	

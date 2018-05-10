@@ -47,8 +47,8 @@ class HeaderTemplate extends Component {
 				 <span className="caret"></span></a>
 					<ul className="dropdown-menu">
 						<li><Link to="profile"><Translation text="Profile" /></Link></li>
-						<li><Link to="logout"><Translation text="Logout" /></Link></li>
                         { this.renderAdminMenu()}
+						<li><Link to="logout"><Translation text="Logout" /></Link></li>
                    </ul>
 				</li>
 			</ul>);
@@ -62,15 +62,6 @@ class HeaderTemplate extends Component {
 			}
 	  }
 	}
-  /*
-  AddUser
-  return (<ul className="nav navbar-nav navbar-right">
-					<li> <Link className="glyphicon glyphicon-user" to="register">
-					<span className="nav_menu">Register</span></Link></li>
-				</ul>);
-			} else {
-  */
-  
     render() {
         return (<nav className="navbar navbar-default">
 			<div className="container">

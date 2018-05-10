@@ -46,7 +46,7 @@ export function registerUser(props) {
       //cookie.save('user', response.data.user, { path: '/' });
       //dispatch({ type: AUTH_USER });
       showNotify(response.message, SUCCESS_NOTIF);
-      window.location.href = `${CLIENT_ROOT_URL}/profile`;
+      window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
     })
     .catch((error) => {
 	   console.log(error);	

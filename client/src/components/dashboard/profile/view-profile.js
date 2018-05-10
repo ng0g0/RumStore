@@ -45,19 +45,24 @@ function validate(formProps) {
   
   errors.email = emailValidate(formProps.email);
 
-  if (!formProps.password) {
-    errors.password = 'Please enter a password';
-  }
+  //if (!formProps.password) {
+  //  errors.password = 'Please enter a password';
+ // }
   
-   if (!formProps.passwordConfirm ) {
-    errors.passwordConfirm = 'Please confirm new password';
-  }
+ 
+    if (formProps.password) {
+        if (!formProps.passwordConfirm ) {
+            errors.passwordConfirm = 'Please confirm new password';
+        } 
+    }
   
-  if (formProps.password !== formProps.passwordConfirm) {
-    errors.passwordConfirm = 'Passwords must match';
-  }
+    if (formProps.password && formProps.passwordConfirm) {
+        if (formProps.password !== formProps.passwordConfirm) {
+            errors.passwordConfirm = 'Passwords must match';
+        }    
+    }
 
-  return errors;
+    return errors;
 }
 
 
@@ -89,6 +94,19 @@ class ViewProfile extends Component {
       );
     }
   }
+  
+  renderAdminMenu() {
+        const user = cookie.load('user');
+        console.log(user);
+        if (user.role === 1) { 
+            return(<div className="row">
+			  <div className="col-md-12">
+				<label><Translation text="Administrator" /></label>
+				<Field name="role" className="form-control" id="role" component={renderField} type="checkbox" />
+			  </div>
+			</div>)
+        }
+    }
 
   render () {
 	const { handleSubmit, load, pristine, reset, submitting } = this.props; 
@@ -127,12 +145,7 @@ class ViewProfile extends Component {
 				<Field name="passwordConfirm" className="form-control" component={renderField} type="password" />
 			  </div>
 			</div>
-            <div className="row">
-			  <div className="col-md-12">
-				<label><Translation text="Administrator" /></label>
-				<Field name="role" className="form-control" id="role" component={renderField} type="checkbox" />
-			  </div>
-			</div>
+            { this.renderAdminMenu()}
 			<button type="submit" className="btn btn-primary"><Translation text="Update" /></button>
 			<button type="button" onClick={() => this.deleteUser(this)}><Translation text="Delete" /></button>
 		  </form>

@@ -105,9 +105,12 @@ export function deleteUser(uid) {
 	};
 }
 
-export function updateUser({ email, firstName, lastName, password, uid,  role}) {
+export function updateUser(props) {
+    console.log('change');
+    var uid = props.uid;
 	return function (dispatch) {
-    axios.post(`${API_URL}/user/${uid}`, { email, firstName, lastName, password, uid ,role })
+    axios.post(`${API_URL}/user/${uid}`, { props }
+    ,{ headers: { Authorization: cookie.load('token') }})   
     .then((response) => {
 		console.log(response);
 		if (!response.data.error) {

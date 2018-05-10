@@ -221,8 +221,7 @@ class UserWalmartList extends Component {
                         <Translation text="WalmartItems" />
                     </div>
                     <div className="col-sm-1">
-                        
-                        {this.renderItemMenuBar(items)}
+                        <Translation text="WalmartAction" />
                     </div>
                 </div>
             {items.map((item) => {
@@ -267,10 +266,11 @@ class UserWalmartList extends Component {
 			return(<tbody><tr><td colspan="3"><Translation text="NO_DATE_FOUND" /></td></tr></tbody>);
 		}
 	}
-    //<Translation text="WalmartAction" />
+    
     renderItemMenuBar(items) {
        // var checked = true;
-        return(<div className="btn-group pull-right">
+        return(<div className="row"><div className="col-sm-12">
+        <div className="btn-group pull-right">
             <a className="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
 				<Translation text="WalmarItemAction" />
 			</a>
@@ -287,7 +287,7 @@ class UserWalmartList extends Component {
                     <Link  className="dropdown-item" data-toggle="modal" data-target="#deleteItem"><Translation text="DeleteSeleected" /></Link>
                 </li>
             </ul>            
-        </div>);
+        </div></div></div>);
         
     } 
     
@@ -300,6 +300,7 @@ class UserWalmartList extends Component {
             return (<div>
                     {this.renderAddItemLayer()}
                     {this.renderDeleteLayer()}
+                    {this.renderItemMenuBar(items)}
                     {this.renderListContent(itemList)}
             </div>);	
 	}

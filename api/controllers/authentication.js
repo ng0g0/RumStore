@@ -187,7 +187,7 @@ exports.forgotPassword = function (req, res, next) {
 					subject: 'Reset Password',
 					text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 						'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-						' '}${config.clientUrl}/reset-password/${resetToken}\n\n` +
+						' '}${config.clientUrl}reset-password/${resetToken}\n\n` +
 						`If you did not request this, please ignore this email and your password will remain unchanged.\n`
 				};
                 
@@ -329,33 +329,74 @@ exports.viewProfile = function (req, res, next) {
 //========================================
 
 exports.userUpdate = function (req, res, next) {
-
-	const email = req.body.email;
-	const firstName = req.body.firstName;
-	const lastName = req.body.lastName;
-	const password = req.body.password;
+    console.log(req.body.props);
+    let change  = 0;
+    let email = "email";
+    let password = "password";
+    let firstName = "Fname";
+    let lastName = "Lname";
+    let role = 3;
+    let message = "User properties updates:";
+    if (req.body.props.email) {
+        email = req.body.props.email;
+        change  += 1; 
+        message.concat(" Email,");
+    }
+    if (req.body.props.password) {
+        password = req.body.props.password;
+        change  += 2; 
+        message.concat(" Password,");
+    }
+    if (req.body.props.firstName) {
+        firstName = req.body.props.firstName;
+        change  += 4; 
+        message.concat(" First Name,");
+    }
+    if (req.body.props.lastName) {
+        lastName = req.body.props.lastName;
+        change  += 8; 
+        message.concat(" Last Name,");
+    }
+    //if (req.body.props.role) {
+        role = (req.body.props.role) ? 1 : 0;
+        change  += 16; 
+        message.concat(" User Role");
+    //}
+	//const email = req.body.props.email;
+	//const firstName = req.body.props.firstName;
+	//const lastName = req.body.props.lastName;
+	//const password = req.body.props.password;
    // const refresh = req.body.refresh;
-   const  role = (req.body.role) ? 1 : 0;
-	const uid = req.body.uid;
+   //const  role = (req.body.role) ? 1 : 0;
+	const uid = req.body.props.uid;
 	let hashPassword = '123';
 	const SALT_FACTOR = 5;
-	if (!email) {
-		return res.status(422).send({ error: 'You must enter an email address.' });
-	}
-	if (!firstName || !lastName) {
-		return res.status(422).send({ error: 'You must enter your full name.' });
-	}
-	if (!password) {
-		return res.status(422).send({ error: 'You must enter an password address.' });
-	}
+	//if (!email) {
+	//	return res.status(422).send({ error: 'You must enter an email address.' });
+	//}
+	//if (!firstName || !lastName) {
+	//	return res.status(422).send({ error: 'You must enter your full name.' });
+	//}
+	//if (!password) {
+	//	return res.status(422).send({ error: 'You must enter an password address.' });
+	//}
+    console.log(`EMAIL=${email}, PASS=${hashPassword}, FN=${firstName}, LN=${lastName}, ROLE=${role} UPDATE=${change}`);
+    
 	bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
 		if (err) return next(err);
 		bcrypt.hash(password, salt, null, (err, hash) => {
 		if (err) return next(err);
 		hashPassword = hash;
-		let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4,  usrrole=$6" + 
-						  " WHERE usrid = $5";
-		db.none(registerSql, [email, hashPassword, firstName, lastName, uid, role] )
+        let registerSql = "UPDATE rbm_user SET " +
+           " username  = (CASE WHEN (($7&1)>0) THEN $1 ELSE username END),  " +
+           " password  = (CASE WHEN (($7&2)>0) THEN $2 ELSE password END),   " +
+           " firstname = (CASE WHEN (($7&4)>0) THEN $3 ELSE firstname END), " +
+           " lastname  = (CASE WHEN (($7&8)>0) THEN $4 ELSE lastname END), " +
+           " usrrole   = (CASE WHEN (($7&16)>0) THEN $6 ELSE usrrole END) " +
+        " WHERE usrid = $5";
+		//let registerSql = "UPDATE rbm_user SET username = $1, password =$2, firstname=$3, lastname=$4,  usrrole=$6" + 
+		//				  " WHERE usrid = $5";
+		db.none(registerSql, [email, hashPassword, firstName, lastName, uid, role, change] )
 			.then((user) => {
 				obj = {
 					uid: uid,
@@ -364,7 +405,7 @@ exports.userUpdate = function (req, res, next) {
 					lastName: lastName, 
                     role: role
 					};
-				res.status(200).json({ user: obj });	
+				res.status(200).json({ user: obj, message: message });	
 			})
 			.catch(error=> {
 					console.log(error);
