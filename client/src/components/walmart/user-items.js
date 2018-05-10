@@ -45,6 +45,7 @@ class UserWalmartList extends Component {
     
     handleCheckBoxItem(event) {
         var item = event.target.value;
+        console.log(item);
         if (item === "all") {
             if (this.state.allChecked) {
                 this.setState({
@@ -88,7 +89,7 @@ class UserWalmartList extends Component {
                 
             }
         }
-        //console.log(this.state.currentValues);
+        console.log(this.state.currentValues);
     }
     
     handleCancelClick(item) {
@@ -176,73 +177,97 @@ class UserWalmartList extends Component {
 
     renderCellContent(item) {
         const { currentValues } = this.state;
+        console.log(item);
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
         return(<div>
-            <div className="col-sm-4"> 
-                <div className="row"> 
-                    <div className="col-sm-12"><img alt={item.itemid} src ={itemImage} />  </div>
-                </div>
-            </div>
-            <div className="col-sm-8"> 
+            <div className="row">
                 { this.renderMessage(item.message) }
-                <div className="row">  
-                    <div className="col-sm-12">ItemID: {item.itemid} </div>
+               <div className="col-sm-2">
+                    <img alt={item.itemid} src ={itemImage} />
+                </div>   
+                <div className="col-sm-2"> 
+                    ItemID: {item.itemid}
+                </div> 
+                <div className="col-sm-4"> 
+                    <div className="row"><div className="col"> Name: <b>{item.name}</b></div></div>
+                    <div className="row"><div className="col">UPC: {item.upc}</div></div>
+                </div>
+                <div className="col-sm-2"> 
+                    AMAZON: {item.asib}
+                </div>
+                <div className="col-sm-2"> 
+                    Price: {item.salePrice}
                 </div>    
-                <div className="row">     
-                    <div className="col-sm-12">Name: <b>{item.name}</b> </div>
-                </div>
-                <div className="row"> 
-                    <div className="col-sm-6">UPC: {item.upc} </div>
-                    <div className="col-sm-12">AMAZON: {item.asib}  </div>
-                 </div>
-                <div className="row"> 
-                    <div className="col-sm-6">Price: {item.salePrice} </div>  
-                </div>
-            </div>  
-            <div className="col-sm-12">             
+            </div>
+            <div className="row">
                 <AccGroup title="WALMAR_ITEM_HISTORY" key={item.itemid} collapsed="Y" item={item.itemid} >  
-                <ItemChart itemDetails={item.itemdetails} />
-                 </AccGroup>        
-            </div>  
-            
+                    <ItemChart itemDetails={item.itemdetails} />    
+                 </AccGroup> 
+            </div>
         </div>);
     }
     
 	renderListContent(items) {
         const { currentValues } = this.state
 		if (items) {
-			return (<tbody>
+			return (<div>
+                <div className="row">
+                    <div className="col-sm-1">
+                   <input type="checkbox" className="form-check-input" name="all"  
+                              checked={this.state.allChecked} value="all"  
+                              onClick={(event )=> this.handleCheckBoxItem(event) }/> 
+                    </div>
+                    <div className="col-sm-10">
+                        <Translation text="WalmartItems" />
+                    </div>
+                    <div className="col-sm-1">
+                        
+                        {this.renderItemMenuBar(items)}
+                    </div>
+                </div>
             {items.map((item) => {
-                return(<tr key={item.itemid}>
-                <th scope="row">
-                    <input type="checkbox" className="form-check-input" name={item.itemid} key={item.itemid} 
+                return(<div className="row" key={item.itemid}>
+                    <div className="col-sm-1">
+                        <input type="checkbox" className="form-check-input" name={item.itemid} key={item.itemid} 
                         checked={currentValues.indexOf(item.itemid) !== -1}
                         value={item.itemid} onClick={(event )=> this.handleCheckBoxItem(event) }/>
-                </th>
-                <td> {this.renderCellContent(item)} </td>
-                <td><a className="btn-sm btn-default" href="#" role="button" 
-                        onClick={()=> this.handleRefreshItem(item.itemid) }>
-                        <Translation text="WalmartRefresh"  />
-                    </a> 
-                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" 
-                        data-target="#deleteItem"
-                        onClick={()=> this.handleDeleteClick(item.itemid) }>
-                        <Translation text="Delete" />
-                    </a>                      
-                    <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" 
-                        data-target="#viewItem">
-                        <Translation text="WalmartInfo" />
-                    </a>
-                </td>
-                </tr>)
-            })} 
-             </tbody>);	
+                    </div>
+                    <div className="col-sm-10">
+                        {this.renderCellContent(item)}
+                    </div>
+                    <div className="col-sm-1">
+                        <div className="row">
+                            <div className="col">
+                                <a className="btn-sm btn-default" href="#" role="button" onClick={()=> this.handleRefreshItem(item.itemid) }>
+                                    <Translation text="WalmartRefresh"  />
+                                </a>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#deleteItem"
+                                    onClick={()=> this.handleDeleteClick(item.itemid) }>
+                                    <Translation text="Delete" />
+                                </a>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#viewItem">
+                                    <Translation text="WalmartInfo" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>)
+            })}
+            </div>);	
 		}
 		else {
 			return(<tbody><tr><td colspan="3"><Translation text="NO_DATE_FOUND" /></td></tr></tbody>);
 		}
 	}
-    
+    //<Translation text="WalmartAction" />
     renderItemMenuBar(items) {
        // var checked = true;
         return(<div className="btn-group pull-right">
@@ -272,23 +297,10 @@ class UserWalmartList extends Component {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
             const { itemList, items} = this.props;
-            return (<div>{this.renderItemMenuBar(items)}
+            return (<div>
                     {this.renderAddItemLayer()}
                     {this.renderDeleteLayer()}
-                    <table className="table">
-                    <thead className="thead-dark">
-                        <tr>
-                        <th scope="col"> 
-                            <input type="checkbox" className="form-check-input" name="all"  
-                              checked={this.state.allChecked} value="all"  
-                              onClick={(event )=> this.handleCheckBoxItem(event) }/>
-                        </th>
-                        <th scope="col"><Translation text="WalmartItems" /></th>
-                        <th scope="col"><Translation text="WalmartAction" /></th>
-                        </tr>
-                    </thead>
                     {this.renderListContent(itemList)}
-                </table>
             </div>);	
 	}
     

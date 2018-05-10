@@ -127,15 +127,19 @@ class ItemChart extends Component {
                 var newArray = [currentItem[0],newObject];
                 return _.zipObject(["dettype","items"], newArray);
             }).value();
-            //console.log(result);
-        result.unshift({dettype:'', items: []});    
+        console.log(result);
+        var curDate = dayjs().format('DD-MMM-YY');
+        result.unshift({dettype:'', items: [ {y: 0, x: curDate} ]});    
         let optionItems = result.map((op) =>
             <option key={op.dettype}>{op.dettype}</option>
         );
         let dataArray = result.filter(function (el) {
                return el.dettype ===  selectedItem;
             });
-        return (<div>
+        if (dataArray.dettype === "") {
+            return(<div></div>)  
+        }   else {
+            return (<div>
             <div className="col-sm-12"> 
                 <label>
                 <Translation text="WALMAR_ITEM_DETAIL" />:
@@ -148,7 +152,10 @@ class ItemChart extends Component {
             {this.renderTable(dataArray)}
             {this.renderGraph(dataArray)}
             </div>
-        </div>)
+        </div>)  
+            
+        } 
+        
     }
 
     render () {
