@@ -6,43 +6,13 @@ import {
     RECV_ITEM_INFO,
     REQ_ITEM_INFO,
 } from '../actions/types';
+import dayjs from 'dayjs';
 
 const INITIAL_STATE = { message: '', error: '', loadingSpinner: true, loadingSpinnerInfo: false };
 
 
 function updateObject(oldObject, newValues) {
     return Object.assign({}, oldObject, newValues);
-}
-
-function updateItemInArray(array, itemId, updateItemCallback) {
-    if (itemId) {
-       // console.log(itemId);
-        
-       const updatedItems = array.map(item => {
-            var result = itemId.find(function(it) { return  it.itemId == item.itemid ;  });
-        var obj = {};//item;
-       // console.log(item);
-        if(result) {
-            obj = Object.assign(item, {
-                    name: result.name,
-                    thumbnailimage: result.thumbnailImage,
-                    upc: result.upc,
-                    salePrice: result.salePrice,
-                    shortDescription: result.shortDescription,
-                    message: result.message,
-                    itemdetails: (item) ? item.itemdetails : []
-            });
-
-        } else {
-            obj = item;
-        }
-        return obj;
-    });
-    return updatedItems; 
-    } else {
-       return array;
-    }
-    
 }
 
 function updateItemInfo(oldInfo, newInfo ) {
@@ -58,10 +28,124 @@ function updateItemInfo(oldInfo, newInfo ) {
             });
 }
 
+function convertItemDetail(itemDetails) {
+    var result = _.chain(itemDetails).groupBy("dettype").toPairs()
+            .map(function (currentItem) {
+                var newObject = [];
+                currentItem[1].forEach(function(it) {
+                    var date = dayjs(it.detdate).format('DD-MMM-YY');
+                    var value = Number.parseFloat(it.detvalue) || it.detvalue;
+                    newObject.push(Object.assign({y:value, x:date}))
+                }); 
+                newObject.sort(function(a,b) {
+                     a = new Date(a.x);
+                     b = new Date(b.x);
+                    return (a > b) ? 1 : ((b > a) ? -1 : 0);
+                }); 
+                var newArray = [currentItem[0],newObject];
+                return _.zipObject(["dettype","items"], newArray);
+            }).value();
+    return result;
+}
 
+function convertItemList(itemList) {
+    let itemArray = [];
+    if (itemList) {
+        itemList.forEach(function(item) {
+            let obj = {
+               asib: item.asib,
+               itemid: item.itemid,
+               name: item.name,
+               noty: item.noty,
+               thumbnailimage: item.thumbnailimage,
+               salePrice: "N/A",
+               priceIndicator: 0,
+               upc: item.upc,
+               webstore: item.webstore,
+               itemdetails: convertItemDetail(item.itemdetails),
+               
+            }
+            itemArray.push(obj);   
+       });
+    }
+    return itemArray;
+}
+
+function updateItemDetails(itemDetails, noty, updateItem) {
+    if (updateItem) {
+        if (noty) {
+            var outArray = [];
+            noty.forEach(function(notification) {
+                let elem = notification;
+                let elemValue = updateItem[notification];
+                if (elem ==="stock") {
+                    elemValue = (elemValue === "Available")? 1: 0;
+                }   
+                var curDate = dayjs().format('DD-MMM-YY');
+                let x = {y: elemValue, x: curDate};
+                itemDetails.forEach((element, index) => {
+                    if(element.dettype === elem) {
+                       itemDetails[index].items = itemDetails[index].items.concat(x); 
+                    }
+                });
+            }); 
+            return    itemDetails;         
+        } 
+    }
+    return itemDetails;
+}
+
+
+function updatePriceIndicator(itemDetails) {
+    const item = itemDetails.find( item => item.dettype === 'salePrice' );
+    let result = 0;
+    if (item.items.length>0) {
+        if (item.items.length>1) {
+            let a = item.items[item.items.length -1];
+            let b = item.items[item.items.length -2];
+            if (a.y > b.y) {result = 1;}
+            if (a.y < b.y) {result = -1;}
+        } 
+    }
+    return result;
+}
+
+function updateItemInArray(itemList, updateItems) {
+    let arrayList = [];
+    if (updateItems) {
+        
+         const updatedItems = itemList.map(item => {
+            var result = updateItems.find(function(it) { return  it.itemId == item.itemid ;  });
+            var obj = {};//item;
+            if(result) {
+                let itemDetails = updateItemDetails(item.itemdetails, item.noty, result);
+                obj = Object.assign(item, {
+                        thumbnailimage: result.thumbnailImage,
+                        salePrice: result.salePrice,
+                        priceIndicator: updatePriceIndicator(itemDetails),
+                        upc: result.upc,
+                        itemdetails: itemDetails,
+                        message: result.message,
+                        
+                });
+
+            } else {
+                obj = item;
+            }
+        return obj;
+        });
+    return updatedItems;
+        
+        
+        
+    } else {
+        return itemList;
+    }
+    return itemArray;
+}
 
 export default function (state = INITIAL_STATE, action) {
-  //console.log(action.data);
+  
   switch (action.type) {
 	case REQ_WALMART_LIST:
 		return Object.assign({}, state, {
@@ -69,7 +153,7 @@ export default function (state = INITIAL_STATE, action) {
 		});
 	case RECV_WALMART_LIST:
 			return Object.assign({}, state, {
-				itemList: action.data.itemList,
+				itemList: convertItemList(action.data.itemList),
                 items: action.data.items,
 				message: action.message,
 				loadingSpinner: false
@@ -80,12 +164,7 @@ export default function (state = INITIAL_STATE, action) {
 			    loadingSpinnerInfo: true
 			});
     case RECV_ITEM_INFO:
-            //console.log(action.data.items);
-            //const newItems =  updateItemInArray(state.itemInfo, action.data.items[0]);
-            //return updateObject(state, {itemInfo : newItems, message: action.message
-            //,loadingSpinnerInfo: false
-            //});
-			return Object.assign({}, state, {
+ 			return Object.assign({}, state, {
 				itemInfo: updateItemInfo({},action.data.items[0]),
 				loadingSpinnerInfo: false
 			});        

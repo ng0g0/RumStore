@@ -19,8 +19,8 @@ class ItemChart extends Component {
     }
     renderItems(aaa) {
         return (<tbody>
-                {aaa.items.map((item) => {
-                    return(<tr key={item.y}><td>{item.y}</td><td>{item.x}</td></tr>)
+                {aaa.items.map((item, index) => {
+                    return(<tr key={index}><td>{item.y}</td><td>{item.x}</td></tr>)
                 })}
         </tbody>);
     }
@@ -32,7 +32,6 @@ class ItemChart extends Component {
         
         if (Number.isNaN(Number.parseFloat(aaa.items[0].y))) {
              yType='text'; 
-             //console.log('text');
         } else {
             
         }
@@ -44,17 +43,18 @@ class ItemChart extends Component {
                 xType={'time'}
                 xDomainRange={[`${minDate}`, `${maxDate}`]}
                 yDomainRange={[`${(minValue.y)-2}`, `${(maxValue.y)+2}`]}
+                y-axis-config='{"tickFormat": ".2s"}'
                 axes
                 width={750}
                 height={250}
                 data={[aaa.items]}
             />) 
         } else {
-            //console.log('TEXT');
             return(<LineChart     
                 xType={'time'}
                 axisLabels={{x: 'Time', y: `${yAxis}`}}
                 xDomainRange={[`${minDate}`, `${maxDate}`]}
+                y-axis-config='{"tickFormat": ".2s"}'
                 yType={'text'}
                 interpolate={'linear'}
                 axes
@@ -69,8 +69,8 @@ class ItemChart extends Component {
         if (detIitems) {
             if (Array.isArray(detIitems)) {
                 return(<div>
-                {detIitems.map((det) => {
-                    return(<div key={det.dettype}>
+                {detIitems.map((det, index) => {
+                    return(<div key={index}>
                         {this.renderEasy(det, det.dettype)}
                         </div>) 
                 })}
@@ -90,8 +90,8 @@ class ItemChart extends Component {
         if (detIitems) {
             if (Array.isArray(detIitems)) {
                 return(<div>
-                    {detIitems.map((det) => {
-                        return(<table className="table" key={det.dettype}>
+                    {detIitems.map((det, index) => {
+                        return(<table className="table" key={index}>
                             <thead className="thead-dark">
                                 <tr><td>Date</td><td>Value</td></tr>
                             </thead>            
@@ -107,39 +107,29 @@ class ItemChart extends Component {
             return(<div></div>);
         }
     }
+   
     
-
-  
+    
     renderChart(itdetail) {
         const { selectedItem } = this.state;
-        var result = _.chain(itdetail).groupBy("dettype").toPairs()
-            .map(function (currentItem) {
-                var newObject = [];
-                currentItem[1].forEach(function(it) {
-                    var date = dayjs(it.detdate).format('DD-MMM-YY');
-                    var value = Number.parseFloat(it.detvalue) || it.detvalue;
-                    //console.log(date)
-                    newObject.push(Object.assign({y:value, x:date}))
-                }); 
-                newObject.sort(function(a,b) {
-                    return (a.y > b.y) ? 1 : ((b.y > a.y) ? -1 : 0);
-                }); 
-                var newArray = [currentItem[0],newObject];
-                return _.zipObject(["dettype","items"], newArray);
-            }).value();
-        console.log(result);
-        var curDate = dayjs().format('DD-MMM-YY');
-        result.unshift({dettype:'', items: [ {y: 0, x: curDate} ]});    
-        let optionItems = result.map((op) =>
-            <option key={op.dettype}>{op.dettype}</option>
-        );
-        let dataArray = result.filter(function (el) {
-               return el.dettype ===  selectedItem;
-            });
-        if (dataArray.dettype === "") {
-            return(<div></div>)  
-        }   else {
-            return (<div>
+        let dataArray = itdetail.filter(function (el) {
+            return el.dettype ===  selectedItem;
+        });
+        return (<div>
+            {this.renderTable(dataArray)}
+            {this.renderGraph(dataArray)}
+        </div>)  
+    }
+    
+    render () {
+        const { itemDetails } = this.props;
+        const { selectedItem } = this.state;
+        let optionItems = itemDetails.map((op, index) => {
+                    return(<option key={op.dettype} value={op.dettype}>{op.dettype}</option>)
+        });
+        optionItems.unshift(<option key="default" defaultValue="default" disabled> Select</option> );
+        if (itemDetails) {
+           return(<div>
             <div className="col-sm-12"> 
                 <label>
                 <Translation text="WALMAR_ITEM_DETAIL" />:
@@ -148,21 +138,7 @@ class ItemChart extends Component {
                     </select>
                 </label>
             </div>
-            <div className="col-sm-12">
-            {this.renderTable(dataArray)}
-            {this.renderGraph(dataArray)}
-            </div>
-        </div>)  
-            
-        } 
-        
-    }
-
-    render () {
-        const { itemDetails } = this.props;
-        if (itemDetails) {
-           return(<div>
-           {this.renderChart(itemDetails)}
+            {this.renderChart(itemDetails)}
            </div>);
         } else {
             return(<Translation text="NO_DATE_FOUND" />);

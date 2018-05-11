@@ -32,14 +32,14 @@ class HeaderTemplate extends Component {
 
     renderAdminMenu() {
         const user = cookie.load('user');
-        console.log(user);
+        //console.log(user);
         if (user.role === 1) { 
             return(<li><Link to="register"><Translation text="AddUser" /></Link></li>)
         }
     }
     
 	renderUserMenu() {
-        
+
 		if (this.props.authenticated) {
 			return (<ul className="nav navbar-nav navbar-right">
 				<li className="dropdown">
@@ -86,7 +86,7 @@ class HeaderTemplate extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log(state);
+   // console.log(state);
     return {
         authenticated: state.auth.authenticated,
         form: state.form

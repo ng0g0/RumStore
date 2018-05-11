@@ -174,10 +174,19 @@ class UserWalmartList extends Component {
             return(<div></div>);
         }
     }
-
+    renderPriceIndicator(value) {
+        switch(value) {
+        case -1:
+            return(<span className="glyphicon glyphicon-arrow-down red"></span>)
+        case 1:
+            return(<span className="glyphicon glyphicon-arrow-up green"></span>)
+        default:
+            return(<span className="glyphicon glyphicon-minus"></span>)
+        } 
+    }
     renderCellContent(item) {
         const { currentValues } = this.state;
-        console.log(item);
+        //console.log(item);
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
         return(<div>
             <div className="row">
@@ -189,19 +198,20 @@ class UserWalmartList extends Component {
                     ItemID: {item.itemid}
                 </div> 
                 <div className="col-sm-4"> 
-                    <div className="row"><div className="col"> Name: <b>{item.name}</b></div></div>
-                    <div className="row"><div className="col">UPC: {item.upc}</div></div>
+                    <div className="row"><div className="col"><Translation text="Name" />: <b>{item.name}</b></div></div>
+                    <div className="row"><div className="col"><Translation text="WALMAR_ITEM_UPC" />: {item.upc}</div></div>
                 </div>
                 <div className="col-sm-2"> 
-                    AMAZON: {item.asib}
+                    <Translation text="WALMAR_ITEM_ASIN" />: {item.asib}
                 </div>
                 <div className="col-sm-2"> 
-                    Price: {item.salePrice}
+                    <Translation text="WALMAR_ITEM_PRICE" />: {item.salePrice}
+                    {this.renderPriceIndicator(item.priceIndicator)}
                 </div>    
             </div>
             <div className="row">
                 <AccGroup title="WALMAR_ITEM_HISTORY" key={item.itemid} collapsed="Y" item={item.itemid} >  
-                    <ItemChart itemDetails={item.itemdetails} />    
+                    <ItemChart itemDetails={item.itemdetails} key={item.itemid} />    
                  </AccGroup> 
             </div>
         </div>);
@@ -277,14 +287,19 @@ class UserWalmartList extends Component {
             
             <ul className="dropdown-menu">
                 <li key="add"> 
-                    <Link className="dropdown-item" data-toggle="modal" data-target="#addItem"> <Translation text="ADD_ITEM" /></Link>
+                    <Link className="dropdown-item" data-toggle="modal" data-target="#addItem">
+                        <Translation text="ADD_ITEM" />
+                    </Link>
                 </li>
                 <li key="Selected">
                     <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> 
-                        <Translation text="RefreshSelected" /></Link>
+                        <Translation text="RefreshSelected" />
+                    </Link>
                 </li>
                 <li key="del">
-                    <Link  className="dropdown-item" data-toggle="modal" data-target="#deleteItem"><Translation text="DeleteSeleected" /></Link>
+                    <Link  className="dropdown-item" data-toggle="modal" data-target="#deleteItem">
+                        <Translation text="DeleteSeleected" />
+                    </Link>
                 </li>
             </ul>            
         </div></div></div>);

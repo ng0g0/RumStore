@@ -181,7 +181,7 @@ exports.getUserItemList = function (req, res, next) {
   var obj;	
   //let itemListSql = "select asib,itemid from rs_items z where z.usrid = $1";
   let itemListSql = "select itemrefresh,webstore, webid as itemid, itemname as name, itemimgurl as thumbnailimage, itemupc as upc, itemasib as asib, "+
-            " array_to_json(itemdetails) as itemdetails  from rs_items z where z.usrid = $1 ";
+            " array_to_json(itemdetails) as itemdetails, array_to_json(notification) as noty  from rs_items z where z.usrid = $1 ";
   
   	db.many(itemListSql, [usrId])
 	.then(itemList=> {
