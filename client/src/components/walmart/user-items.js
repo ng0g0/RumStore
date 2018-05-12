@@ -222,20 +222,17 @@ class UserWalmartList extends Component {
 		if (items) {
 			return (<div>
                 <div className="row">
-                    <div className="col-sm-1">
-                   <input type="checkbox" className="form-check-input" name="all"  
+                    <div className="col-sm-12">
+                   <input type="checkbox" className="form-check-input  allcheck" name="all"  
                               checked={this.state.allChecked} value="all"  
                               onClick={(event )=> this.handleCheckBoxItem(event) }/> 
                     </div>
-                    <div className="col-sm-10">
-                        <Translation text="WalmartItems" />
-                    </div>
-                    <div className="col-sm-1">
-                        <Translation text="WalmartAction" />
-                    </div>
+                    
                 </div>
             {items.map((item) => {
-                return(<div className="row" key={item.itemid}>
+                return(<div className="panel panel-default blockche">
+                        <div className="panel-body">
+                    <div className="row" key={item.itemid}>
                     <div className="col-sm-1">
                         <input type="checkbox" className="form-check-input" name={item.itemid} key={item.itemid} 
                         checked={currentValues.indexOf(item.itemid) !== -1}
@@ -268,12 +265,14 @@ class UserWalmartList extends Component {
                             </div>
                         </div>
                     </div>
+                </div> </div>
                 </div>)
             })}
             </div>);	
 		}
 		else {
-			return(<tbody><tr><td colspan="3"><Translation text="NO_DATE_FOUND" /></td></tr></tbody>);
+			return(<div className="panel panel-default">
+     <div className="panel-body"><Translation text="NO_DATE_FOUND" /></div></div>);
 		}
 	}
     
@@ -312,11 +311,13 @@ class UserWalmartList extends Component {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
             const { itemList, items} = this.props;
-            return (<div>
+            return (<div className="panel panel-default">
+                <div className="panel-body">
                     {this.renderAddItemLayer()}
                     {this.renderDeleteLayer()}
                     {this.renderItemMenuBar(items)}
                     {this.renderListContent(itemList)}
+                </div>
             </div>);	
 	}
     

@@ -94,6 +94,9 @@ body {
     width: 40px
 }
 
+.allcheck {
+    margin: 4px 16px 0;
+}
 .blockcolor {
     background-color: #999;
 }
