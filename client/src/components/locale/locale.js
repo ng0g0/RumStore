@@ -89,7 +89,9 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_PRICE': 'Price',
     'WALMAR_ITEM_ONSTOCK': 'OnStock',
     'WALMAR_ITEM_NOTIFICATION': 'Notifications',
-    'Administrator': 'Administrator'
+    'Administrator': 'Administrator',
+    'date': 'Date',
+    'value': 'Value' 
     
     
   },
@@ -184,7 +186,9 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_PRICE': 'Цена',
     'WALMAR_ITEM_ONSTOCK': 'Наличен',
     'WALMAR_ITEM_NOTIFICATION': 'Аларми',
-    'Administrator': 'Администратор'
+    'Administrator': 'Администратор',
+    'date': 'Дата',
+    'value': 'Стойност' 
     
   }
 };

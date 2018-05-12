@@ -1,11 +1,13 @@
 const pgp = require('pg-promise')(/*options*/);
 const db = require('../connection/postgres');
 var request = require('request');
+const async = require('async');
 
 var QRE = pgp.errors.QueryResultError;
 var qrec = pgp.errors.queryResultErrorCode;
 var walmar_key = 'upxrg7rpj4hjew5jbjwqhwkf';
 
+const MailSender = require('./mail');
 
 exports.getWalmartSearchedItems = function (req, res, next) {
   console.log(req.params);
@@ -38,36 +40,149 @@ exports.getWalmartItems = function (req, res, next) {
     
 };
 
-exports.getWalmartItemRequest = function(itemId) {
-    console.log(itemId);
-   return request({
-            uri: `https://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=${itemId}`,
-        }).pipe(res);
-} 
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+};    
 
 exports.WalmartNotification = function() {
-    let selectItemSql = "select webid, u.usrid, username, itemid,array_to_string(notification,',')  from rs_items i, rbm_user u " + 
-        " where notification is not null "+ 
-        " and i.usrid = u.usrid ";
-    var itemList = "";    
-    db.many(selectItemSql) 
-    .then(items=> {
-		console.log(items);	
-        itemList = itemList.concat(items.webid, ',');
-	});
-    itemList = itemList.slice(0, -1);
-    var responce = [];
-    var itemArray = itemList.split(",");
-        var cnt = Math.ceil(itemArray.length/10);
-        var i;
-        for (i = 0; i < cnt; i++) { 
-            sentItems =  itemArray.splice(0+i*10,10+i*10).join();
-            console.log(`Page ${i} =${sentItems}`);	
-            setTimeout(function() { responce.concat(getWalmartItemRequest(sentItems))}, 500);
-        }
-      console.log(responce);
-      
-    
+    console.log('WalmartNotification');
+        
+    let walmartItemsSQL = "select '['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue|| '\"}',',')||']' itemDet, itemid, notification, webid, username "+
+        " from ( select distinct dettype, detvalue,itemid , notification, webid, username  "+
+        "   from ( select max(t.detdate) OVER (PARTITION BY itemid, dettype) maxdate ,z.itemid, t.* , z.notification , z.webid, u.username "+
+        "     from rs_items z,UNNEST(itemdetails) as t(dettype,detvalue,detdate), rbm_user u "+
+        "     where u.usrid=z.usrid and u.active = 1 and array_length(z.notification , array_ndims(z.notification))>$1 "+
+        "   ) x where x.maxdate = x.detdate ) y GROUP BY itemid, notification, webid, username ";
+        
+        
+        
+    db.many(walmartItemsSQL, [0])
+	.then(itemsList => {
+        console.log(`Items Retreved = ${itemsList.length}`);
+        //unique items send to walmart
+        let items = itemsList.map(item => item.webid).filter((value, index, self) => self.indexOf(value) === index).join(',');        
+        console.log(`Items = ${items}`);
+        let walmartItems = items.split(',');
+        console.log(`Total Items = ${walmartItems.length}`);
+       
+
+        async.waterfall([
+            function( callbackfunc1) {
+               let walmartResponce = [];
+               var cnt = Math.ceil(walmartItems.length/10);
+               console.log(`Total Pages = ${cnt}`);
+               var i = 0;
+               async.whilst(
+                    function() { return i < cnt; },
+                    function( callbackwh) {
+                        let sentItems =  walmartItems.splice(0+i*10,10+i*10).join();
+                        console.log(`Page ${i} =${sentItems}`);
+                        setTimeout(function() { 
+                            request.get(`https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${sentItems}`, function (err, res, body) {
+                                if (IsJsonString(body)) {
+                                    let wItemRet = JSON.parse(body); //{items: []}; //
+                                    console.log(`Items Retreved = ${wItemRet.items.length}`);
+                                    walmartResponce = walmartResponce.concat(wItemRet.items);
+                                } else {
+                                    console.log('NOT JSON');
+                                }
+                            i++;
+                            callbackwh(null, walmartResponce);
+                            });
+                        }, 1000);
+                    },
+                    function (err, result) {
+                       console.log(`Items Retreved = ${result.length}`); 
+                       callbackfunc1(null, result);
+                    }
+                );
+            },
+            function( walmartResponce, callbackfunc2) {
+                console.log(`Total Items Retreved = ${walmartResponce.length}`);
+                //console.log(walmartResponce);
+                if (walmartResponce.length > 0) {
+                    let updateArray =[];
+                    walmartResponce.forEach(function(wItem) {
+                        //console.log(wItem);
+                        //console.log(itemsList);
+                       const it = itemsList.find( item => { return Number(item.webid) === wItem.itemId;} );
+                       console.log(it);
+                       console.log(`Item Check = ${it.webid}`);
+                       let itemDet=JSON.parse(it.itemdet);
+                       itemDet.forEach(function(det) {
+                           console.log(`Item Notification = ${det.dettype}`);
+                           let wDet = wItem[det.dettype];
+                           if (det.dettype === "stock") {
+                               wDet = (wDet === "Available")? 1 : 0;
+                           } 
+                           let oldDet = det.detvalue;
+                           console.log(`Walmart New Value = ${wDet} >>>> ${oldDet}`);
+                           if(parseFloat(det.detvalue) !== parseFloat(wDet)) {
+                               console.log(`DIFFERENT`);
+                               updateArray.push({
+                                   id: it.itemid, 
+                                   email: it.username, 
+                                   itemId: it.webid, 
+                                   dettype: det.dettype, 
+                                   detvalue: det.detvalue, 
+                                   newValue: wDet
+                                })
+                           }
+                       })
+                    })
+                    const queries = [];
+                    console.log(`Total Notification Found = ${updateArray.length}`);
+                    //console.log(`Notification: ${updateArray}`);
+                    db.tx(t => { // automatic BEGIN
+                        updateArray.forEach((det) => {
+                        let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) "+
+                            " where itemid = $1";
+                            queries.push(t.none(addDetaild, [det.id, det.dettype, det.newValue]));
+                        });
+                        return t.batch(queries);
+                    })
+                    .then(data => {
+                    //    //sendEmail
+                         let users = updateArray.map(noty => noty.email).filter((value, index, self) => self.indexOf(value) === index);
+                        console.log(`-------------------------------`);  
+                        users.forEach((name) => {
+                            let html = '';
+                            let items= updateArray.filter(x => x.email === name);
+                                html += `'<p>Hello ${name}</p>`;
+                                console.log(`User ${name}`);    
+                                html +=`<p>Following Items was updated</p><table> <tr> <td> Item </td><td> Detail </td><td> New Value </td><td> Old Value </td></tr>`;
+                                
+                                items.forEach((item) => {
+                                    html += `<tr> <td> ${item.itemId} </td><td> ${item.dettype} </td><td> ${item.newValue} </td><td> ${item.detvalue}</td></tr>`
+                                    console.log(`Item ${item.itemId} ${item.dettype} changed ${item.detvalue} to ${item.newValue}`); 
+                                })
+                                html +=`</table>`; 
+                        console.log(`-------------------------------`); 
+                        curDate = new Date().toISOString().slice(0, 10);
+                        const  subject = `RumStore Notification Update ${curDate}`;
+                        
+                        MailSender.sendEmail(name, subject, html)
+                        })
+                    })
+                    .catch(error => {
+                            console.log(error);
+                    });
+                }
+                callbackfunc2(null, 'done');
+                
+            }
+        ], function (err, result) {
+            console.log(result)
+            // result now equals 'done'
+        });
+
+    });
+    //return walmartItems;
 }
 
 exports.WalmartAddItems = function (req, res, next) {

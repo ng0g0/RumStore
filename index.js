@@ -1,5 +1,6 @@
 const UserController = require('./api/controllers/authentication');
 const WalmartController = require('./api/controllers/walmart');
+const WalmartScheduler = require('./api/schedule/walmart');
 
 const express = require('express');
 const passport = require('passport');
@@ -113,5 +114,7 @@ console.log(process.env.NODE_ENV);
 
 const port = process.env.PORT || config.port;
 app.listen(port);
+//WalmartScheduler.currentTime();
+//WalmartController.WalmartNotification();
 
 console.log(`API listening on ${port}`);

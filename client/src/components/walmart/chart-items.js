@@ -93,7 +93,8 @@ class ItemChart extends Component {
                     {detIitems.map((det, index) => {
                         return(<table className="table" key={index}>
                             <thead className="thead-dark">
-                                <tr><td>Date</td><td>Value</td></tr>
+                                <tr><td><Translation text="value" /></td>
+                                    <td><Translation text="date" /></td></tr>
                             </thead>            
                             {this.renderItems(det)}
                         </table>) 

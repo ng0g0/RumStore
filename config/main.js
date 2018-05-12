@@ -13,6 +13,7 @@ console.log(`Client Url: ${clientUrl}`);
 	 //var db = pgp(connectionString);
 
 module.exports = {
+   mailUser:  'dani@kia-bg.com',
   // Secret key for JWT signing and encryption
   secret: 'super secret passphrase',
   // Database connection information
