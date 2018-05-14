@@ -16,10 +16,10 @@ class HeaderTemplate extends Component {
                     <Link to="dashboard"><Translation text="Dashboard" /></Link>
                 </li>
                 <li key={`${2}header`}>
-                    <Link to="/walmart"><Translation text="Walmart" /></Link>
+                    <Link to="/walmart"><Translation text="UserItems" /></Link>
                 </li>
                 <li key={`${3}header`}>
-                    <Link to="/reports"><Translation text="Reports" /></Link>
+                    <Link to="/settings"><Translation text="Settings" /></Link>
                 </li>
             </ul>);
         } 

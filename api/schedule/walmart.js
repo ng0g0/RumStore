@@ -1,34 +1,26 @@
-//var schedule = require('node-schedule');
+var schedule = require('node-schedule');
+const WalmartController = require('../controllers/walmart');
+let count = 0;
 
-/*
-exports.runSchedure = function (req, res, next) {
-    console.log(req.user);
-    var job1 = new schedule.Job('cancelJob', function() {});
-      job1.schedule({
-        second: new schedule.Range(8, 22);	
-      });
-    
-    var rule = new schedule.RecurrenceRule();
-    rule.hour = 
-    rule.minute = 0;
-    var j = schedule.scheduleJob(scheduleId, rule, function(){
-        console.log('Schedule started');
+exports.runSchedure = function () {
+   console.log('runSchedure');
+    schedule.scheduleJob('WalmartSchedule', '0 */2 * * *', function() {
+        WalmartController.WalmartNotification();
+        currentTime();
     });
-    
-    return res.status(200).json({ message: `Schedule started ` });
 }
 
-exports.stopSchedure = function (req, res, next) {
-    console.log(req.user);	
-    var j = schedule.scheduleJob(scheduleId, rule, function(){
-        console.log('Schedule started');
-    });
-    j.cancel();
-    return res.status(200).json({ message: `Schedule stopped ` });
+stopSchedure = function () {
+
+    var my_job = schedule.scheduledJobs['WalmartSchedule'];
+    my_job.cancel();
+    console.log('WalmartSchedule job canceled ');
 } 
-
-*/
-
-exports.currentTime = function () {
-    console.log('Current Date is: ' + new Date().toISOString().slice(0, 10))
+currentTime = function () {
+    count ++ ;
+    console.log(`${count} Current Date is: ` + new Date().toISOString().slice(0, 10));
+    if (count > 3) {
+      stopSchedure();  
+    }
+    console.log()
 };

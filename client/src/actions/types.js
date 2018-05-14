@@ -44,6 +44,9 @@ export const RECV_WALMART_INFO = 'RECV_WALMART_INFO';
 export const REQ_ITEM_INFO = 'REQ_ITEM_INFO';
 export const RECV_ITEM_INFO = 'RECV_ITEM_INFO';
 
+export const REQ_ITEM_UPDATE = 'REQ_ITEM_UPDATE';
+export const RECV_ITEM_UPDATE = 'RECV_ITEM_UPDATE';
+
 
 //= =====================
 // Messaging Actions

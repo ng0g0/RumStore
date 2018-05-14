@@ -168,7 +168,7 @@ export default function (state = INITIAL_STATE, action) {
 				itemInfo: updateItemInfo({},action.data.items[0]),
 				loadingSpinnerInfo: false
 			});        
-    
+
 	case RECV_WALMART_INFO: {
             //
             const newItems =  updateItemInArray(state.itemList, action.data.items);

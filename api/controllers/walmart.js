@@ -32,13 +32,44 @@ exports.getWalmartSearchedItems = function (req, res, next) {
    
 };    
 exports.getWalmartItems = function (req, res, next) {
-    console.log(req.params);
+   // console.log(req.params);
    const itemId = req.params.itemId;
    return request({
             uri: `https://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=${itemId}`,
         }).pipe(res);
     
 };
+
+exports.getUserUpdateItems = function (req, res, next) {
+  //console.log(req.user);	
+  const usrId = req.user.uid;
+  var obj;	
+  
+  let itemsSql = "select itemid, webid, webstore,'['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue||'\",\"oldValue\":\"'||oldvalue||'\"}',',')||']' itemDet "+
+                " from ( select itemid, webid, detdate, dettype, oldvalue, detvalue, webstore  "+
+                "    from  (select lead(t.detvalue) OVER (PARTITION BY z.itemid, t.dettype ORDER BY t.detdate DESC) as oldvalue, t.dettype, t.detvalue, t.detdate, "+
+                "              rank() OVER (PARTITION BY z.itemid, t.dettype ORDER BY t.detdate desc) as drang ,z.itemid,  z.webid, z.webstore "+ 
+                "            from rs_items z,UNNEST(itemdetails) as t(dettype,detvalue,detdate), rbm_user u "+
+                "            where u.usrid=z.usrid and u.active = 1 and u.usrid = $1 "+ 
+                "            and array_length(z.notification , array_ndims(z.notification))>0 ) x "+  
+                "    where oldvalue is not null and  drang = 1 ) y "+ 
+                " GROUP BY itemid, webid, webstore "; 
+
+  	db.many(itemsSql, [usrId])
+	.then(items=> {
+		return res.status(200).json({ updatedItems: items });
+	})
+	.catch(error=> {
+	   if (error instanceof QRE && error.code === qrec.noData) {
+			res.status(200).json({ entry: obj, message: 'NO_DATE_FOUND' });
+			return next(error);
+		} else {
+			return next(error);
+		}
+	});
+  
+  
+}; 
 
 function IsJsonString(str) {
     try {
@@ -58,8 +89,6 @@ exports.WalmartNotification = function() {
         "     from rs_items z,UNNEST(itemdetails) as t(dettype,detvalue,detdate), rbm_user u "+
         "     where u.usrid=z.usrid and u.active = 1 and array_length(z.notification , array_ndims(z.notification))>$1 "+
         "   ) x where x.maxdate = x.detdate ) y GROUP BY itemid, notification, webid, username ";
-        
-        
         
     db.many(walmartItemsSQL, [0])
 	.then(itemsList => {

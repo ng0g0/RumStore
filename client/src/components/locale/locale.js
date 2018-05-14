@@ -91,7 +91,10 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_NOTIFICATION': 'Notifications',
     'Administrator': 'Administrator',
     'date': 'Date',
-    'value': 'Value' 
+    'value': 'Value',
+    'UserItems': 'User Items',
+    'Settings': 'Settings',
+    'NO_UPDATE_FOUND': 'There is not changed items'
     
     
   },
@@ -188,7 +191,10 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_NOTIFICATION': 'Аларми',
     'Administrator': 'Администратор',
     'date': 'Дата',
-    'value': 'Стойност' 
+    'value': 'Стойност' ,
+    'UserItems': 'Продукти',
+    'Settings': 'Settings',
+    'NO_UPDATE_FOUND': 'Няма променени продукти'
     
   }
 };
