@@ -11,6 +11,8 @@ import {
  RECV_WALMART_INFO,
  REQ_ITEM_INFO,
  RECV_ITEM_INFO,
+ REQ_WALMART_SEARCH,
+ RECV_WALMART_SEARCH
  //CLEAR_BLOCK_INFO
  } 
 from './types';
@@ -39,14 +41,20 @@ function requestWalmartAPI() {
 //function receiveWalmartAPI() {
 //   return {type: RECV_WALMART_INFO}  
 //}
-function requestItemInfo() {
-    return {type: REQ_ITEM_INFO} 
+function requestItemInfo(stype, search) {
+    return {
+        type: REQ_WALMART_SEARCH,
+        stype: stype,
+        search: search
+    } 
 }
 
-function receiveItemInfo(json) {
+function receiveItemInfo(json, stype, search) {
 	return{
-		type: RECV_ITEM_INFO,
-		data: json
+		type: RECV_WALMART_SEARCH,
+		data: json,
+        stype: stype,
+        search: search
 	}
 };
 
@@ -100,14 +108,14 @@ export function saveItem(props) {
 export function searchFunc(props) {
     //console.log(props);
     return function (dispatch) {
-        dispatch(requestItemInfo());
+        dispatch(requestItemInfo(props.stype, props.search));
         return axios({ url: `${API_URL}/walmart/item/search/${props.stype}/${props.search}`,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
             //console.log(response.data);
-            dispatch(receiveItemInfo(response.data));
+            dispatch(receiveItemInfo(response.data, props.stype, props.search));
         })
         .catch((error) => {
             console.log(error)

@@ -8,7 +8,13 @@ import {
 } from '../actions/types';
 import dayjs from 'dayjs';
 
-const INITIAL_STATE = { message: '', error: '', loadingSpinner: true, loadingSpinnerInfo: false };
+const INITIAL_STATE = { 
+    message: '', 
+    error: '', 
+    loadingSpinner: true, 
+    loadingSpinnerInfo: false, 
+    performSearch: {stype: 'itemId', search: ''} 
+};
 
 
 function updateObject(oldObject, newValues) {
@@ -62,7 +68,8 @@ function convertItemList(itemList) {
                priceIndicator: 0,
                upc: item.upc,
                webstore: item.webstore || "walmart",
-               itemdetails: convertItemDetail(item.itemdetails)
+               itemdetails: convertItemDetail(item.itemdetails),
+               stock: item.stock
                
             }
             itemArray.push(obj);   
@@ -126,6 +133,7 @@ function updateItemInArray(itemList, updateItems) {
                         upc: result.upc,
                         itemdetails: itemDetails,
                         message: result.message,
+                        stock: result.stock
                         
                 });
 
@@ -166,6 +174,7 @@ export default function (state = INITIAL_STATE, action) {
     case RECV_ITEM_INFO:
  			return Object.assign({}, state, {
 				itemInfo: convertItemList(action.data.items),
+                performSearch: {stype: action.stype, search: action.search}, 
 				loadingSpinnerInfo: false
 			});        
 

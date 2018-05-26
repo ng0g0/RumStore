@@ -8,11 +8,7 @@ import Translation from '../locale/translate';
 import LayerMask from '../layerMask/layermask';
 import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
-//import ItemChart from './chart-items'; 
-//import AddItem from './add-items';
-//import { WalmartItem } from '../../consts';
-//import { submit } from 'redux-form'
-//import TabItems from './tab-items'; 
+
 
 class ListItems extends Component {
 	//static contextTypes = {
@@ -44,8 +40,6 @@ class ListItems extends Component {
     }
    
     renderCellContent(item) {
-        //const { currentValues } = this.state;
-        //console.log(item);
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
         return(<div>
             <div className="row">
@@ -57,14 +51,22 @@ class ListItems extends Component {
                     ItemID: {item.itemid}
                 </div> 
                 <div className="col-sm-4"> 
-                    <div className="row"><div className="col"><Translation text="Name" />: <b>{item.name}</b></div></div>
-                    <div className="row"><div className="col"><Translation text="WALMAR_ITEM_UPC" />: {item.upc}</div></div>
+                    <div className="row">
+                        <div className="col">
+                            <Translation text="Name" />:<b>{item.name}</b>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            <Translation text="WALMAR_ITEM_UPC" />:{item.upc}
+                        </div>
+                    </div>
                 </div>
                 <div className="col-sm-2"> 
-                    <Translation text="WALMAR_ITEM_ASIN" />: {item.asib}
+                    <Translation text="Stock" />:<b>{item.stock}</b>
                 </div>
                 <div className="col-sm-2"> 
-                    <Translation text="WALMAR_ITEM_PRICE" />: {item.salePrice}
+                    <Translation text="WALMAR_ITEM_PRICE" />:{item.salePrice}
                 </div>    
             </div>
         </div>);
@@ -87,38 +89,39 @@ class ListItems extends Component {
             </div>);	
 		}
 		else {
-			return(<div className="panel panel-default">
-     <div className="panel-body"><Translation text="NO_DATE_FOUND" /></div></div>);
+            if (this.props.preformSearch) {
+                return(<div className="panel panel-default">
+                <div className="panel-body">
+                    <Translation text="NO_DATE_FOUND" />
+                </div>
+            </div>);
+            } else {
+                <div> </div>
+            }
+			;
 		}
 	}
     
    
     render() {
-        console.log(this.props);
-        const {itemInfo } = this.props;
-        if ( this.props.loadingSpinnerInfo ) {
+        const {itemSearch, preformSearch, loadingSpinner } = this.props;
+        if ( loadingSpinner &&  preformSearch) {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
-            const { itemList, items} = this.props;
             return (<div className="panel panel-default">
                 <div className="panel-body">
-                    {this.renderListContent(itemInfo)}
+                    {this.renderListContent(itemSearch)}
                 </div>
             </div>);	
         }
     }
 }
 
-//{this.renderAddItemLayer()}
-
 function mapStateToProps(state) {
   return {
-    //items: state.walmart.items,  
-//    loadingSpinnerInfo: state.walmart.loadingSpinnerInfo,
-    itemInfo: state.walmart.itemInfo,
-    //itemList: state.walmart.itemList,
-	//errorMessage: state.walmart.error,
-	//loadingSpinner: state.walmart.loadingSpinner
+    loadingSpinner: state.walmartSearch.searchSpinner,
+    itemSearch: state.walmartSearch.itemSearch,
+    preformSearch: state.walmartSearch.preformSearch
   };
 }
 
@@ -130,7 +133,6 @@ const mapDispatchToProps = (dispatch) =>
         dispatch
     );
 
-//    export default ListItems;
 export default connect(mapStateToProps, mapDispatchToProps)(ListItems);
 
 

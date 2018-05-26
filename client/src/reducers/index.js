@@ -5,6 +5,7 @@ import userReducer from './user_reducer';
 import langReducer from './lang_reducer';
 import walmartReducer from './walmart_reducer';
 import dashboardReducer from './dashboard_reducer';
+import walmartSReducer from './walmart_search';
 
 const rootReducer = combineReducers({
   form: formReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   user: userReducer,
   lang: langReducer,
   walmart: walmartReducer,
-  dashboard: dashboardReducer
+  dashboard: dashboardReducer,
+  walmartSearch: walmartSReducer
 });
 
 export default rootReducer;
