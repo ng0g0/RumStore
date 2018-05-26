@@ -12,6 +12,7 @@ import ItemChart from './chart-items';
 import AddItem from './add-items';
 import { WalmartItem } from '../../consts';
 import { submit } from 'redux-form'
+import TabItems from './tab-items'; 
 
 class UserWalmartList extends Component {
 	static contextTypes = {
@@ -24,6 +25,7 @@ class UserWalmartList extends Component {
         this.handleCheckBoxItem = this.handleCheckBoxItem.bind(this);
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
+        this.handleFetchAll = this.handleFetchAll.bind(this);
         
         this.state = {
             allChecked: false,
@@ -34,14 +36,19 @@ class UserWalmartList extends Component {
 	}
   
 	componentDidMount() {
+        console.log(this.props);
 		if (!this.props.items) {
-			this.props.dispatch(fetchWalmarUserList());
+			 this.handleFetchAll();//, 
 		} 
-        setInterval(
-            this.handleRefreshItem(this.props.items), 
-            300000
-        );
+       //this.interval = setInterval(
+       //    this.handleRefreshItem(this.props.items), 
+       //    10000
+       //);
 	}
+    
+    handleFetchAll() {
+        this.props.dispatch(fetchWalmarUserList());
+    }
     
     handleCheckBoxItem(event) {
         var item = event.target.value;
@@ -230,9 +237,9 @@ class UserWalmartList extends Component {
                     
                 </div>
             {items.map((item) => {
-                return(<div className="panel panel-default blockche">
+                return(<div className="panel panel-default blockche" key={item.itemid}>
                         <div className="panel-body">
-                    <div className="row" key={item.itemid}>
+                    <div className="row" >
                     <div className="col-sm-1">
                         <input type="checkbox" className="form-check-input" name={item.itemid} key={item.itemid} 
                         checked={currentValues.indexOf(item.itemid) !== -1}
@@ -304,7 +311,7 @@ class UserWalmartList extends Component {
         </div></div></div>);
         
     } 
-    
+   
     render() {
         //console.log(this.state);
         if ( this.props.loadingSpinner ) {

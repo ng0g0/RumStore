@@ -30,7 +30,7 @@ const renderField = ({
   meta: { touched, error, warning },
 }) =>
   ( <div>
-      <input className="form-control" {...input} type={type} disabled />
+      <input className="form-control" {...input} type={type} />
 	  {touched &&  error &&   <div className="error"><Translation text={error} /></div>}
     </div>
   );
@@ -61,7 +61,6 @@ class AddItem extends Component {
             </div>);
         } else {
             return(<div>
-            <SearchItem />
             <form onSubmit={handleSubmit}>
             <div className="row">
                 <div className="col-md-6">

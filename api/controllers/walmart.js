@@ -10,26 +10,34 @@ var walmar_key = 'upxrg7rpj4hjew5jbjwqhwkf';
 const MailSender = require('./mail');
 
 exports.getWalmartSearchedItems = function (req, res, next) {
-  console.log(req.params);
- // :sType/::itemId
-  
-  const searchType = req.params.sType;
-  const itemId = req.params.itemId  || 0;
-  if (itemId.length >0) {
-    if (searchType === "upc") {
-        return request({
-                uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&upc=${itemId}`,
-            }).pipe(res);    
-        } else {
-        return request({
-                uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`,
-            }).pipe(res);  
+    console.log(req.params);
+    const searchType = req.params.sType;
+    const itemId = req.params.itemId  || 0;
+    if (itemId.length >0) {
+        switch(searchType) {
+            case "upc":
+                return request({
+                        uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&upc=${itemId}`,
+                    }).pipe(res);
+                break;
+            case "name":
+                return request({
+                        uri: `https://api.walmartlabs.com/v1/search?apiKey=${walmar_key}&query=${itemId}`,
+                    }).pipe(res); 
+            break;
+            case "itemId":
+                return request({
+                        uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`,
+                    }).pipe(res); 
+                break;
+            default:
+                return request({
+                        uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`,
+                    }).pipe(res);
         }  
-  } else {
-      res.status(200).json({ message: 'NO_DATE_FOUND' });
-  }
-  
-   
+    } else {
+        res.status(200).json({ message: 'NO_DATE_FOUND' });
+    }
 };    
 exports.getWalmartItems = function (req, res, next) {
    // console.log(req.params);

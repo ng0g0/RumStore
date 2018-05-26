@@ -7,6 +7,7 @@ import { searchFunc } from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import { searchWalmart } from '../../consts';
 import AccGroup from '../accordion/accordiongroup';
+import ListItems from './list-items';
 //import {required, maxLength15, minLength2} from '../../consts/validation';
 
 /*
@@ -35,31 +36,45 @@ class SearchItem extends Component {
 	}
    
     render () {
-        //console.log(searchWalmart);
-        const { handleSubmit } = this.props;
-        return(
-            <AccGroup title="WALMAR_ITEM_SEARCH" key="searchArea" item="searchArea" > 
-            <form onSubmit={handleSubmit}>
-            <div className="row">
-            <div className="col-md-6">
-                <label>Search by:</label>
-                <div>
-                    <label><Field name="stype" component="input" type="radio" value="itemId"/> ItemId</label>
-                    <label><Field name="stype" component="input" type="radio" value="upc"/> UPC</label>
-                </div>
-            </div>
-            <div className="col-md-6">
-                <Field name="search" component="input" type="text"/>
-            </div>
-            </div>
-            <div className="row">
-                <div className="col-md-12">
-                    <button type="submit"><Translation text="WALMAR_ITEM_SEARCH" /></button>
-                </div>
-            </div>
-            
-          </form>
-          </AccGroup>); 
+        const { handleSubmit, itemInfo } = this.props;
+        //console.log(itemInfo);
+        return (<div className="panel panel-default">
+                    <div className="panel-body">
+                        <form onSubmit={handleSubmit}>
+                        <div className="row">
+                            <div className="col-md-3">
+                                <div className="row">
+                                    <div className="col-md-6"><label>Search by:</label></div>
+                                    <div className="col-md-6">
+                                        <div className="row">
+                                            <label><Field name="stype" component="input" type="radio" value="itemId"/> 
+                                                ItemId
+                                            </label>        
+                                        </div>
+                                        <div className="row">
+                                            <label><Field name="stype" component="input" type="radio" value="upc"/>
+                                                UPC
+                                                </label>
+                                        </div>
+                                        <div className="row">
+                                            <label><Field name="stype" component="input" type="radio" value="name"/>
+                                                name
+                                                </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <Field name="search" component="input" type="text"/>
+                            </div>
+                            <div className="col-md-3">
+                                <button type="submit"><Translation text="WALMAR_ITEM_SEARCH" /></button>
+                            </div>
+                        </div>
+                        </form>
+                        <ListItems />
+                    </div>
+                </div>);
     }
 	
 }
@@ -86,7 +101,7 @@ const form = reduxForm({
  // validate,
  // enableReinitialize: true,
   onSubmit: handleFormSubmit, 
-   initialValues: { stype: 'itemid' }
+  initialValues: { stype: 'itemId' }
 });
 
 

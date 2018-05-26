@@ -53,16 +53,16 @@ function convertItemList(itemList) {
     if (itemList) {
         itemList.forEach(function(item) {
             let obj = {
-               asib: item.asib,
-               itemid: item.itemid,
+               asib: item.asib || "N/A",
+               itemid: item.itemid || item.itemId,
                name: item.name,
-               noty: item.noty,
-               thumbnailimage: item.thumbnailimage,
-               salePrice: "N/A",
+               noty: item.noty || [],
+               thumbnailimage: item.thumbnailimage || item.thumbnailImage,
+               salePrice: item.salePrice || "N/A",
                priceIndicator: 0,
                upc: item.upc,
-               webstore: item.webstore,
-               itemdetails: convertItemDetail(item.itemdetails),
+               webstore: item.webstore || "walmart",
+               itemdetails: convertItemDetail(item.itemdetails)
                
             }
             itemArray.push(obj);   
@@ -165,7 +165,7 @@ export default function (state = INITIAL_STATE, action) {
 			});
     case RECV_ITEM_INFO:
  			return Object.assign({}, state, {
-				itemInfo: updateItemInfo({},action.data.items[0]),
+				itemInfo: convertItemList(action.data.items),
 				loadingSpinnerInfo: false
 			});        
 

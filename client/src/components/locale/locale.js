@@ -84,15 +84,17 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_UPC': 'UPC',
     'WALMAR_ITEM_ASIN': 'ASIN',
     'WALMAR_ITEM_REFRESH': 'Refresh Item',
-    'WALMAR_ITEM_SEARCH': 'Search',
+    'WALMAR_ITEM_SEARCH': 'Search Items',
     'WALMAR_ITEM_HISTORY': 'Product history',
     'WALMAR_ITEM_PRICE': 'Price',
     'WALMAR_ITEM_ONSTOCK': 'OnStock',
     'WALMAR_ITEM_NOTIFICATION': 'Notifications',
+    'WALMAR_SEARCH': 'Walmart Search',
     'Administrator': 'Administrator',
     'date': 'Date',
     'value': 'Value',
     'UserItems': 'User Items',
+    'USER_LISTITEMS': 'User Products',
     'Settings': 'Settings',
     'NO_UPDATE_FOUND': 'There is not changed items'
     
@@ -189,10 +191,12 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_PRICE': 'Цена',
     'WALMAR_ITEM_ONSTOCK': 'Наличен',
     'WALMAR_ITEM_NOTIFICATION': 'Аларми',
+    'WALMAR_SEARCH': 'Walmart Търсачка',
     'Administrator': 'Администратор',
     'date': 'Дата',
     'value': 'Стойност' ,
     'UserItems': 'Продукти',
+    'USER_LISTITEMS': 'Продукти',
     'Settings': 'Settings',
     'NO_UPDATE_FOUND': 'Няма променени продукти'
     
