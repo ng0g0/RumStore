@@ -53,27 +53,6 @@ class FooterTemplate extends Component {
 		<option {...options}>{lang.name}</option>
 		);
   }
-  
-  renderAmazon() {
-    return(<div class="alignleft">
-     <script type="text/javascript">
-       	amzn_assoc_ad_type = "banner";
-	amzn_assoc_marketplace = "amazon";
-	amzn_assoc_region = "US";
-	amzn_assoc_placement = "assoc_banner_placement_default";
-	amzn_assoc_campaigns = "bestsellingproducts";
-	amzn_assoc_banner_type = "category";
-	amzn_assoc_p = "288";
-	amzn_assoc_isresponsive = "false";
-	amzn_assoc_banner_id = "03JGEXJ8VWRFPFC6SYG2";
-	amzn_assoc_width = "320";
-	amzn_assoc_height = "50";
-	amzn_assoc_tracking_id = "rumstoreporta-20";
-	amzn_assoc_linkid = "179c4adc1d4b6435f7d0a305ae1eef86";
-     </script>
-     <script src="//z-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1"></script>
-    </div>);  
-  }
 
   render() {
     const d = new Date();
@@ -82,7 +61,10 @@ class FooterTemplate extends Component {
       <footer>
         <div className="container">
             <div className="row">
-            {this.renderAmazon()}
+                <div className="col-lg-12">
+                    <iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=288&l=ur1&category=bestsellingproducts&banner=03JGEXJ8VWRFPFC6SYG2&f=ifr&linkID=1aebbf9922bbe8507a0855676858c5c0&t=rumstoreporta-20&tracking_id=rumstoreporta-20" width="320" height="50" scrolling="no" marginWidth="0" frameBorder="0">
+                    </iframe> 
+                </div>
             </div>
           <div className="row">
             <div className="col-lg-12">
@@ -90,7 +72,7 @@ class FooterTemplate extends Component {
             </div>
           </div>
 		  <div className="row">
-		  <select className="selectpicker" data-width="fit" onChange={this.setLang.bind(this)} value={this.props.locale}>
+            <select className="selectpicker" data-width="fit" onChange={this.setLang.bind(this)} value={this.props.locale}>
 			 {locale.LANG_NAMES.map((lang) =>   this.renderOptions(lang)   )}
 			</select>
 		  </div>
