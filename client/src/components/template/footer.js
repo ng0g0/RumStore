@@ -53,13 +53,37 @@ class FooterTemplate extends Component {
 		<option {...options}>{lang.name}</option>
 		);
   }
+  
+  renderAmazon() {
+    return(<div class="alignleft">
+     <script type="text/javascript">
+       	amzn_assoc_ad_type = "banner";
+	amzn_assoc_marketplace = "amazon";
+	amzn_assoc_region = "US";
+	amzn_assoc_placement = "assoc_banner_placement_default";
+	amzn_assoc_campaigns = "bestsellingproducts";
+	amzn_assoc_banner_type = "category";
+	amzn_assoc_p = "288";
+	amzn_assoc_isresponsive = "false";
+	amzn_assoc_banner_id = "03JGEXJ8VWRFPFC6SYG2";
+	amzn_assoc_width = "320";
+	amzn_assoc_height = "50";
+	amzn_assoc_tracking_id = "rumstoreporta-20";
+	amzn_assoc_linkid = "179c4adc1d4b6435f7d0a305ae1eef86";
+     </script>
+     <script src="//z-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1"></script>
+    </div>);  
+  }
 
   render() {
     const d = new Date();
     const year = d.getFullYear();
     return (
       <footer>
-        <div className="container">					
+        <div className="container">
+            <div className="row">
+            {this.renderAmazon()}
+            </div>
           <div className="row">
             <div className="col-lg-12">
               <p className="copyright">© {year}, Low Intellect Ltd. All Rights Reserved.</p>
