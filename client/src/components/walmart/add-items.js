@@ -40,13 +40,12 @@ class AddItem extends Component {
     constructor(props) {
 		super(props);
         this.state = {
-                result: ['salePrice', 'stock']
+            result: ['salePrice', 'stock']
         }
         this.handleMultiChange = this.handleMultiChange.bind(this);
 	}
     
     handleMultiChange(val) {
-        //console.log(val);
         this.props.dispatch(change(WalmartItem, 'notification', val));
     }
     
@@ -65,8 +64,8 @@ class AddItem extends Component {
             <div className="row">
                 <div className="col-md-6">
                     <label><Translation text="WALMAR_ITEM_ID" /></label>
-                    <Field name="webid" className="form-control" component={renderField} type="text"/>
-                    <Field name="itemid" style={{ height: 0 }} component="input" type="hidden" />
+                    <Field name="itemid" className="form-control" component={renderField} type="text"/>
+                    <Field name="id" style={{ height: 0 }} component="input" type="hidden" />
                 </div>
                 <div className="col-md-6">
                     <label><Translation text="WALMART_STORE" /></label>
@@ -79,45 +78,45 @@ class AddItem extends Component {
             <div className="row">
                 <div className="col-md-12">
                     <label><Translation text="WALMAR_ITEM_NAME" /></label>
-                    <Field name="itemname" className="form-control" component={renderField} type="text"/>
+                    <Field name="name" className="form-control" component={renderField} type="text"/>
                 </div>
             </div> 
             <div className="row">
-                <div className="col-md-4">
-                <img alt='image' src ={itemImage} />    
-                </div>
-                <div className="col-md-8">
-                    <label><Translation text="WALMAR_ITEM_URL" /></label>
-                    <Field name="itemimgurl" className="form-control" component={renderField} type="text"/>
+                <div className="col-md-12">
+                    <img alt='image' src ={itemImage} />    
+                    <Field name="thumbnailimage" style={{ height: 0 }}  component={renderField} type="text"/>
                  </div>
             </div> 
             <div className="row">
                 <div className="col-md-12">
                     <label><Translation text="WALMAR_ITEM_UPC" /></label>
-                    <Field name="itemupc" className="form-control" component={renderField} type="text"/>
+                    <Field name="upc" className="form-control" component={renderField} type="text"/>
                 </div>
             </div> 
             <div className="row">
                 <div className="col-md-6">
                     <label><Translation text="WALMAR_ITEM_PRICE" /></label>
-                    <Field name="itemPrice" className="form-control" component={renderField} type="text"/>
+                    <Field name="salePrice" className="form-control" component={renderField} type="text"/>
                 </div>
                 <div className="col-md-6">
                     <label><Translation text="WALMAR_ITEM_ONSTOCK" /></label>
-                    <Field name="itemstock" className="form-control" component={renderField} type="text"/>
+                    <Field name="stock" className="form-control" component="select">
+                    <option value="Available">Available</option>
+                    <option value="Not available">Not available</option>
+                    </Field>
                 </div>
             </div> 
             <div className="row">
                 <div className="col-md-12">
                     <label><Translation text="WALMAR_ITEM_ASIN" /></label>
-                    <Field name="itemasib" className="form-control" component="input" type="text"/>
+                    <Field name="asib" className="form-control" component="input" type="text"/>
                 </div>
             </div> 
             <AccGroup title="WALMAR_ITEM_NOTIFICATION" key="notificationArea" item="notificationArea" > 
             <div className="row">
                 <div className="col-md-12">
                 <Field
-                    name="notification"
+                    name="noty"
                     component={renderMultiselect}
                     data={this.state.result}
                     onChange={(e) => this.handleMultiChange(e)}
@@ -131,13 +130,11 @@ class AddItem extends Component {
 	
 	}
 }
-//<FieldArray name="notifications" component={renderNotification} templateList={this.state.templateList}/>
-//<Field name="hobbies"  component={Multiselect}  defaultValue={[]}  onBlur={() => props.onBlur()}   data={this.state.result}/>
 	
 function mapStateToProps(state) {
-    //console.log(state);
+   // console.log(state);
     const selector = formValueSelector(WalmartItem)
-    const itemURL = selector(state, 'itemimgurl')
+    const itemURL = selector(state, 'thumbnailimage')
    return {
 	errorMessage: state.walmart.error,
     initialValues: state.walmart.itemInfo,

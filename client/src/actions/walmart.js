@@ -12,7 +12,9 @@ import {
  REQ_ITEM_INFO,
  RECV_ITEM_INFO,
  REQ_WALMART_SEARCH,
- RECV_WALMART_SEARCH
+ RECV_WALMART_SEARCH,
+ RECV_ITEM_2_FORM,
+ RECV_DB_2_FORM 
  //CLEAR_BLOCK_INFO
  } 
 from './types';
@@ -64,6 +66,19 @@ function receiveWalmartAPI(json) {
 		data: json
 	}
 };
+function copyItemToForm(item) {
+	return{
+		type: RECV_ITEM_2_FORM,
+		data: item
+	}
+};
+function copyDBToForm(item) {
+	return{
+		type: RECV_DB_2_FORM,
+		data: item
+	}
+};
+
 
 //http://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=17201599,469836497
 
@@ -152,6 +167,17 @@ export function fetchFromWalmarAPI(items) {
             console.log(error)
 		});
     };    
+}
+export function itemToAddForm(item) {
+    return function (dispatch) {
+       dispatch(copyItemToForm(item)); 
+    };        
+}
+
+export function dbToAddForm(item) {
+    return function (dispatch) {
+       dispatch(copyDBToForm(item)); 
+    };        
 }
 
 export function fetchWalmarUserList() {

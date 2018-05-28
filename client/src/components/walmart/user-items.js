@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { fetchWalmarUserList, fetchFromWalmarAPI, deleteWalmarItem } from '../../actions/walmart';
+import { fetchWalmarUserList, fetchFromWalmarAPI, deleteWalmarItem, dbToAddForm } from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import AccGroup from '../accordion/accordiongroup';
 import Translation from '../locale/translate';
@@ -26,6 +26,7 @@ class UserWalmartList extends Component {
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.handleFetchAll = this.handleFetchAll.bind(this);
+        this.handleAddForm = this.handleAddForm.bind(this);
         
         this.state = {
             allChecked: false,
@@ -45,6 +46,11 @@ class UserWalmartList extends Component {
        //    10000
        //);
 	}
+    
+    handleAddForm(item) {
+        console.log(item);
+         this.props.dispatch(dbToAddForm(item));
+    }
     
     handleFetchAll() {
         this.props.dispatch(fetchWalmarUserList());
@@ -266,7 +272,9 @@ class UserWalmartList extends Component {
                         </div>
                         <div className="row">
                             <div className="col">
-                                <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#viewItem">
+                                <a className="btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#addItem"
+                                    onClick={()=> this.handleAddForm(item) }
+                                    >
                                     <Translation text="WalmartInfo" />
                                 </a>
                             </div>
@@ -343,7 +351,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) =>   
     bindActionCreators({
             fetchFromWalmarAPI,
-            deleteWalmarItem
+            deleteWalmarItem,
+            dbToAddForm
         }, 
         dispatch
     );

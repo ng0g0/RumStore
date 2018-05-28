@@ -2,33 +2,36 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 //import { fetchWalmarUserList, fetchFromWalmarAPI, deleteWalmarItem } from '../../actions/walmart';
+import { itemToAddForm } from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import AccGroup from '../accordion/accordiongroup';
 import Translation from '../locale/translate';
 import LayerMask from '../layerMask/layermask';
 import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
-
+import AddItem from './add-items';
+import { WalmartItem } from '../../consts';
+import { submit } from 'redux-form';
+import _ from 'lodash';
 
 class ListItems extends Component {
-	//static contextTypes = {
-	//	router: PropTypes.object,
-	//}
-	
 	constructor(props) {
 		super(props);
-        //this.handleDeleteItem = this.handleDeleteItem.bind(this);
-        //this.handleDeleteClick = this.handleDeleteClick.bind(this);
+        this.handleAddItem = this.handleAddItem.bind(this);
+        this.handleAddForm = this.handleAddForm.bind(this);
 	}
-  
-
-   /*    
-    handleCancelClick(item) {
-        this.setState({clickedItem: ''},() => { 
-            console.log('new state', this.state); 
-        });
+    handleAddItem(item) {
+          this.props.dispatch(submit(WalmartItem));
     }
- */ 
+    handleAddForm(item) {
+        //console.log(item);
+         this.props.dispatch(itemToAddForm(item));
+    }
+    
+    handleCancelClick(item) {
+        console.log('Cancel'); 
+    }
+  
     renderMessage(msg) {
         if (msg) {
             return (<div className="row"> 
@@ -37,6 +40,17 @@ class ListItems extends Component {
         } else {
             return(<div></div>);
         }
+    }
+    
+    renderAddItemLayer() {
+        let layerid = 'addItem'
+        let label = 'ADD_ITEM';
+		return (<LayerMask layerid={layerid} header={label} key={layerid}
+                    onOkClick={this.handleAddItem.bind(this)}
+                    onCancelClick={this.handleCancelClick.bind(this)}                    
+                    actionbtn="Save">
+                    <AddItem /> 
+                </LayerMask>);
     }
    
     renderCellContent(item) {
@@ -73,15 +87,30 @@ class ListItems extends Component {
     }
     
 	renderListContent(items) {
-		if (items) {
+        if (!items) {
+            return(<div> </div>);
+        }
+		if (items.length > 0) {
+            let userItems = this.props.items.list.split(",");
 			return (<div>
             {items.map((item) => {
+                const findItem = userItems.find(function(element) {
+                    return element == item.itemid;});
+                const actionButton = (_.isUndefined(findItem)) ?  (
+                        <Link className="btn-sm btn-default" data-toggle="modal" data-target="#addItem"
+                            onClick={()=> this.handleAddForm(item) } >
+                            <Translation text="ADD_ITEM" />
+                        </Link>
+                    ) : (<div className="green"> <Translation text="WALMAR_ALREADY" /></div> );
                 return(<div className="panel panel-default blockche" key={item.itemid}>
                         <div className="panel-body">
                             <div className="row" >
-                                <div className="col-sm-12">
+                                <div className="col-sm-10">
                                 {this.renderCellContent(item)}
                                 </div>
+                                <div className="col-sm-1">
+                                    {actionButton}
+                                </div> 
                             </div> 
                         </div>
                 </div>)
@@ -96,7 +125,7 @@ class ListItems extends Component {
                 </div>
             </div>);
             } else {
-                <div> </div>
+                return(<div> </div>);
             }
 			;
 		}
@@ -110,6 +139,7 @@ class ListItems extends Component {
         } else {
             return (<div className="panel panel-default">
                 <div className="panel-body">
+                    {this.renderAddItemLayer()}
                     {this.renderListContent(itemSearch)}
                 </div>
             </div>);	
@@ -121,14 +151,14 @@ function mapStateToProps(state) {
   return {
     loadingSpinner: state.walmartSearch.searchSpinner,
     itemSearch: state.walmartSearch.itemSearch,
+    items: state.walmart.items,  
     preformSearch: state.walmartSearch.preformSearch
   };
 }
 
 const mapDispatchToProps = (dispatch) =>   
     bindActionCreators({
-            //fetchFromWalmarAPI,
-            //deleteWalmarItem
+            itemToAddForm
         }, 
         dispatch
     );

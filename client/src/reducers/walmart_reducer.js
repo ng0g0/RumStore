@@ -1,10 +1,12 @@
 import { 
 	REQ_WALMART_LIST,
     RECV_WALMART_LIST,
-    REQ_WALMART_INFO,
-    RECV_WALMART_INFO,
-    RECV_ITEM_INFO,
-    REQ_ITEM_INFO,
+    //REQ_WALMART_INFO,
+    //RECV_WALMART_INFO,
+    //RECV_ITEM_INFO,
+//    REQ_ITEM_INFO,
+    RECV_ITEM_2_FORM,
+    RECV_DB_2_FORM
 } from '../actions/types';
 import dayjs from 'dayjs';
 
@@ -69,7 +71,8 @@ function convertItemList(itemList) {
                upc: item.upc,
                webstore: item.webstore || "walmart",
                itemdetails: convertItemDetail(item.itemdetails),
-               stock: item.stock
+               stock: item.stock,
+               id: item.id || 0
                
             }
             itemArray.push(obj);   
@@ -166,8 +169,24 @@ export default function (state = INITIAL_STATE, action) {
 				message: action.message,
 				loadingSpinner: false
 			});
-			
-	case REQ_ITEM_INFO:
+	case RECV_ITEM_2_FORM:
+            console.log(action);
+            return Object.assign({}, state, {
+                itemInfo: action.data
+            });
+    case RECV_DB_2_FORM:
+        console.log(action);
+        return Object.assign({}, state, {
+                itemInfo: action.data
+        });
+	default:
+ 	  return { ...state };   
+  }
+}
+
+
+/*
+case REQ_ITEM_INFO:
 			return Object.assign({}, state, {
 			    loadingSpinnerInfo: true
 			});
@@ -176,14 +195,10 @@ export default function (state = INITIAL_STATE, action) {
 				itemInfo: convertItemList(action.data.items),
                 performSearch: {stype: action.stype, search: action.search}, 
 				loadingSpinnerInfo: false
-			});        
-
-	case RECV_WALMART_INFO: {
+			});
+    	case RECV_WALMART_INFO: {
             //
             const newItems =  updateItemInArray(state.itemList, action.data.items);
             return updateObject(state, {itemList : newItems, message: action.message});
-            }
-	default:
- 	  return { ...state };   
-  }
-}
+            }            
+*/            

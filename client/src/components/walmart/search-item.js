@@ -44,7 +44,7 @@ class SearchItem extends Component {
                         </form>
                         </div>
                         </div>
-                        <ListItems />
+                        <ListItems {...this.props} />
                     </div>
                 </div>);
     }

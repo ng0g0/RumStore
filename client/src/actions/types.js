@@ -48,6 +48,8 @@ export const REQ_ITEM_UPDATE = 'REQ_ITEM_UPDATE';
 export const RECV_ITEM_UPDATE = 'RECV_ITEM_UPDATE';
 export const REQ_WALMART_SEARCH = 'REQ_WALMART_SEARCH';
 export const RECV_WALMART_SEARCH = 'RECV_WALMART_SEARCH';
+export const RECV_ITEM_2_FORM = 'RECV_ITEM_2_FORM';
+export const RECV_DB_2_FORM = 'RECV_DB_2_FORM';
 
 
 //= =====================

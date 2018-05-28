@@ -10,37 +10,42 @@ var walmar_key = 'upxrg7rpj4hjew5jbjwqhwkf';
 const MailSender = require('./mail');
 
 exports.getWalmartSearchedItems = function (req, res, next) {
-    console.log(req.params);
     const searchType = req.params.sType;
     const itemId = req.params.itemId  || 0;
+    let url = '';
     if (itemId.length >0) {
         switch(searchType) {
             case "upc":
-                return request({
-                        uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&upc=${itemId}`,
-                    }).pipe(res);
+                url = `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&upc=${itemId}`;
                 break;
             case "name":
-                return request({
-                        uri: `https://api.walmartlabs.com/v1/search?apiKey=${walmar_key}&query=${itemId}`,
-                    }).pipe(res); 
+               url = `https://api.walmartlabs.com/v1/search?apiKey=${walmar_key}&query=${itemId}`
             break;
             case "itemId":
-                return request({
-                        uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`,
-                    }).pipe(res); 
+                url = `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`;
                 break;
             default:
-                return request({
-                        uri: `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`,
-                    }).pipe(res);
-        }  
+               url = `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`
+        }
+        let options = { url: url };
+        return request(options, function (error, response, body) {
+            var obj = JSON.parse(body);
+                if (obj.errors) {
+                   res.status(200).json({ message: 'NO_DATE_FOUND' }); 
+                } else {
+                    res.status(200).json(obj);    
+                }
+            }).on('error', function(err) {
+              console.log('ERROR');
+              console.log(err)
+              res.status(200).json({ message: err});
+            });
+        
     } else {
         res.status(200).json({ message: 'NO_DATE_FOUND' });
     }
 };    
 exports.getWalmartItems = function (req, res, next) {
-   // console.log(req.params);
    const itemId = req.params.itemId;
    return request({
             uri: `https://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=${itemId}`,
@@ -49,7 +54,6 @@ exports.getWalmartItems = function (req, res, next) {
 };
 
 exports.getUserUpdateItems = function (req, res, next) {
-  //console.log(req.user);	
   const usrId = req.user.uid;
   var obj;	
   
@@ -223,50 +227,71 @@ exports.WalmartNotification = function() {
 }
 
 exports.WalmartAddItems = function (req, res, next) {
+  let change  = 0;
+  
   const usrId = req.user.uid;
   const storeName = req.body.props.webstore;
-  const webid = req.body.props.webid;
-  const name = req.body.props.itemname;
-  const imgUrl = req.body.props.itemimgurl;
-  const upc = req.body.props.itemupc;
-  const asib = req.body.props.itemasib;
-  const notification = req.body.props.notification;
+  const webid = req.body.props.itemid;
+  const itemid = req.body.props.id || 0;
+  const name = req.body.props.name;
+  const imgUrl = req.body.props.thumbnailimage;
+  const upc = req.body.props.upc;
+  
+  const asib = req.body.props.asib;
+  const notification = req.body.props.notification || {};
+  console.log(itemid);
+  console.log(notification);
+  let noty ='{';
   var details = [];
-  if (notification.length > 0 )  {
-      notification.forEach(function(elem) {
-        if (elem === "stock") {
-            var valStock = (req.body.props.itemstock === 'Available') ? 1 : 0;
+  Object.keys(notification).forEach(function (key) {
+    let elem = notification[key];
+    console.log(elem);
+    if (notification[key] === "stock") {
+            var valStock = (req.body.props.stock === 'Available') ? 1 : 0;
             details.push({type: 'stock', val: valStock, not: `{${elem}}`})
-        }
-        if (elem === "salePrice") {
-            details.push({type: 'salePrice', val: req.body.props.itemPrice, not: `{${elem}}`})    
-        }
-        
-    });
-  }
-    
+    }
+    if (notification[key] === "salePrice") {
+            details.push({type: 'salePrice', val: req.body.props.salePrice, not: `{${elem}}`})    
+    }
+    noty += `${elem},`;
+  
+  });
+    if (noty.length > 1) {
+        noty = noty.slice(0, -1);  
+    }
+    noty += '}';
+   console.log(noty);
    const queries = [];
    var obj;
    db.tx(t => { // automatic BEGIN
-        let addItemSql = "insert into rs_items(usrid, webstore,webid,itemname, itemimgurl, itemupc, 	itemasib ) "+
-                          " values($1, $2 ,$3 ,$4, $5, $6, $7) RETURNING itemid";
-        queries.push(
-        t.one(addItemSql,[usrId, storeName, webid, name, imgUrl, upc, asib ])
-        .then(data => {
-            details.forEach((det) => {
-                let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) "+
-                    " , notification = array_cat(notification, $4) "+
-                    " where itemid = $1";
-                queries.push(t.none(addDetaild, [data.itemid, det.type, det.val, det.not]));
-            });
-        })
-        );
+        if (itemid == 0) {
+            let addItemSql = "insert into rs_items(usrid, webstore,webid,itemname, itemimgurl, itemupc, itemasib ) "+
+                              " values($1, $2 ,$3 ,$4, $5, $6, $7) RETURNING itemid";
+            queries.push(
+            t.one(addItemSql,[usrId, storeName, webid, name, imgUrl, upc, asib ])
+            .then(data => {
+                details.forEach((det) => {
+                    let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) "+
+                        " , notification = array_cat(notification, $4) "+
+                        " where itemid = $1";
+                    queries.push(t.none(addDetaild, [data.itemid, det.type, det.val, det.not]));
+                });
+            })
+            );
         console.log(`ADDED ${webid} Item `);    
+        }  else {
+            let updateItemSql = "update rs_items set itemasib =$1, notification =$2 where itemid= $3";
+            queries.push(t.none(updateItemSql,[asib, noty, itemid ]));
+        }
    return t.batch(queries);
    })
     .then(data => {
         console.log('OK');
-        return res.status(200).json({ block: obj, message: `Item ${webid} added ` });
+        if (itemid == 0) { 
+            return res.status(200).json({ block: obj, message: `Item ${webid} added ` });
+        } else {
+            return res.status(200).json({ block: obj, message: `Item ${webid} Updated ` });
+        }
     })
     .catch(error => {
         console.log(error);
@@ -332,7 +357,7 @@ exports.getUserItemList = function (req, res, next) {
    const usrId = req.user.uid;
   var obj;	
   //let itemListSql = "select asib,itemid from rs_items z where z.usrid = $1";
-  let itemListSql = "select itemrefresh,webstore, webid as itemid, itemname as name, itemimgurl as thumbnailimage, itemupc as upc, itemasib as asib, "+
+  let itemListSql = "select itemrefresh,webstore, webid as itemid, itemname as name, itemimgurl as thumbnailimage, itemupc as upc, itemasib as asib,itemid as id, "+
             " array_to_json(itemdetails) as itemdetails, array_to_json(notification) as noty  from rs_items z where z.usrid = $1 ";
   
   	db.many(itemListSql, [usrId])
