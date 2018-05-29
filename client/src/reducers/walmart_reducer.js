@@ -179,6 +179,10 @@ export default function (state = INITIAL_STATE, action) {
         return Object.assign({}, state, {
                 itemInfo: action.data
         });
+    case RECV_WALMART_INFO: {
+            const newItems =  updateItemInArray(state.itemList, action.data.items);
+            return updateObject(state, {itemList : newItems, message: action.message});
+            }    
 	default:
  	  return { ...state };   
   }

@@ -39,13 +39,14 @@ class UserWalmartList extends Component {
 	componentDidMount() {
         console.log(this.props);
 		if (!this.props.items) {
-			 this.handleFetchAll();//, 
+			 this.handleFetchAll();//,
+            //this.handleRefreshItem(this.props.items);             
 		} 
-        this.handleRefreshItem(this.props.items);
-       //this.interval = setInterval(
-       //    this.handleRefreshItem(this.props.items), 
-       //    10000
-       //);
+        
+       this.interval = setInterval(
+           this.handleRefreshItem(this.props.items), 
+           10000
+       );
 	}
     
     handleAddForm(item) {
