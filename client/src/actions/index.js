@@ -74,20 +74,20 @@ function receiveUserData(json) {
 export function fetchUser(uid) {
   return function (dispatch) {
 	dispatch(requestUserData());  
-	console.log(uid);
+	//console.log(uid);
 	return axios({ url: `${API_URL}/user/${uid}`,
 			timeout: 2000,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
     })
     .then((response) => {
-		console.log(response);
+		//console.log(response);
         dispatch(receiveUserData(response.data.user));
     })
     .catch((response) => {
-		console.log(response);
-	dispatch(errorHandler(response.data.error)
-	);});
+		//console.log(response);
+        dispatch(errorHandler(response.data.error));
+    });
   };
 }
 
@@ -106,18 +106,18 @@ export function deleteUser(uid) {
 }
 
 export function updateUser(props) {
-    console.log('change');
+    //console.log('change');
     var uid = props.uid;
 	return function (dispatch) {
     axios.post(`${API_URL}/user/${uid}`, { props }
     ,{ headers: { Authorization: cookie.load('token') }})   
     .then((response) => {
-		console.log(response);
+		//console.log(response);
 		if (!response.data.error) {
-			console.log('OK');
+			//console.log('OK');
 			dispatch(fetchUser(uid));
 		} else {
-			console.log('NOK');
+			//console.log('NOK');
 			dispatch({
 				type: ERROR_RESPONSE,
 				payload: {
@@ -134,17 +134,13 @@ export function updateUser(props) {
 }
 
 export function errorHandler(dispatch, error, type) {
-  console.log('Error type: ', type);
-  console.log(error);
+  //console.log('Error type: ', type);
+  //console.log(error);
 
   let errorMessage = error.response ? error.response.data : error;
-
-   // NOT AUTHENTICATED ERROR
   if (error.status === 401 || error.response.status === 401) {
-    errorMessage = 'You are not authorized to do this.';
-    return dispatch(logoutUser(errorMessage));
+    errorMessage = 'You are not authorized';
   }
-
   dispatch({
     type,
     payload: errorMessage,

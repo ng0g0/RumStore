@@ -31,20 +31,15 @@ app.use(function(req, res, next) {
 const apiRoutes = express.Router(),
     authRoutes = express.Router(),
     userRoutes = express.Router(),
-    //blockRoutes = express.Router(),
-	//entryRoutes = express.Router(),
     walmartRouter = express.Router();
 
 	
 	// Set auth routes as subgroup/middleware to apiRoutes
   apiRoutes.use('/auth', authRoutes);
-
   // Registration route
   authRoutes.post('/register', requireAuth, UserController.register);
-
   // Login route
   authRoutes.post('/login', requireLogin, UserController.login);
-
   // Password reset request route (generate/send token)
   authRoutes.post('/forgot-password', UserController.forgotPassword);
 
@@ -90,7 +85,8 @@ const apiRoutes = express.Router(),
 
     apiRoutes.use('/walmart', walmartRouter);
     walmartRouter.post('/item', requireAuth, WalmartController.WalmartAddItems);	
-    walmartRouter.get('/item/:itemId', requireAuth, WalmartController.getWalmartItems);	
+    walmartRouter.get('/item/:itemId', requireAuth, WalmartController.getWalmartItems);
+	walmartRouter.get('/bestitem', requireAuth, WalmartController.getWalmartBestItems);
     walmartRouter.get('/item/search/:sType/:itemId', requireAuth, WalmartController.getWalmartSearchedItems);	
     
     walmartRouter.delete('/:itemId', requireAuth, WalmartController.deleteWalmartItems);	

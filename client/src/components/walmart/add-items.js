@@ -30,7 +30,7 @@ const renderField = ({
   meta: { touched, error, warning },
 }) =>
   ( <div>
-      <input className="form-control" {...input} type={type} />
+      <input className="form-control" {...input} type={type} disabled />
 	  {touched &&  error &&   <div className="error"><Translation text={error} /></div>}
     </div>
   );

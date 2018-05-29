@@ -5,16 +5,18 @@ import {SUCCESS_NOTIF, ERROR_NOTIF} from '../consts';
 //import jsonp from 'jsonp';
 
 import { 
- REQ_WALMART_LIST,
- RECV_WALMART_LIST,
- REQ_WALMART_INFO,
- RECV_WALMART_INFO,
- REQ_ITEM_INFO,
- RECV_ITEM_INFO,
- REQ_WALMART_SEARCH,
- RECV_WALMART_SEARCH,
- RECV_ITEM_2_FORM,
- RECV_DB_2_FORM 
+    REQ_WALMART_LIST,
+    RECV_WALMART_LIST,
+    REQ_WALMART_INFO,
+    RECV_WALMART_INFO,
+    REQ_ITEM_INFO,
+    RECV_ITEM_INFO,
+    REQ_WALMART_SEARCH,
+    RECV_WALMART_SEARCH,
+    RECV_ITEM_2_FORM,
+    RECV_DB_2_FORM,
+    RECV_WALMART_BEST,
+    REQ_WALMART_BEST 
  //CLEAR_BLOCK_INFO
  } 
 from './types';
@@ -39,6 +41,17 @@ function receiveWalmartList(json) {
 function requestWalmartAPI() {
    return {type: REQ_WALMART_INFO} 
 }
+function requestWalmartBEST() {
+   return {type: REQ_WALMART_BEST} 
+}
+
+
+function receiveWalmartBest(json) {
+	return{
+		type: RECV_WALMART_BEST,
+		data: json
+	}
+};
 
 //function receiveWalmartAPI() {
 //   return {type: RECV_WALMART_INFO}  
@@ -120,6 +133,23 @@ export function saveItem(props) {
     });
   };
 }
+export function bestItems() {
+    return function (dispatch) {
+        dispatch(requestWalmartBEST());
+        return axios({ url: `${API_URL}/walmart/bestitem`,
+			method: 'get',
+			headers: { Authorization: cookie.load('token') }
+            })
+        .then((response) => {
+            dispatch(receiveWalmartBest(response.data));
+        })
+        .catch((error) => {
+            console.log(error)
+		}); 
+    }
+}
+
+
 export function searchFunc(props) {
     //console.log(props);
     return function (dispatch) {

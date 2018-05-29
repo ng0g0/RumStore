@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import Translation from '../locale/translate';
 import { connect } from 'react-redux';
 import { fetchItemUpdate } from '../../actions/dashboard';
+import { bestItems } from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
+import DataGrid from '../template/data-grid';
 
 
 class Dashboard extends Component {
@@ -11,7 +13,12 @@ class Dashboard extends Component {
   }
     
     componentDidMount() {
-        this.interval = setInterval(this.props.dispatch(fetchItemUpdate()), 50000);
+        //this.interval = setInterval(
+        this.props.dispatch(fetchItemUpdate());
+        //, 50000);
+        //this.interval = setInterval(
+        this.props.dispatch(bestItems());
+        //, 50000);
     }    
     
     
@@ -31,6 +38,7 @@ class Dashboard extends Component {
                     <div className="panel panel-primary">
                         <div className="panel-heading">Top 5 Selling Items</div>
                         <div className="panel-body">
+                            <DataGrid data={this.props.walmartBest} spinner= {this.props.loadingWalmartBest } />
                         </div>
                     </div> 
                 </div>
@@ -52,6 +60,15 @@ class Dashboard extends Component {
                 </div>
             </div>            
 		</div>);	
+    }
+    
+    renderWalmartBest() {
+      if ( this.props.loadingWalmartBest ) {
+            return (<div className='loader'><Translation text="Loading" />...</div>);
+        } else { 
+            const { walmartBest} = this.props; 
+            return (<div> </div>);
+        }
     }
   
     renderPriceIndicator(value) {
@@ -110,7 +127,9 @@ function mapStateToProps(state) {
     //console.log(state);
   return {
     updatedItems: state.dashboard.updatedItems,
-	loadingSpinnerUpdate: state.dashboard.loadingSpinnerUpdate
+    walmartBest: state.dashboard.walmartBest,
+	loadingSpinnerUpdate: state.dashboard.loadingSpinnerUpdate,
+    loadingWalmartBest: state.dashboard.loadingWalmartBest
   };
 }
 

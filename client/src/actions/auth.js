@@ -23,6 +23,7 @@ export function loginUser({ email, password }) {
   return function (dispatch) {
     axios.post(`${API_URL}/auth/login`, { email, password })
     .then((response) => {
+        //console.log('loginUser: ', response);
       cookie.save('token', response.data.token, { path: '/' });
       cookie.save('user', response.data.user, { path: '/' });
       dispatch({ type: AUTH_USER });
@@ -30,7 +31,8 @@ export function loginUser({ email, password }) {
       window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
     })
     .catch((error) => {
-	  console.log(error.response); 	
+        //console.log('loginUser Error : ', error);
+	  console.log(error); 	
       errorHandler(dispatch, error.response, AUTH_ERROR);
     });
   };

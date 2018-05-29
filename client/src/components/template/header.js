@@ -5,8 +5,6 @@ import { Link } from 'react-router';
 import Translation from '../locale/translate';
 import { ToastContainer } from 'react-toastify';
 
-
-
 class HeaderTemplate extends Component {
   
     renderLinks() {
@@ -19,34 +17,26 @@ class HeaderTemplate extends Component {
                     <Link to="/walmart"><Translation text="UserItems" /></Link>
                 </li>
                 <li key={`${3}header`}>
-                    <Link to="/settings"><Translation text="Settings" /></Link>
+                    <Link to="profile"><Translation text="Profile" /></Link>
                 </li>
             </ul>);
         } 
     }
-/*
-<li key={`${2}header`}>
-                    <Link to="/blocks"><Translation text="Building" /></Link>
-                </li>
-*/
 
     renderAdminMenu() {
         const user = cookie.load('user');
-        //console.log(user);
         if (user.role === 1) { 
             return(<li><Link to="register"><Translation text="AddUser" /></Link></li>)
         }
     }
     
 	renderUserMenu() {
-
 		if (this.props.authenticated) {
 			return (<ul className="nav navbar-nav navbar-right">
 				<li className="dropdown">
 				 <a className="dropdown-toggle" data-toggle="dropdown" href="#">
 				 <span className="caret"></span></a>
 					<ul className="dropdown-menu">
-						<li><Link to="profile"><Translation text="Profile" /></Link></li>
                         { this.renderAdminMenu()}
 						<li><Link to="logout"><Translation text="Logout" /></Link></li>
                    </ul>
@@ -54,7 +44,6 @@ class HeaderTemplate extends Component {
 			</ul>);
 		} else {
 			if (!this.props.form.login) {
-				
 				return (<ul className="nav navbar-nav navbar-right">
 					<li> <Link className="glyphicon glyphicon-user" to="login">
 					<span className="nav_menu">Login</span></Link></li>
@@ -86,7 +75,6 @@ class HeaderTemplate extends Component {
 }
 
 function mapStateToProps(state) {
-   // console.log(state);
     return {
         authenticated: state.auth.authenticated,
         form: state.form

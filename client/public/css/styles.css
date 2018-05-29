@@ -83,6 +83,13 @@ body {
     margin-bottom: 10px;  
 }
 
+.errormsg {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+    color: red
+}
+
 .linche {
     border-bottom: 1px solid #DBDBDB !important;
     border-top: 1px solid #DBDBDB !important;
@@ -109,6 +116,7 @@ body {
   margin-top: 0px;
   margin-bottom: 0px;
   border-radius: 0px;
+  margin-left: 0px;
 }
 .center-block {
     display: block;

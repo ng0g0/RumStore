@@ -17,8 +17,8 @@ class Login extends Component {
   renderAlert() {
     if (this.props.errorMessage) {
       return (
-        <div>
-          <span><strong>Error!</strong> {this.props.errorMessage}</span>
+        <div className="errormsg">
+          <span>{this.props.errorMessage}</span>
         </div>
       );
     }

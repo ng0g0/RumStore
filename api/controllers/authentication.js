@@ -68,7 +68,7 @@ exports.login = function (req, res, next) {
     role: req.user.role,
   };
   console.log('login');
-  console.log(userInfo);
+  //console.log(userInfo);
   res.status(200).json({
     token: `JWT ${generateToken(userInfo)}`,
     user: userInfo
@@ -76,7 +76,7 @@ exports.login = function (req, res, next) {
 };
 
 exports.register = function (req, res, next) {
-    console.log(req.body.props);
+   // console.log(req.body.props);
 	const email = req.body.props.email;
 	const firstName = req.body.props.firstName;
 	const lastName = req.body.props.lastName;
@@ -87,23 +87,15 @@ exports.register = function (req, res, next) {
 	if (!email) {
 		return res.status(422).send({ error: 'You must enter an email address.' });
 	}
-
-	// Return error if full name not provided
 	if (!firstName || !lastName) {
 		return res.status(422).send({ error: 'You must enter your full name.' });
 	}
 
-	// Return error if no password provided
-	//if (!password) {
-//		return res.status(422).send({ error: 'You must enter a password.' });
-//	}
-	//console.log('Validation ok');
 	bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
 		if (err) return next(err);
 		bcrypt.hash(password, salt, null, (err, hash) => {
 		if (err) return next(err);
 		hashPassword = hash;
-		//console.log('Validating password');
 		let registerSql = "INSERT INTO rbm_user (username, password, firstname, lastname, active, usrrole) VALUES( $1, $2, $3, $4, 1, $5) RETURNING usrid";
 		db.one(registerSql, [email, hashPassword, firstName, lastName, role] )
 		.then((user) => {
@@ -113,8 +105,6 @@ exports.register = function (req, res, next) {
 				firstName: firstName,
 				lastName: lastName
 				};
-			//console.log(obj);	
-            
             const subject = 'Welcome to RumStore';
             const html = `Hi ${firstName}, <br> Welcome to Rumstore.<br><br>` +
 					   ` User name: ${email} <br> `+
@@ -140,7 +130,7 @@ exports.forgotPassword = function (req, res, next) {
 	let findSql = "select usrid from rbm_user where username = $1";
 	db.one(findSql, [email])
 	.then(user=> {
-		console.log(`USERID:${user.usrid}`);
+		//console.log(`USERID:${user.usrid}`);
 		// Generate a token with Crypto
 		crypto.randomBytes(48, (err, buffer) => {
 		const resetToken = buffer.toString('hex');
@@ -235,15 +225,15 @@ exports.verifyToken = function (req, res, next) {
 
 
 exports.viewProfile = function (req, res, next) {
-  console.log('viewProfile');
-  console.log(req.params);	
+  //console.log('viewProfile');
+  //console.log(req.params);	
   const userId = req.params.userId;
   let finUserSql = "select usrid,username as email, password, firstname, lastname, usrrole as role " + 
 					" from rbm_user where usrid = $1 ";
 	var obj;
 	db.one(finUserSql, [userId])
 	.then(user=> {
-		console.log(user);
+		//console.log(user);
 		if (req.user.email !== user.email) { 
 			return res.status(401).json({ error: 'You are not authorized to view this user profile.' }); 
 		} else {
@@ -275,7 +265,7 @@ exports.viewProfile = function (req, res, next) {
 //========================================
 
 exports.userUpdate = function (req, res, next) {
-    console.log(req.body.props);
+    //console.log(req.body.props);
     let change  = 0;
     let email = "email";
     let password = "password";
@@ -326,7 +316,7 @@ exports.userUpdate = function (req, res, next) {
 	//if (!password) {
 	//	return res.status(422).send({ error: 'You must enter an password address.' });
 	//}
-    console.log(`EMAIL=${email}, PASS=${hashPassword}, FN=${firstName}, LN=${lastName}, ROLE=${role} UPDATE=${change}`);
+    //console.log(`EMAIL=${email}, PASS=${hashPassword}, FN=${firstName}, LN=${lastName}, ROLE=${role} UPDATE=${change}`);
     
 	bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
 		if (err) return next(err);
@@ -375,11 +365,11 @@ exports.userUpdate = function (req, res, next) {
 exports.userDelete = function (req, res, next) {
 	const email = req.body.email;
 	const uid = req.params.userId;
-	console.log(req.params);
+	//console.log(req.params);
 	let deleteSql = "UPDATE rbm_user SET active = 0 WHERE usrid = $1";
 	db.none(deleteSql, [uid] )
 		.then((user) => {
-			console.log('Deleted');	
+			//console.log('Deleted');	
             const subject = 'RumStore User Deleted';
             const html = `You are receiving this email because you deleted your user.<br><br>` +
                        `If you did not request this change, please contact us immediately.<br><br>`; 

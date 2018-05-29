@@ -161,7 +161,7 @@ class UserWalmartList extends Component {
                     <DeleteItem deleteItems={this.state.clickedItem || this.state.currentValues.join()} />    
                </LayerMask>);
    }
-
+    /*
    handleAddItem({ dispatch }) {
        this.props.dispatch(submit(WalmartItem));
         console.log('Add Items');
@@ -177,7 +177,7 @@ class UserWalmartList extends Component {
                     <AddItem /> 
                 </LayerMask>);
    }  
-  
+  */
     renderMessage(msg) {
         if (msg) {
             return (<div className="row"> 
@@ -199,7 +199,6 @@ class UserWalmartList extends Component {
     }
     renderCellContent(item) {
         const { currentValues } = this.state;
-        //console.log(item);
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
         return(<div>
             <div className="row">
@@ -287,48 +286,43 @@ class UserWalmartList extends Component {
 		}
 		else {
 			return(<div className="panel panel-default">
-     <div className="panel-body"><Translation text="NO_DATE_FOUND" /></div></div>);
+                <div className="panel-body"><Translation text="NO_DATE_FOUND" /></div>
+            </div>);
 		}
 	}
     
     renderItemMenuBar(items) {
-       // var checked = true;
-        return(<div className="row"><div className="col-sm-12">
-        <div className="btn-group pull-right">
-            <a className="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-				<Translation text="WalmarItemAction" />
-			</a>
-            
-            <ul className="dropdown-menu">
-                <li key="add"> 
-                    <Link className="dropdown-item" data-toggle="modal" data-target="#addItem">
-                        <Translation text="ADD_ITEM" />
-                    </Link>
-                </li>
-                <li key="Selected">
-                    <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> 
-                        <Translation text="RefreshSelected" />
-                    </Link>
-                </li>
-                <li key="del">
-                    <Link  className="dropdown-item" data-toggle="modal" data-target="#deleteItem">
-                        <Translation text="DeleteSeleected" />
-                    </Link>
-                </li>
-            </ul>            
-        </div></div></div>);
-        
+        return(<div className="row">
+            <div className="col-sm-12">
+                <div className="btn-group pull-right">
+                    <a className="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+                        <Translation text="WalmarItemAction" />
+                    </a>
+                    <ul className="dropdown-menu">
+                        <li key="Selected">
+                            <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> 
+                                <Translation text="RefreshSelected" />
+                            </Link>
+                        </li>
+                        <li key="del">
+                            <Link  className="dropdown-item" data-toggle="modal" data-target="#deleteItem">
+                                <Translation text="DeleteSeleected" />
+                            </Link>
+                        </li>
+                    </ul>            
+                </div>
+            </div>
+        </div>);
     } 
    
     render() {
-        //console.log(this.state);
         if ( this.props.loadingSpinner ) {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
             const { itemList, items} = this.props;
             return (<div className="panel panel-default">
                 <div className="panel-body">
-                    {this.renderAddItemLayer()}
+                    {/*this.renderAddItemLayer()*/}
                     {this.renderDeleteLayer()}
                     {this.renderItemMenuBar(items)}
                     {this.renderListContent(itemList)}

@@ -9,6 +9,14 @@ var walmar_key = 'upxrg7rpj4hjew5jbjwqhwkf';
 
 const MailSender = require('./mail');
 
+exports.getWalmartBestItems = function (req, res, next) {
+   const itemId = req.params.itemId;
+   return request({
+            uri: `http://api.walmartlabs.com/v1/feeds/bestsellers?apikey=${walmar_key}`,
+        }).pipe(res);
+    
+};
+
 exports.getWalmartSearchedItems = function (req, res, next) {
     const searchType = req.params.sType;
     const itemId = req.params.itemId  || 0;
