@@ -48,7 +48,7 @@ class DataGrid extends Component {
                                     <img alt={item.itemId} src ={itemImage} />
                                 </div>
                                 <div className="col-sm-8"> 
-                                    <div className="row" ><b>ItemID</b>: {item.itemid}</div>
+                                    <div className="row" ><b>ItemID</b>: {item.itemId}</div>
                                     <div className="row" >Name:{item.name}</div>
                                     <div className="row" ><Translation text="WALMAR_ITEM_PRICE" />:{item.salePrice}</div>
                                 </div>

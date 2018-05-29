@@ -41,6 +41,7 @@ class UserWalmartList extends Component {
 		if (!this.props.items) {
 			 this.handleFetchAll();//, 
 		} 
+        this.handleRefreshItem(this.props.items);
        //this.interval = setInterval(
        //    this.handleRefreshItem(this.props.items), 
        //    10000
@@ -161,7 +162,7 @@ class UserWalmartList extends Component {
                     <DeleteItem deleteItems={this.state.clickedItem || this.state.currentValues.join()} />    
                </LayerMask>);
    }
-    /*
+   
    handleAddItem({ dispatch }) {
        this.props.dispatch(submit(WalmartItem));
         console.log('Add Items');
@@ -177,7 +178,7 @@ class UserWalmartList extends Component {
                     <AddItem /> 
                 </LayerMask>);
    }  
-  */
+   /**/
     renderMessage(msg) {
         if (msg) {
             return (<div className="row"> 
@@ -322,7 +323,7 @@ class UserWalmartList extends Component {
             const { itemList, items} = this.props;
             return (<div className="panel panel-default">
                 <div className="panel-body">
-                    {/*this.renderAddItemLayer()*/}
+                    {this.renderAddItemLayer()}
                     {this.renderDeleteLayer()}
                     {this.renderItemMenuBar(items)}
                     {this.renderListContent(itemList)}
