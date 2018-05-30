@@ -7,7 +7,7 @@ class DeleteItem extends Component {
 	}
     render () {
         const { deleteItems } = this.props;
-        console.log(deleteItems);
+        //console.log(deleteItems);
         return(<div className="row">
             <div className="col-md-12">
                 <label><Translation text="DELETE_ANSWER" items={deleteItems}/></label>

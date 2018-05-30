@@ -13,6 +13,7 @@ import AddItem from './add-items';
 import { WalmartItem } from '../../consts';
 import { submit } from 'redux-form'
 import TabItems from './tab-items'; 
+import _ from 'lodash';
 
 class UserWalmartList extends Component {
 	static contextTypes = {
@@ -32,7 +33,8 @@ class UserWalmartList extends Component {
             allChecked: false,
             checkedCount: 2,
             currentValues: [],
-            clickedItem: ''
+            clickedItem: '',
+            filter: '',
         }
 	}
   
@@ -189,6 +191,12 @@ class UserWalmartList extends Component {
             return(<div></div>);
         }
     }
+    
+    onChangeHandler(e){
+        this.setState({
+            filter: e.target.value,
+            })
+    }
     renderPriceIndicator(value) {
         switch(value) {
         case -1:
@@ -231,19 +239,41 @@ class UserWalmartList extends Component {
         </div>);
     }
     
+   
+    
 	renderListContent(items) {
-        const { currentValues } = this.state
+        
+        const { currentValues, filter } = this.state
 		if (items) {
+            var filtered= _.filter(items, function(item) {
+                if (filter.length > 0) {
+                    if (item.itemid.toUpperCase().indexOf(filter.toUpperCase())== -1){
+                        if (item.name.toUpperCase().indexOf(filter.toUpperCase()) == -1){ 
+                            //if (item.upc.toUpperCase().indexOf(filter.toUpperCase()) == -1){ 
+                                if (item.asib.toUpperCase().indexOf(filter.toUpperCase()) == -1){ 
+                                    return false; 
+                                //}
+                            }
+                        }
+                    }                    
+                        
+                }
+                return true;
+            });
+            console.log(filtered);
 			return (<div>
                 <div className="row">
-                    <div className="col-sm-12">
+                    <div className="col-sm-2">
                    <input type="checkbox" className="form-check-input  allcheck" name="all"  
                               checked={this.state.allChecked} value="all"  
                               onClick={(event )=> this.handleCheckBoxItem(event) }/> 
                     </div>
-                    
+                    <div className="col-sm-10">
+                    <Translation text="WALMAR_ITEM_SEARCH"  />
+                    <input value={filter} type="text" onChange={this.onChangeHandler.bind(this)}/>
+                    </div>
                 </div>
-            {items.map((item) => {
+            {filtered.map((item) => {
                 return(<div className="panel panel-default blockche" key={item.itemid}>
                         <div className="panel-body">
                     <div className="row" >
@@ -325,7 +355,7 @@ class UserWalmartList extends Component {
             return (<div className="panel panel-default">
                 <div className="panel-body">
                     {this.renderAddItemLayer()}
-                    {this.renderDeleteLayer()}
+                    {this.renderDeleteLayer() }
                     {this.renderItemMenuBar(items)}
                     {this.renderListContent(itemList)}
                 </div>

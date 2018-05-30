@@ -32,26 +32,52 @@ class DataGrid extends Component {
         }
         
     }
-    
+    renderHeader(columns) {
+        return(<div className="row" >
+            {columns.map((col) => {
+                let classcl = `col-sm-${col.size || 2}`;
+                const colValue = col.name;
+                return(<div className={classcl}>
+                    {colValue}
+                    </div>)
+            })}
+        </div> );
+    }
     renderTable(items) {
+        const {columns } = this.props;
         if (!items) {
             return(<div> </div>);
         }
+        if (!columns) {
+            console.log('No Columns defined');
+            return(<div> </div>);
+        }
+        
         if (items.length > 0) {
            return (<div>
+           this.renderHeader(columns);
            {items.slice(this.state.start, this.state.end).map((item, index) => {
                var itemImage = item.thumbnailImage || "/images/nopic.jpg";
                 return(<div className="panel panel-default blockche" key={item.itemId}>
                         <div className="panel-body">
                             <div className="row" >
-                                <div className="col-sm-4">
+                            {columns.map((col) => {
+                                let classcl = `col-sm-${col.size || 2}`;
+                                const colValue = col.type === "image" ?
+                                    (<img alt={item["itemId"]} src ={item[col.name]} />) :
+                                    (<span>{item[col.name]}</span>);
+                                return(<div className={classcl}>
+                                    {colValue}
+                                    </div>)
+                            })}
+                            {/*<div className="col-sm-4">
                                     <img alt={item.itemId} src ={itemImage} />
                                 </div>
                                 <div className="col-sm-8"> 
                                     <div className="row" ><b>ItemID</b>: {item.itemId}</div>
                                     <div className="row" >Name:{item.name}</div>
                                     <div className="row" ><Translation text="WALMAR_ITEM_PRICE" />:{item.salePrice}</div>
-                                </div>
+                            </div>*/}
                             </div> 
                         </div>
                 </div>)
@@ -79,6 +105,7 @@ class DataGrid extends Component {
 
 DataGrid.PropTypes = {
 		data: PropTypes.array,
+        columns: PropTypes.array,
         spinner: PropTypes.bool,
 
 	};

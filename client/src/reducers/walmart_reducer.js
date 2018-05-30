@@ -109,13 +109,15 @@ function updateItemDetails(itemDetails, noty, updateItem) {
 function updatePriceIndicator(itemDetails) {
     const item = itemDetails.find( item => item.dettype === 'salePrice' );
     let result = 0;
+    if (item.items) {
     if (item.items.length>0) {
-        if (item.items.length>1) {
-            let a = item.items[item.items.length -1];
-            let b = item.items[item.items.length -2];
-            if (a.y > b.y) {result = 1;}
-            if (a.y < b.y) {result = -1;}
-        } 
+            if (item.items.length>1) {
+                let a = item.items[item.items.length -1];
+                let b = item.items[item.items.length -2];
+                if (a.y > b.y) {result = 1;}
+                if (a.y < b.y) {result = -1;}
+            } 
+        }
     }
     return result;
 }
@@ -132,7 +134,7 @@ function updateItemInArray(itemList, updateItems) {
                 obj = Object.assign(item, {
                         thumbnailimage: result.thumbnailImage,
                         salePrice: result.salePrice,
-                        priceIndicator: updatePriceIndicator(itemDetails),
+                        priceIndicator: 0, //updatePriceIndicator(itemDetails),
                         upc: result.upc,
                         itemdetails: itemDetails,
                         message: result.message,

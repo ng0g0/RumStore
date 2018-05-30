@@ -24,6 +24,12 @@ class Dashboard extends Component {
     
   
     render() {
+        const columGrid = [
+            {name: "thumbnailImage", type: "image", size: 2 },
+            {name: "itemId", type: "int", size: 2 },
+            {name: "name", type: "string", size: 4 },
+    {name: "salePrice;", type: "float", size: 2 }];
+            
 		return ( <div>
             <div className="row">
                 <div className="col-sm-6">
@@ -38,7 +44,10 @@ class Dashboard extends Component {
                     <div className="panel panel-primary">
                         <div className="panel-heading">Top 5 Selling Items</div>
                         <div className="panel-body">
-                            <DataGrid data={this.props.walmartBest} spinner= {this.props.loadingWalmartBest } />
+                            <DataGrid data={this.props.walmartBest} 
+                            spinner= {this.props.loadingWalmartBest }
+                            columns = {columGrid}
+                            />
                         </div>
                     </div> 
                 </div>
