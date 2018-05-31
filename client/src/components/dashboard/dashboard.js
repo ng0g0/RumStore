@@ -25,7 +25,7 @@ class Dashboard extends Component {
   
     render() {
         const columGrid = [
-            {name: "thumbnailImage", type: "image", size: 2 },
+            {name: "thumbnailImage", type: "image", size: 4 },
             {name: "itemId", type: "int", size: 2 },
             {name: "name", type: "string", size: 4 },
             {name: "salePrice", type: "float", size: 2 }];

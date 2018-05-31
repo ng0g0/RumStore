@@ -214,7 +214,7 @@ class UserWalmartList extends Component {
             <div className="row">
                 { this.renderMessage(item.message) }
                <div className="col-sm-2">
-                    <img alt={item.itemid} src ={itemImage} />
+                    <img alt={item.itemid} src ={itemImage} className="img-responsive"/>
                 </div>   
                 <div className="col-sm-2"> 
                     ItemID: {item.itemid}

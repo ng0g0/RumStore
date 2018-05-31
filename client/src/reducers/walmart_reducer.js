@@ -182,6 +182,7 @@ export default function (state = INITIAL_STATE, action) {
                 itemInfo: action.data
         });
     case RECV_WALMART_INFO: {
+        console.log(action.data);
             const newItems =  updateItemInArray(state.itemList, action.data.items);
             return updateObject(state, {itemList : newItems, message: action.message});
             }    

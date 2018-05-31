@@ -54,11 +54,56 @@ exports.getWalmartSearchedItems = function (req, res, next) {
     }
 };    
 exports.getWalmartItems = function (req, res, next) {
-   const itemId = req.params.itemId;
-   return request({
-            uri: `https://api.walmartlabs.com/v1/items?apiKey=upxrg7rpj4hjew5jbjwqhwkf&itemId=${itemId}`,
-        }).pipe(res);
+    const itemId = req.params.itemId;
+    let walmartItems = itemId.split(',');
+    console.log(`Total Items = ${walmartItems.length}`);
     
+    async.waterfall([
+            function( callbackfunc1) {
+               let walmartResponce = [];
+               var cnt = Math.ceil(walmartItems.length/10);
+               console.log(`Total Pages = ${cnt}`);
+               var i = 0;
+               async.whilst(
+                    function() { return i < cnt; },
+                    function( callbackwh) {
+                        console.log(`walmartItems =${walmartItems}`);
+                        let bg = 0;//+i*10;
+                        let ed = (walmartItems.length < 10 ) ? walmartItems.length :10;
+                        console.log(`strar =${bg}, end = ${ed}`);
+                        let sentItems =  walmartItems.splice(bg,ed).join();
+                        console.log(`Page ${i} =${sentItems}`);
+                        setTimeout(function() { 
+                            request.get(`https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${sentItems}`, function (err, res, body) {
+                                if (IsJsonString(body)) {
+                                    let wItemRet = JSON.parse(body); //{items: []}; //
+                                    console.log(`Items Retreved = ${wItemRet.items.length}`);
+                                    walmartResponce = walmartResponce.concat(wItemRet.items);
+                                } else {
+                                    console.log('NOT JSON');
+                                }
+                            i++;
+                            console.log(`Left Items${walmartItems.join()}`);
+                            callbackwh(null, walmartResponce);
+                            });
+                        }, 1000);
+                    },
+                    function (err, result) {
+                       console.log(`Items Retreved = ${result.length}`); 
+                       callbackfunc1(null, result);
+                    }
+                );
+            },
+            function( walmartResponce, callbackfunc2) {
+                console.log(`Total Items Retreved = ${walmartResponce.length}`);
+                return res.status(200).json({ items: walmartResponce });
+                callbackfunc2(null, 'done');
+                
+            }
+        ], function (err, result) {
+            console.log(result)
+            // result now equals 'done'
+        });
 };
 
 exports.getUserUpdateItems = function (req, res, next) {
@@ -129,7 +174,11 @@ exports.WalmartNotification = function() {
                async.whilst(
                     function() { return i < cnt; },
                     function( callbackwh) {
-                        let sentItems =  walmartItems.splice(0+i*10,10+i*10).join();
+                        console.log(`walmartItems =${walmartItems}`);
+                        let bg = 0;//+i*10;
+                        let ed = (walmartItems.length < 10 ) ? walmartItems.length :10;
+                        console.log(`strar =${bg}, end = ${ed}`);
+                        let sentItems =  walmartItems.splice(bg,ed).join();
                         console.log(`Page ${i} =${sentItems}`);
                         setTimeout(function() { 
                             request.get(`https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${sentItems}`, function (err, res, body) {

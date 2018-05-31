@@ -173,26 +173,26 @@ export function fetchFromWalmarAPI(items) {
     return function (dispatch) {
         var sentItems;
         var leftItems;
-        var itemArray = [];
-        if (Array.isArray(items) ) {
-            itemArray = items.split(",");
-        }
-        var cnt = Math.ceil(itemArray.length/WALMART_MAX_ITEMS);
-        if (cnt > 1) {
-            sentItems =  itemArray.splice(0,WALMART_MAX_ITEMS).join();
-            leftItems = items.split(",").splice(WALMART_MAX_ITEMS).join();
-            setTimeout(function() { dispatch(fetchFromWalmarAPI(leftItems)); }, 500);
-            
-        } else {
+        //var itemArray = [];
+        //if (Array.isArray(items) ) {
+        //    itemArray = items.split(",");
+        //}
+        //var cnt = Math.ceil(itemArray.length/WALMART_MAX_ITEMS);
+        //if (cnt > 1) {
+        //    sentItems =  itemArray.splice(0,WALMART_MAX_ITEMS).join();
+        //    leftItems = items.split(",").splice(WALMART_MAX_ITEMS).join();
+        //    setTimeout(function() { dispatch(fetchFromWalmarAPI(leftItems)); }, 500);
+        //    
+        //} else {
             sentItems = items;
-        }
+        //}
      //   console.log(`Sent Items:${sentItems}`);
         return axios({ url: `${API_URL}/walmart/item/${sentItems}`,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
-      //      console.log(response.data);
+            console.log(response.data);
             dispatch(receiveWalmartAPI(response.data));
         })
         .catch((error) => {
