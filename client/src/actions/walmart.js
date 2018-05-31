@@ -173,9 +173,11 @@ export function fetchFromWalmarAPI(items) {
     return function (dispatch) {
         var sentItems;
         var leftItems;
-        var itemArray = items.split(",");
+        var itemArray = [];
+        if (Array.isArray(items) ) {
+            itemArray = items.split(",");
+        }
         var cnt = Math.ceil(itemArray.length/WALMART_MAX_ITEMS);
-      //  console.log(`Pages:${cnt}`);
         if (cnt > 1) {
             sentItems =  itemArray.splice(0,WALMART_MAX_ITEMS).join();
             leftItems = items.split(",").splice(WALMART_MAX_ITEMS).join();

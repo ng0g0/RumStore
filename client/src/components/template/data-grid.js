@@ -55,7 +55,7 @@ class DataGrid extends Component {
         
         if (items.length > 0) {
            return (<div>
-           this.renderHeader(columns);
+           {this.renderHeader(columns)};
            {items.slice(this.state.start, this.state.end).map((item, index) => {
                var itemImage = item.thumbnailImage || "/images/nopic.jpg";
                 return(<div className="panel panel-default blockche" key={item.itemId}>
@@ -64,7 +64,7 @@ class DataGrid extends Component {
                             {columns.map((col) => {
                                 let classcl = `col-sm-${col.size || 2}`;
                                 const colValue = col.type === "image" ?
-                                    (<img alt={item["itemId"]} src ={item[col.name]} />) :
+                                    (<img alt={item["itemId"]} src ={item[col.name]} className="img-responsive"/>) :
                                     (<span>{item[col.name]}</span>);
                                 return(<div className={classcl}>
                                     {colValue}

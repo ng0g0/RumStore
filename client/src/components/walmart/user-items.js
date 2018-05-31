@@ -39,7 +39,7 @@ class UserWalmartList extends Component {
 	}
   
 	componentDidMount() {
-        console.log(this.props);
+        //console.log(this.props);
 		if (!this.props.items) {
 			 this.handleFetchAll();//,
             //this.handleRefreshItem(this.props.items);             
@@ -52,7 +52,7 @@ class UserWalmartList extends Component {
 	}
     
     handleAddForm(item) {
-        console.log(item);
+        //console.log(item);
          this.props.dispatch(dbToAddForm(item));
     }
     
@@ -62,7 +62,7 @@ class UserWalmartList extends Component {
     
     handleCheckBoxItem(event) {
         var item = event.target.value;
-        console.log(item);
+        //console.log(item);
         if (item === "all") {
             if (this.state.allChecked) {
                 this.setState({
@@ -106,7 +106,7 @@ class UserWalmartList extends Component {
                 
             }
         }
-        console.log(this.state.currentValues);
+        //console.log(this.state.currentValues);
     }
     
     handleCancelClick(item) {
@@ -148,9 +148,9 @@ class UserWalmartList extends Component {
     handleRefreshItem(items) {
         if (items) {
             this.props.dispatch(fetchFromWalmarAPI(items)); 
-        } else {
-            console.log('Items not found');
-        }
+        } //else {
+        //    console.log('Items not found');
+        //}
             
         
     }
@@ -168,7 +168,7 @@ class UserWalmartList extends Component {
    
    handleAddItem({ dispatch }) {
        this.props.dispatch(submit(WalmartItem));
-        console.log('Add Items');
+        //console.log('Add Items');
     }
    
     renderAddItemLayer() {
@@ -260,7 +260,7 @@ class UserWalmartList extends Component {
                 }
                 return true;
             });
-            console.log(filtered);
+            //console.log(filtered);
 			return (<div>
                 <div className="row">
                     <div className="col-sm-2">

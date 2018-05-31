@@ -28,7 +28,7 @@ class Dashboard extends Component {
             {name: "thumbnailImage", type: "image", size: 2 },
             {name: "itemId", type: "int", size: 2 },
             {name: "name", type: "string", size: 4 },
-    {name: "salePrice;", type: "float", size: 2 }];
+            {name: "salePrice", type: "float", size: 2 }];
             
 		return ( <div>
             <div className="row">
