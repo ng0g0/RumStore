@@ -28,6 +28,10 @@ class UserWalmartList extends Component {
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.handleFetchAll = this.handleFetchAll.bind(this);
         this.handleAddForm = this.handleAddForm.bind(this);
+        this.handleNextPage = this.handleNextPage.bind(this);
+        this.handlePrevPage = this.handlePrevPage.bind(this);
+        this.handleMovePage = this.handleMovePage.bind(this);
+
         
         this.state = {
             allChecked: false,
@@ -35,8 +39,36 @@ class UserWalmartList extends Component {
             currentValues: [],
             clickedItem: '',
             filter: '',
+            sort: '',
+            page: 1,
+            itemPage: 20,
         }
 	}
+    
+    handleMovePage(page) {
+       this.setState({
+            page : page
+            }) 
+    }
+    handleNextPage() {
+        let page = this.state.page;
+        let itemcount = (this.props.itemList) ? this.props.itemList.length : 0; 
+        let maxPage = Math.ceil( itemcount /this.state.itemPage);
+        let newPage = (page < maxPage)? page + 1: page;
+        this.setState({
+            page : newPage
+            })
+    }
+    handlePrevPage() {
+        let page = this.state.page;
+        let newPage = (this.state.page > 1) ? page - 1: page;
+        this.setState({
+            page : newPage
+            })
+        
+    }
+    
+    
   
 	componentDidMount() {
         //console.log(this.props);
@@ -155,6 +187,7 @@ class UserWalmartList extends Component {
         
     }
     
+
     renderDeleteLayer() {
         let layerid = 'deleteItem'
         let label = 'DELETE_QUESTION';
@@ -195,6 +228,7 @@ class UserWalmartList extends Component {
     onChangeHandler(e){
         this.setState({
             filter: e.target.value,
+            page: 1
             })
     }
     renderPriceIndicator(value) {
@@ -260,7 +294,13 @@ class UserWalmartList extends Component {
                 }
                 return true;
             });
-            //console.log(filtered);
+            let pageItems = this.state.page*this.state.itemPage;
+            let totaItems = filtered.length;
+            let maxPage = Math.ceil( totaItems /this.state.itemPage);
+            let start = 0+((this.state.page-1)*(this.state.itemPage));
+            let end = ( pageItems > totaItems) ? totaItems : pageItems;
+            //console.log(`start = ${start}`);
+            //console.log(`end = ${end}`);
 			return (<div>
                 <div className="row">
                     <div className="col-sm-2">
@@ -273,7 +313,7 @@ class UserWalmartList extends Component {
                     <input value={filter} type="text" onChange={this.onChangeHandler.bind(this)}/>
                     </div>
                 </div>
-            {filtered.map((item) => {
+            {filtered.slice(start, end).map((item) => {
                 return(<div className="panel panel-default blockche" key={item.itemid}>
                         <div className="panel-body">
                     <div className="row" >
@@ -314,6 +354,16 @@ class UserWalmartList extends Component {
                 </div> </div>
                 </div>)
             })}
+            <div className="row">
+                <div className="col-sm-4"> Total Items: {totaItems} </div>
+                <div className="col-sm-4"> <a href="#" onClick={()=> this.handleMovePage(1) }><span className="glyphicon glyphicon-step-backward"></span></a>
+                    &nbsp;<a href="#" onClick={()=> this.handlePrevPage() }><span className="glyphicon glyphicon-backward"></span></a> 
+                    &nbsp;<Translation text="WALMAR_PAGE" />:{this.state.page} /{maxPage}
+                    &nbsp;<a href="#" onClick={()=> this.handleNextPage() }><span className="glyphicon glyphicon-forward"></span></a>
+                    &nbsp;<a href="#" onClick={()=> this.handleMovePage(maxPage) }><span className="glyphicon glyphicon-step-forward"></span></a> 
+                </div>
+            </div>
+        
             </div>);	
 		}
 		else {
