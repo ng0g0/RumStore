@@ -257,7 +257,7 @@ class UserWalmartList extends Component {
                     <div className="row"><div className="col"><Translation text="Name" />: <b>{item.name}</b></div></div>
                     <div className="row"><div className="col"><Translation text="WALMAR_ITEM_UPC" />: {item.upc}</div></div>
                 </div>
-                <div className="col-sm-2"> 
+                <div className="col-sm-2">   
                     <Translation text="WALMAR_ITEM_ASIN" />: {item.asib}
                 </div>
                 <div className="col-sm-2"> 
