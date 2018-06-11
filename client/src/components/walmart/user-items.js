@@ -299,8 +299,8 @@ class UserWalmartList extends Component {
             let maxPage = Math.ceil( totaItems /this.state.itemPage);
             let start = 0+((this.state.page-1)*(this.state.itemPage));
             let end = ( pageItems > totaItems) ? totaItems : pageItems;
-            //console.log(`start = ${start}`);
-            //console.log(`end = ${end}`);
+            console.log(`start = ${start}`);
+            console.log(`end = ${end}`);
 			return (<div>
                 <div className="row">
                     <div className="col-sm-2">
