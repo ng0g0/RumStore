@@ -26,6 +26,8 @@ class UserWalmartList extends Component {
         this.handleCheckBoxItem = this.handleCheckBoxItem.bind(this);
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
+        this.handleSort = this.handleSort.bind(this);
+        this.handlePage = this.handlePage.bind(this);
         this.handleFetchAll = this.handleFetchAll.bind(this);
         this.handleAddForm = this.handleAddForm.bind(this);
         this.handleNextPage = this.handleNextPage.bind(this);
@@ -180,11 +182,7 @@ class UserWalmartList extends Component {
     handleRefreshItem(items) {
         if (items) {
             this.props.dispatch(fetchFromWalmarAPI(items)); 
-        } //else {
-        //    console.log('Items not found');
-        //}
-            
-        
+        } 
     }
     
 
@@ -202,6 +200,7 @@ class UserWalmartList extends Component {
    handleAddItem({ dispatch }) {
        this.props.dispatch(submit(WalmartItem));
         //console.log('Add Items');
+        
     }
    
     renderAddItemLayer() {
@@ -214,7 +213,6 @@ class UserWalmartList extends Component {
                     <AddItem /> 
                 </LayerMask>);
    }  
-   /**/
     renderMessage(msg) {
         if (msg) {
             return (<div className="row"> 
@@ -225,11 +223,28 @@ class UserWalmartList extends Component {
         }
     }
     
+    handlePage(pageItems) {
+       this.setState({itemPage: pageItems},() => { 
+            console.log('new itemPage ', pageItems); 
+        }); 
+    }
+    handleSort(sort) {
+        this.setState({sort: sort},() => { 
+            console.log('new sort ', sort); 
+        });
+    }
     onChangeHandler(e){
-        this.setState({
-            filter: e.target.value,
-            page: 1
-            })
+        console.log(e);
+        switch(e.target.name) {
+            case "filter":
+                this.setState({
+                    filter: e.target.value,
+                    page: 1
+                });
+                break;
+            default: 
+              console.log(e);
+        }
     }
     renderPriceIndicator(value) {
         switch(value) {
@@ -273,11 +288,69 @@ class UserWalmartList extends Component {
         </div>);
     }
     
-   
+    renderItemPerPage() {
+        let pageArray = [10,20,30];  
+        let pageSize = this.state.itemPage;
+        return(<div className="btn-group">
+                <button type="button" className="btn btn dropdown-toggle" data-toggle="dropdown">
+                        <Translation text="WALMAR_PAGE_SIZE" />:{pageSize}&nbsp;<span className="caret"></span>
+                </button>
+                <ul className="dropdown-menu" role="menu">
+                {pageArray.map((sp, index) => {
+                    return( <li key={sp}>
+                                <a href="#" onClick={()=> this.handlePage(sp) }>{sp}</a>
+                            </li>);
+                })}    
+                </ul>
+            </div>);
+    }
+    renderSortButton() {
+        let sortArray = [ 
+                {lable: 'ASIBDESC', key: '-asib'}, 
+                {lable: 'ASIBASC', key: '+asib'}, 
+                {lable: 'UPCDESC', key: '-upc'},
+                {lable: 'UPCASC', key: '+upc'},
+                {lable: 'NameDESC', key: '-name'},
+                {lable: 'NameASC', key: '+name'},
+                {lable: 'ItemIdDESC', key: '-itemid'},
+                {lable: 'ItemIdASC', key: '+itemid'},
+                {lable: 'PriceDESC', key: '-salePrice'},
+                {lable: 'PriceASC', key: '+salePrice'},
+                {lable: 'Clear', key: ''},
+            ];
+            
+        let sortLabel = this.state.sort.length > 0 && this.state.sort.substring(1);
+        let arrowicon = this.state.sort.length > 0 && ((this.state.sort[0] === "-") ? <span className="glyphicon glyphicon-arrow-down"></span>:<span className="glyphicon glyphicon-arrow-up"></span>);
+        return(<div className="btn-group">
+                <button type="button" className="btn btn dropdown-toggle" data-toggle="dropdown">
+                        <Translation text="WALMAR_ITEM_SORT" />:{sortLabel}&nbsp;{arrowicon} &nbsp; <span className="caret"></span>
+                </button>
+                <ul className="dropdown-menu" role="menu">
+                {sortArray.map((sp, index) => {
+                    return( <li key={sp.key}>
+                                <a href="#" onClick={()=> this.handleSort(sp.key) }>
+                                    <Translation text={sp.lable}/>
+                                </a>
+                            </li>);
+                })}    
+                </ul>
+            </div>);
+    }
     
 	renderListContent(items) {
+        function dynamicSort(property) {
+            var sortOrder = 1;
+            if(property[0] === "-") {
+                sortOrder = -1;
+                property = property.substr(1);
+            }
+            return function (a,b) {
+                var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+                return result * sortOrder;
+            }
+        }
         
-        const { currentValues, filter } = this.state
+        const { currentValues, filter, itemPage, sort } = this.state
 		if (items) {
             var filtered= _.filter(items, function(item) {
                 if (filter.length > 0) {
@@ -294,23 +367,33 @@ class UserWalmartList extends Component {
                 }
                 return true;
             });
+            if (this.state.sort.length > 0) {
+                filtered.sort(dynamicSort(this.state.sort));
+            }
+//            console.log(filtered);
+
             let pageItems = this.state.page*this.state.itemPage;
             let totaItems = filtered.length;
             let maxPage = Math.ceil( totaItems /this.state.itemPage);
             let start = 0+((this.state.page-1)*(this.state.itemPage));
             let end = ( pageItems > totaItems) ? totaItems : pageItems;
-            console.log(`start = ${start}`);
-            console.log(`end = ${end}`);
 			return (<div>
                 <div className="row">
                     <div className="col-sm-2">
-                   <input type="checkbox" className="form-check-input  allcheck" name="all"  
+                        <input type="checkbox" className="form-check-input  allcheck" name="all"  
                               checked={this.state.allChecked} value="all"  
                               onClick={(event )=> this.handleCheckBoxItem(event) }/> 
                     </div>
-                    <div className="col-sm-10">
-                    <Translation text="WALMAR_ITEM_SEARCH"  />
-                    <input value={filter} type="text" onChange={this.onChangeHandler.bind(this)}/>
+                    <div className="col-sm-4">
+                    <Translation text="WALMAR_ITEM_SEARCH" />: 
+                        <input value={filter} type="text" name="filter" onChange={this.onChangeHandler.bind(this)}/>
+                    </div>
+                    
+                    <div className="col-sm-2">
+                    {this.renderItemPerPage()}
+                    </div>
+                    <div className="col-sm-2">
+                    {this.renderSortButton()}
                     </div>
                 </div>
             {filtered.slice(start, end).map((item) => {

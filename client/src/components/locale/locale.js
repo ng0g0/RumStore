@@ -93,7 +93,19 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_ONSTOCK': 'OnStock',
     'WALMAR_ITEM_NOTIFICATION': 'Notifications',
     'WALMAR_SEARCH': 'Walmart Search',
+    'WALMAR_PAGE_SIZE': 'Items per Page',
+    'WALMAR_ITEM_SORT': 'Sort by',
     'Administrator': 'Administrator',
+    'ASIBDESC': 'ASIB desc',
+    'ASIBASC': 'ASIB asc',
+    'UPCDESC': 'UPC desc',
+    'UPCASC': 'UPC asc',
+    'NameDESC': 'Name desc',
+    'NameASC': 'Name asc',
+    'ItemIdDESC': 'ItemId desc',
+    'ItemIdASC': 'ItemId asc',
+    'PriceDESC': 'Price desc',
+    'PriceASC': 'Price asc',
     'SHOW_MORE': 'Show Next 5',
     'SHOW_PMORE': 'Show Prior 5',
     'date': 'Date',
@@ -101,7 +113,8 @@ const TRANSLATIONS = {
     'UserItems': 'User Items',
     'USER_LISTITEMS': 'User Products',
     'Settings': 'Settings',
-    'NO_UPDATE_FOUND': 'There is not changed items'
+    'NO_UPDATE_FOUND': 'There is not changed items',
+    'Clear': 'Clear'
     
     
   },
@@ -193,6 +206,16 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_UPC': 'UPC',
     'WALMAR_ITEM_ASIN': 'ASIN',
     'WALMAR_ALREADY': 'Добавен',
+    'ASIBDESC': 'ASIB нискодящ',
+    'ASIBASC': 'ASIB възходящ',
+    'UPCDESC': 'UPC нискодящ',
+    'UPCASC': 'UPC възходящ',
+    'NameDESC': 'Name нискодящ',
+    'NameASC': 'Name възходящ',
+    'ItemIdDESC': 'ItemId нискодящ',
+    'ItemIdASC': 'ItemId възходящ',
+    'PriceDESC': 'Price нискодящ',
+    'PriceASC': 'Price възходящ',
     'SHOW_MORE': 'Покажи още 5',
     'SHOW_PMORE': 'Покажи предишните 5',
     'WALMAR_ITEM_REFRESH': 'Обнови продукт',
@@ -202,13 +225,16 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_ONSTOCK': 'Наличен',
     'WALMAR_ITEM_NOTIFICATION': 'Аларми',
     'WALMAR_SEARCH': 'Walmart Търсачка',
+    'WALMAR_PAGE_SIZE': 'Продукти на страница',
+    'WALMAR_ITEM_SORT': 'Подредени по',
     'Administrator': 'Администратор',
     'date': 'Дата',
     'value': 'Стойност' ,
     'UserItems': 'Продукти',
     'USER_LISTITEMS': 'Продукти',
     'Settings': 'Settings',
-    'NO_UPDATE_FOUND': 'Няма променени продукти'
+    'NO_UPDATE_FOUND': 'Няма променени продукти',
+    'Clear': 'Изчисти'
     
   }
 };
@@ -223,3 +249,4 @@ export default {
 	TRANSLATIONS,
 	LANG_NAMES
 };
+
