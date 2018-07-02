@@ -1,7 +1,7 @@
 var http = require('http'); //importing http
 
 var options = {
-    host: 'https://rumstore.herokuapp.com',
+    host: 'rumstore.herokuapp.com',
     port: 80,
     path: '/WAKEUP_DYNO'
 };
