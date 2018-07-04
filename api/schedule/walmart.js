@@ -10,6 +10,22 @@ exports.runSchedure = function () {
     });
 }
 
+exports.runCleanUp = function () {
+   console.log('runCleanUp');
+    schedule.scheduleJob('WalmartClean', '0 0 * * *', function() {
+        WalmartController.WalmartCleanUp();
+        currentTime();
+    });
+}
+
+exports.runWalmartDailyUpdate = function () {
+   console.log('runWalmartDailyUpdate');
+    schedule.scheduleJob('WalmartDailyUpdate', '0 0 * * *', function() {
+        WalmartController.WalmartDailyUpdate();
+        currentTime();
+    });
+}
+
 stopSchedure = function () {
 
     var my_job = schedule.scheduledJobs['WalmartSchedule'];

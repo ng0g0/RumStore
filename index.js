@@ -112,6 +112,10 @@ console.log(process.env.NODE_ENV);
 const port = process.env.PORT || config.port;
 app.listen(port);
 WalmartScheduler.runSchedure();
+WalmartScheduler.runCleanUp();
+WalmartScheduler.runWalmartDailyUpdate();
+//WalmartController.WalmartCleanUp();
+//WalmartController.WalmartDailyUpdate();
 //WalmartController.WalmartNotification();
 
 console.log(`API listening on ${port}`);
