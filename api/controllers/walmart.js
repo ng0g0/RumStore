@@ -20,10 +20,10 @@ exports.getWalmartBestItems = function (req, res, next) {
 exports.getWalmartSearchedItems = function (req, res, next) {
     const searchType = req.params.sType;
     const itemId = req.params.itemId  || 0;
-    const itemPage = 10;
-    const page = 1;
+    const itemPage = req.params.items || 10;
+    const page = req.params.page || 1;
     const orderval = 'asc';
-    const sort = "title"; //relevance, price, title, bestseller, customerRating, new
+    const sort = req.params.sort || "title"; //relevance, price, title, bestseller, customerRating, new
     let order = ""; //asc, desc user only if sort is  price, title, customerRating
     switch(sort) {
     case "price":
@@ -40,7 +40,7 @@ exports.getWalmartSearchedItems = function (req, res, next) {
     } 
     
     let url = '';
-    console.log(searchType);
+    //console.log(searchType);
     if (itemId.length >0) {
         switch(searchType) {
             case "upc":

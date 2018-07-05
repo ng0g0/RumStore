@@ -10,8 +10,8 @@ import LayerMask from '../layerMask/layermask';
 import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
 import AddItem from './add-items';
-import { WalmartItem } from '../../consts';
-import { submit } from 'redux-form';
+import { WalmartItem, searchWalmart } from '../../consts';
+import { submit, change } from 'redux-form';
 import _ from 'lodash';
 
 class ListItems extends Component {
@@ -31,6 +31,39 @@ class ListItems extends Component {
     handleCancelClick(item) {
         console.log('Cancel'); 
     }
+    handleChangePage(maxPage, type) {
+        let minPage = 1;
+        let newValue = -1;
+        //console.log(type);
+        switch(type) {
+            case "FIRST":
+                newValue =  1;  
+                break;
+            case "NEXT":
+                if (maxPage >= this.props.formSearch.pageNum) {
+                   newValue =   this.props.formSearch.pageNum + 1;    
+                }
+                break;
+            case "PRIOR":
+                if (minPage < this.props.formSearch.pageNum) {
+                    newValue =   this.props.formSearch.pageNum - 1;    
+                }
+                break;
+            default:
+                newValue =  maxPage;
+                
+            } 
+            
+            if (newValue != -1) {
+                this.props.dispatch(change(searchWalmart, 'pageNum', newValue));
+                setTimeout(() => { 
+                    //console.log(this.props.formSearch);
+                    this.props.dispatch(submit(searchWalmart)); 
+               }, 2500);
+            }
+           
+    }
+
   
     renderMessage(msg) {
         if (msg) {
@@ -132,17 +165,17 @@ class ListItems extends Component {
 	}
     
     rentderFoundItems() {
-        console.log(this.props);
+        //console.log(this.props);
         const {totalItems, preformSearch, loadingSpinner } = this.props;
         let maxPage = Math.ceil( totalItems /this.props.formSearch.itemPage);
         if (preformSearch && !loadingSpinner) {
             return (<div className="row">
                 <div className="col-sm-4"> Total Items: {totalItems} </div>
-                <div className="col-sm-4"> <a href="#" onClick={()=> this.handleMovePage(1) } disabled><span className="glyphicon glyphicon-step-backward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handlePrevPage() }><span className="glyphicon glyphicon-backward"></span></a> 
+                <div className="col-sm-4"> <a href="#" onClick={()=> this.handleChangePage(maxPage, "FIRST") } ><span className="glyphicon glyphicon-step-backward"></span></a>
+                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "PRIOR") }><span className="glyphicon glyphicon-backward"></span></a> 
                     &nbsp;<Translation text="WALMAR_PAGE" />:{this.props.formSearch.pageNum} /{maxPage}
-                    &nbsp;<a href="#" onClick={()=> this.handleNextPage() }><span className="glyphicon glyphicon-forward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handleMovePage(maxPage) }><span className="glyphicon glyphicon-step-forward"></span></a> 
+                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "NEXT") }><span className="glyphicon glyphicon-forward"></span></a>
+                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "LAST") }><span className="glyphicon glyphicon-step-forward"></span></a> 
                 </div>
             </div>);
         }

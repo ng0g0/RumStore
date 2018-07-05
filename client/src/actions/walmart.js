@@ -157,10 +157,10 @@ export function bestItems() {
 
 
 export function searchFunc(props) {
-    console.log(props);
+    //console.log(props);
     return function (dispatch) {
         dispatch(requestItemInfo(props.stype, props.search, props.sort, props.itemPage, props.pageNum));
-        return axios({ url: `${API_URL}/walmart/item/search/${props.stype}/${props.search}`,
+        return axios({ url: `${API_URL}/walmart/item/search/${props.stype}/${props.search}/${props.pageNum}/${props.itemPage}/${props.sort}`,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
             })

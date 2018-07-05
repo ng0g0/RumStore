@@ -25,46 +25,41 @@ class SearchItem extends Component {
                         <div className="panel-body">
                      <form onSubmit={handleSubmit}>
                         <div className="row">
-                            <div className="col-md-2">
-                                <div className="row">
-                                    <label>Search by:</label>
-                                    <Field name="stype" component="select">
+                            <div className="col-md-2"><label>Search:</label></div>
+                            <div className="col-md-10"><Field name="search" component="input" type="text"/></div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-2"><label>Search by:</label></div>
+                            <div className="col-md-10"><Field name="stype" component="select">
                                         <option value="itemId">ItemId</option>
                                         <option value="upc">UPC</option>
                                         <option value="name">name</option>
                                         <option value="search">FreeSearch</option> 
-                                    </Field>
-                                </div>
-                            </div>
-                            <div className="col-md-3">
-                                <Field name="search" component="input" type="text"/>
-                            </div>
-                            <div className="col-md-3">
-                                <div className="row">
-                                    <label>sort by:</label>
-                                    <Field name="sort" component="select">
+                                    </Field></div>
+                        </div>
+                        <div className="row">    
+                            <div className="col-md-2"><label>sort by:</label></div>
+                            <div className="col-md-10"><Field name="sort" component="select">
                                         <option value="relevance">relevance</option>
                                         <option value="price">price</option>
                                         <option value="title">title</option>
                                         <option value="bestseller">bestseller</option>
                                         <option value="customerRating">customerRating</option>
                                         <option value="new">new</option>
-                                    </Field>
-                                </div>    
-                            </div>
-                            <div className="col-md-2">
-                                <div className="row">
-                                    <label>Items per Page:</label>
-                                    <Field name="itemPage" component="select">
+                                    </Field></div>    
+                        </div>
+                        <div className="row">  
+                            <div className="col-md-2"><label>Items per Page:</label></div>
+                            <div className="col-md-10"><Field name="itemPage" component="select">
                                         <option value="10">10</option>
                                         <option value="25">25</option>
                                     </Field>
-                                    <Field name="pageNum" component="input" type="text" disabled />
-                                    
+                                    <Field name="pageNum" component="input" style={{ height: 0 }} type="hidden" />
                                 </div>
-                            </div>
-                            <div className="col-md-3">
-                                <button type="submit"><Translation text="WALMAR_ITEM_SEARCH" /></button>
+                        </div>
+                        <div className="row">  
+                            <div className="col-md-12">
+                               <button type="submit"><Translation text="WALMAR_ITEM_SEARCH" /></button>
                             </div>
                         </div>
                         </form>
@@ -89,14 +84,32 @@ const mapDispatchToProps = (dispatch) =>
 }, dispatch);
 
 function  handleFormSubmit(formProps, dispatch) {
+   //console.log(formProps);
     return dispatch(searchFunc(formProps));
 }
+
+//let timeout = null; 
 
 const form = reduxForm({
   form: searchWalmart,
   enableReinitialize: true,
+//  onChange: (values, dispatch, props, previousValues) => {
+//      let value = values;
+//      console.log(value);
+//      clearTimeout(timeout);
+//        timeout = setTimeout(() => { 
+        //props.submit()
+            //console.log(props);
+            //console.log(dispatch);
+//          console.log(values);
+            //console.log(previousValues);
+//            console.log(values);
+// /       }, 1500);
+//    },
   onSubmit: handleFormSubmit, 
 });
+
+
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(form(SearchItem));

@@ -42,12 +42,15 @@ export default function (state = INITIAL_STATE, action) {
 			searchSpinner: true,
             formSearch: {
                 stype: action.stype || 'itemId', 
-                search: action.search || ''
+                search: action.search || '',
+                sort: action.sort, 
+                itemPage: action.itemPage, 
+                pageNum: action.pageNum
             },
             preformSearch: true  
 		});
     case RECV_WALMART_SEARCH:
-            console.log(action.data);
+            //console.log(action.data);
  			return Object.assign({}, state, {
                 searchSpinner: false,
                 formSearch: {
