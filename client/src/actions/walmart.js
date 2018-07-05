@@ -56,20 +56,26 @@ function receiveWalmartBest(json) {
 //function receiveWalmartAPI() {
 //   return {type: RECV_WALMART_INFO}  
 //}
-function requestItemInfo(stype, search) {
+function requestItemInfo(stype, search, sort, itemPage, pageNum) {
     return {
         type: REQ_WALMART_SEARCH,
         stype: stype,
-        search: search
+        search: search,
+        sort: sort,
+        itemPage: itemPage,
+        pageNum: pageNum
     } 
 }
 
-function receiveItemInfo(json, stype, search) {
+function receiveItemInfo(json, stype, search, sort, itemPage, pageNum ) {
 	return{
 		type: RECV_WALMART_SEARCH,
 		data: json,
         stype: stype,
-        search: search
+        search: search,
+        sort: sort,
+        itemPage: itemPage,
+        pageNum: pageNum
 	}
 };
 
@@ -151,16 +157,18 @@ export function bestItems() {
 
 
 export function searchFunc(props) {
-    //console.log(props);
+    console.log(props);
     return function (dispatch) {
-        dispatch(requestItemInfo(props.stype, props.search));
+        dispatch(requestItemInfo(props.stype, props.search, props.sort, props.itemPage, props.pageNum));
         return axios({ url: `${API_URL}/walmart/item/search/${props.stype}/${props.search}`,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
             //console.log(response.data);
-            dispatch(receiveItemInfo(response.data, props.stype, props.search));
+            
+           //, sort, itemPage, pageNum
+            dispatch(receiveItemInfo(response.data, props.stype, props.search, props.sort, props.itemPage, props.pageNum));
         })
         .catch((error) => {
             console.log(error)

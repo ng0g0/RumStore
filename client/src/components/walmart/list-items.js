@@ -131,7 +131,23 @@ class ListItems extends Component {
 		}
 	}
     
-   
+    rentderFoundItems() {
+        console.log(this.props);
+        const {totalItems, preformSearch, loadingSpinner } = this.props;
+        let maxPage = Math.ceil( totalItems /this.props.formSearch.itemPage);
+        if (preformSearch && !loadingSpinner) {
+            return (<div className="row">
+                <div className="col-sm-4"> Total Items: {totalItems} </div>
+                <div className="col-sm-4"> <a href="#" onClick={()=> this.handleMovePage(1) } disabled><span className="glyphicon glyphicon-step-backward"></span></a>
+                    &nbsp;<a href="#" onClick={()=> this.handlePrevPage() }><span className="glyphicon glyphicon-backward"></span></a> 
+                    &nbsp;<Translation text="WALMAR_PAGE" />:{this.props.formSearch.pageNum} /{maxPage}
+                    &nbsp;<a href="#" onClick={()=> this.handleNextPage() }><span className="glyphicon glyphicon-forward"></span></a>
+                    &nbsp;<a href="#" onClick={()=> this.handleMovePage(maxPage) }><span className="glyphicon glyphicon-step-forward"></span></a> 
+                </div>
+            </div>);
+        }
+        return(<div></div>);
+    }
     render() {
         const {itemSearch, preformSearch, loadingSpinner } = this.props;
         if ( loadingSpinner &&  preformSearch) {
@@ -140,6 +156,7 @@ class ListItems extends Component {
             return (<div className="panel panel-default">
                 <div className="panel-body">
                     {this.renderAddItemLayer()}
+                    {this.rentderFoundItems()}
                     {this.renderListContent(itemSearch)}
                 </div>
             </div>);	
@@ -152,7 +169,9 @@ function mapStateToProps(state) {
     loadingSpinner: state.walmartSearch.searchSpinner,
     itemSearch: state.walmartSearch.itemSearch,
     items: state.walmart.items,  
-    preformSearch: state.walmartSearch.preformSearch
+    preformSearch: state.walmartSearch.preformSearch,
+    formSearch: state.walmartSearch.formSearch,
+    totalItems: state.walmartSearch.totalItems,
   };
 }
 

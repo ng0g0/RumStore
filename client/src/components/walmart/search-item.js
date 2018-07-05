@@ -8,6 +8,7 @@ import {bindActionCreators} from 'redux';
 import { searchWalmart } from '../../consts';
 import ListItems from './list-items';
 
+
 class SearchItem extends Component {
     constructor(props) {
 		super(props);
@@ -31,11 +32,36 @@ class SearchItem extends Component {
                                         <option value="itemId">ItemId</option>
                                         <option value="upc">UPC</option>
                                         <option value="name">name</option>
+                                        <option value="search">FreeSearch</option> 
                                     </Field>
                                 </div>
                             </div>
                             <div className="col-md-3">
                                 <Field name="search" component="input" type="text"/>
+                            </div>
+                            <div className="col-md-3">
+                                <div className="row">
+                                    <label>sort by:</label>
+                                    <Field name="sort" component="select">
+                                        <option value="relevance">relevance</option>
+                                        <option value="price">price</option>
+                                        <option value="title">title</option>
+                                        <option value="bestseller">bestseller</option>
+                                        <option value="customerRating">customerRating</option>
+                                        <option value="new">new</option>
+                                    </Field>
+                                </div>    
+                            </div>
+                            <div className="col-md-2">
+                                <div className="row">
+                                    <label>Items per Page:</label>
+                                    <Field name="itemPage" component="select">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                    </Field>
+                                    <Field name="pageNum" component="input" type="text" disabled />
+                                    
+                                </div>
                             </div>
                             <div className="col-md-3">
                                 <button type="submit"><Translation text="WALMAR_ITEM_SEARCH" /></button>
@@ -48,7 +74,8 @@ class SearchItem extends Component {
                     </div>
                 </div>);
     }
-	
+    
+	 //relevance, price, title, bestseller, customerRating, new
 }
 	
 function mapStateToProps(state) {

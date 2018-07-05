@@ -20,7 +20,27 @@ exports.getWalmartBestItems = function (req, res, next) {
 exports.getWalmartSearchedItems = function (req, res, next) {
     const searchType = req.params.sType;
     const itemId = req.params.itemId  || 0;
+    const itemPage = 10;
+    const page = 1;
+    const orderval = 'asc';
+    const sort = "title"; //relevance, price, title, bestseller, customerRating, new
+    let order = ""; //asc, desc user only if sort is  price, title, customerRating
+    switch(sort) {
+    case "price":
+        order = `&order=${orderval}`;
+        break;
+    case "title":
+        order = `&order=${orderval}`;
+        break;
+    case "customerRating":
+        order = `&order=${orderval}`;
+        break;
+    default:
+        order = '';
+    } 
+    
     let url = '';
+    console.log(searchType);
     if (itemId.length >0) {
         switch(searchType) {
             case "upc":
@@ -32,14 +52,27 @@ exports.getWalmartSearchedItems = function (req, res, next) {
             case "itemId":
                 url = `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`;
                 break;
+            case "search":
+                url= `http://api.walmartlabs.com/v1/search?apiKey=${walmar_key}&query=${itemId}&numItems=${itemPage}&start=${page}&sort=${sort}${order}`;
+                break;
             default:
                url = `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${itemId}`
         }
+        console.log(url);
         let options = { url: url };
+        let obj;
         return request(options, function (error, response, body) {
-            var obj = JSON.parse(body);
-                if (obj.errors) {
-                   res.status(200).json({ message: 'NO_DATE_FOUND' }); 
+            //console.log(body);
+            try {
+                    obj = JSON.parse(body);
+                } catch(e) {
+                    console.log(body);
+                    res.status(200).json({ message: err});    
+                    //alert(e); // error in the above string (in this case, yes)!
+                }
+               if (obj.errors) {
+                   console.log(body);
+                   res.status(200).json({ message: obj.errors.message }); 
                 } else {
                     res.status(200).json(obj);    
                 }
@@ -50,9 +83,11 @@ exports.getWalmartSearchedItems = function (req, res, next) {
             });
         
     } else {
+        console.log('Item id empty');
         res.status(200).json({ message: 'NO_DATE_FOUND' });
     }
-};    
+};   
+ 
 exports.getWalmartItems = function (req, res, next) {
     const itemId = req.params.itemId;
     let walmartItems = itemId.split(',');
@@ -77,8 +112,13 @@ exports.getWalmartItems = function (req, res, next) {
                             request.get(`https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&itemId=${sentItems}`, function (err, res, body) {
                                 if (IsJsonString(body)) {
                                     let wItemRet = JSON.parse(body); //{items: []}; //
-                                    console.log(`Items Retreved = ${wItemRet.items.length}`);
-                                    walmartResponce = walmartResponce.concat(wItemRet.items);
+                                    if (wItemRet.items) {
+                                        console.log(`Items Retreved = ${wItemRet.items.length}`);
+                                        walmartResponce = walmartResponce.concat(wItemRet.items);    
+                                    } else { 
+                                       console.log(`Items missing`);
+                                    }
+                                    
                                 } else {
                                     console.log('NOT JSON');
                                 }
@@ -270,12 +310,12 @@ exports.WalmartDailyUpdate = function() {
 exports.WalmartNotification = function() {
     console.log('WalmartNotification');
         
-    let walmartItemsSQL = "select '['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue|| '\"}',',')||']' itemDet, itemid, notification, webid, username "+
-        " from ( select distinct dettype, detvalue,itemid , notification, webid, username  "+
-        "   from ( select max(t.detdate) OVER (PARTITION BY itemid, dettype) maxdate ,z.itemid, t.* , z.notification , z.webid, u.username "+
+    let walmartItemsSQL = "select '['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue|| '\"}',',')||']' itemDet, itemid, notification, webid, username, itemname "+
+        " from ( select distinct dettype, detvalue,itemid , notification, webid, username, itemname  "+
+        "   from ( select max(t.detdate) OVER (PARTITION BY itemid, dettype) maxdate ,z.itemid, t.* , z.notification , z.webid, u.username, itemname "+
         "     from rs_items z,UNNEST(itemdetails) as t(dettype,detvalue,detdate), rbm_user u "+
         "     where u.usrid=z.usrid and u.active = 1 and array_length(z.notification , array_ndims(z.notification))>$1 "+
-        "   ) x where x.maxdate = x.detdate ) y GROUP BY itemid, notification, webid, username ";
+        "   ) x where x.maxdate = x.detdate ) y GROUP BY itemid, notification, webid, username, itemname ";
         
     db.many(walmartItemsSQL, [0])
 	.then(itemsList => {
@@ -348,6 +388,7 @@ exports.WalmartNotification = function() {
                                     updateArray.push({
                                            id: itd.itemid, 
                                            email: itd.username, 
+                                           itemname: itd.itemname,
                                            itemId: itd.webid, 
                                            dettype: det.dettype, 
                                            detvalue: det.detvalue, 
@@ -380,7 +421,7 @@ exports.WalmartNotification = function() {
                                 html +=`<p>Following Items was updated</p><table> <tr> <td> Item </td><td> Detail </td><td> New Value </td><td> Old Value </td></tr>`;
                                 
                                 items.forEach((item) => {
-                                    html += `<tr> <td> ${item.itemId} </td><td> ${item.dettype} </td><td> ${item.newValue} </td><td> ${item.detvalue}</td></tr>`
+                                    html += `<tr> <td> ${item.itemId} </td><td>${item.itemname}</td><td> ${item.dettype} </td><td> ${item.newValue} </td><td> ${item.detvalue}</td></tr>`
                                     console.log(`Item ${item.itemId} ${item.dettype} changed ${item.detvalue} to ${item.newValue}`); 
                                 })
                                 html +=`</table>`; 

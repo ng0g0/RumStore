@@ -6,7 +6,7 @@ import {
 const INITIAL_STATE = { 
     error: '', 
     searchSpinner: false, 
-    formSearch: {stype: 'itemId', search: ''},
+    formSearch: {stype: 'itemId', search: '', sort: 'title', itemPage: 10, pageNum: 1, totalItems: 0},
     preformSearch: false   
 };
 
@@ -47,14 +47,19 @@ export default function (state = INITIAL_STATE, action) {
             preformSearch: true  
 		});
     case RECV_WALMART_SEARCH:
+            console.log(action.data);
  			return Object.assign({}, state, {
                 searchSpinner: false,
                 formSearch: {
                     stype: action.stype || 'itemId', 
-                    search: action.search || ''
+                    search: action.search || '',
+                    sort: action.sort, 
+                    itemPage: action.itemPage, 
+                    pageNum: action.pageNum
                 },
 				itemSearch: convertItemList(action.data.items),
-			});        
+                totalItems: action.data.totalResults
+            });        
 	default:
  	  return { ...state };   
   }
