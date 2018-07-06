@@ -221,9 +221,12 @@ export function dbToAddForm(item) {
 }
 
 export function walmartDailyRefresh() {
+    console.log('walmartDailyRefresh');
     return function (dispatch) {
-    axios.get(`${API_URL}/walmart/dailyRefresh`
-    ,{ headers: { Authorization: cookie.load('token') }}) 
+    return axios({ url: `${API_URL}/walmart/dailyRefresh`,
+			method: 'get',
+			headers: { Authorization: cookie.load('token') }
+    })    
     .then((response) => {
         if (response.error) {
             showNotify(response.error, ERROR_NOTIF );

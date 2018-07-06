@@ -201,21 +201,6 @@ exports.WalmartCleanUp = function() {
     db.none(walmartCleanSQL, [historyInterval]);                      
 }
 
-exports.getDailyUpdate = function (req, res, next) { 
-    async.waterfall([
-        function( callbackfunc1) {
-            WalmartDailyUpdate();
-            callbackfunc1(null, 'done');
-        }], function (err, result) {
-            if (err) {
-                res.status(200).json({ error: err });
-            }
-            res.status(200).json({ message: result });
-            console.log(result)
-        });
-    
-};
-
 exports.WalmartDailyUpdate = function() {
     console.log('WalmartDailyUpdate');
     let walmartDailySQL =   " select z.itemid, array_to_string(z.notification,',') as notification , z.webid  "+
@@ -266,13 +251,13 @@ exports.WalmartDailyUpdate = function() {
                 console.log(`Total Items Retreved = ${walmartResponce.length}`);
                 //console.log(walmartResponce);
                 if (walmartResponce.length > 0) {
-                    console.log();
+                    console.log('Start processing');
                     let updateArray =[];
                     walmartResponce.forEach(function(wItem) {
                        const it = items.filter( item => { return Number(item.webid) === wItem.itemId;} );
-                       console.log(it);
+                       console.log(`${it.length} object found`);
                        it.forEach(function(itd) {
-                           //console.log(`Item Check = ${itd.webid} and ${itd.itemid}`);
+                           console.log(`Item Check = ${itd.webid} and ${itd.itemid}`);
                             let itemDet=itd.notification.split(',');
                             itemDet.forEach(function(det) {
                                 //console.log(`Item Notification = ${det}`);
@@ -324,6 +309,26 @@ exports.WalmartDailyUpdate = function() {
     //return walmartItems;
         
 }
+
+exports.getDailyUpdate = function (req, res, next) { 
+console.log('getDailyUpdate');
+    async.waterfall([
+        function( callbackfunc1) {
+            module.exports.WalmartDailyUpdate( function(err, data) {        
+            if (err) throw err;
+            console.log("Reading file completed : " + new Date().toISOString());
+                callbackfunc1(null, 'done');
+            });
+            
+        }], function (err, result) {
+            if (err) {
+                res.status(200).json({ error: err });
+            }
+            res.status(200).json({ message: result });
+            console.log(result)
+        });
+    
+};
 
 exports.WalmartNotification = function() {
     console.log('WalmartNotification');

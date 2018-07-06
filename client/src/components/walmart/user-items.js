@@ -86,6 +86,7 @@ class UserWalmartList extends Component {
        );
 	}
     handleDailyRefresh() {
+        console.log('handleDailyRefresh');
         this.props.dispatch(walmartDailyRefresh());
     }
     
