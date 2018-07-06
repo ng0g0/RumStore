@@ -266,10 +266,11 @@ exports.WalmartDailyUpdate = function() {
                 console.log(`Total Items Retreved = ${walmartResponce.length}`);
                 //console.log(walmartResponce);
                 if (walmartResponce.length > 0) {
+                    console.log();
                     let updateArray =[];
                     walmartResponce.forEach(function(wItem) {
                        const it = items.filter( item => { return Number(item.webid) === wItem.itemId;} );
-                       //console.log(it.length);
+                       console.log(it);
                        it.forEach(function(itd) {
                            //console.log(`Item Check = ${itd.webid} and ${itd.itemid}`);
                             let itemDet=itd.notification.split(',');
@@ -307,7 +308,10 @@ exports.WalmartDailyUpdate = function() {
                     .catch(error => {
                             console.log(error);
                     });
+                } else {
+                    console.log(` Daily Update Item Failed`);
                 }
+                
                 callbackfunc2(null, 'done');
                 
             }
