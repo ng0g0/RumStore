@@ -80,10 +80,10 @@ class UserWalmartList extends Component {
             //this.handleRefreshItem(this.props.items);             
 		} 
         
-       this.interval = setInterval(
-           this.handleRefreshItem(this.props.items), 
-           10000
-       );
+       //this.interval = setInterval(
+       //    this.handleRefreshItem(this.props.items), 
+       //    10000
+       //);
 	}
     handleDailyRefresh() {
         console.log('handleDailyRefresh');
@@ -281,8 +281,13 @@ class UserWalmartList extends Component {
                     <Translation text="WALMAR_ITEM_ASIN" />: {item.asib}
                 </div>
                 <div className="col-sm-2"> 
+                    <div className="row">
                     <Translation text="WALMAR_ITEM_PRICE" />: {item.salePrice}
                     {this.renderPriceIndicator(item.priceIndicator)}
+                    </div>
+                    <div className="row">
+                    <Translation text="Stock" />: {(item.stock == 1) ? 'Available': 'Unavailable' }
+                    </div>
                 </div>    
             </div>
             <div className="row">

@@ -56,6 +56,26 @@ function convertItemDetail(itemDetails) {
     return result;
 }
 
+function updatePriceIndicator(itemDetails) {
+    if (!itemDetails) {
+        return 0;
+    }
+    const item = itemDetails.find( item => item.dettype === 'salePrice' );
+    let result = 0;
+    if (item.items) {
+    if (item.items.length>0) {
+            if (item.items.length>1) {
+                let a = item.items[item.items.length -1];
+                let b = item.items[item.items.length -2];
+                if (a.y > b.y) {result = 1;}
+                if (a.y < b.y) {result = -1;}
+            } 
+        }
+    }
+    return result;
+}
+
+
 function convertItemList(itemList) {
     let itemArray = [];
     if (itemList) {
@@ -66,8 +86,8 @@ function convertItemList(itemList) {
                name: item.name,
                noty: item.noty || [],
                thumbnailimage: item.thumbnailimage || item.thumbnailImage,
-               salePrice: item.salePrice || "N/A",
-               priceIndicator: 0,
+               salePrice: item.salePrice || item.saleprice,
+               priceIndicator: updatePriceIndicator(item.itemDetails),
                upc: item.upc,
                webstore: item.webstore || "walmart",
                itemdetails: convertItemDetail(item.itemdetails),
@@ -105,22 +125,6 @@ function updateItemDetails(itemDetails, noty, updateItem) {
     return itemDetails;
 }
 
-
-function updatePriceIndicator(itemDetails) {
-    const item = itemDetails.find( item => item.dettype === 'salePrice' );
-    let result = 0;
-    if (item.items) {
-    if (item.items.length>0) {
-            if (item.items.length>1) {
-                let a = item.items[item.items.length -1];
-                let b = item.items[item.items.length -2];
-                if (a.y > b.y) {result = 1;}
-                if (a.y < b.y) {result = -1;}
-            } 
-        }
-    }
-    return result;
-}
 
 function updateItemInArray(itemList, updateItems) {
     let arrayList = [];

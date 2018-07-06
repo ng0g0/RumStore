@@ -254,7 +254,7 @@ export function fetchWalmarUserList() {
        // console.log(response.data)
         dispatch(receiveWalmartList(response.data));
        // console.log(response.data);
-        dispatch(fetchFromWalmarAPI(response.data.items.list));
+        //dispatch(fetchFromWalmarAPI(response.data.items.list));
     })
     .catch((error) => {
 		console.log(error)

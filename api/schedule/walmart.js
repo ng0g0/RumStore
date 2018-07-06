@@ -4,17 +4,15 @@ let count = 0;
 
 exports.runSchedure = function () {
    console.log('runSchedure');
-    schedule.scheduleJob('WalmartSchedule', '0 */2 * * *', function() {
+    schedule.scheduleJob('WalmartSchedule', '30 */2 * * *', function() {
         WalmartController.WalmartNotification();
-        currentTime();
     });
 }
 
 exports.runCleanUp = function () {
    console.log('runCleanUp');
-    schedule.scheduleJob('WalmartClean', '0 0 * * *', function() {
+    schedule.scheduleJob('WalmartClean', '20 6 * * *', function() {
         WalmartController.WalmartCleanUp();
-        currentTime();
     });
 }
 
@@ -41,9 +39,9 @@ exports.runWalmartDailyNow = function () {
 
 exports.runWalmartDailyUpdate = function () {
    console.log('runWalmartDailyUpdate');
-    schedule.scheduleJob('WalmartDailyUpdate', '0 0 * * *', function() {
+    schedule.scheduleJob('WalmartDailyUpdate', '30 4 * * *', function() {
         WalmartController.WalmartDailyUpdate();
-        currentTime();
+        //currentTime();
     });
 }
 

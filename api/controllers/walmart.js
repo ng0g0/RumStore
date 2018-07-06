@@ -189,14 +189,17 @@ function IsJsonString(str) {
 
 exports.WalmartCleanUp = function() {
     console.log('WalmartCleanUp');
-    let historyInterval = `'15 days'`; // `'1 minutes'`;
-    let walmartCleanSQL =   "UPDATE rs_items itm "+ 
+    let historyInterval = `'7 days'`; // `'1 minutes'`;
+    let walmartCleanSQL =   " UPDATE rs_items itm "+
                             " SET itemdetails = case when array_ndims(subquery.itemdetails) = 1 and  subquery.itemdetails[1] is null then '{}' else "+
                             " array_cat(null, subquery.itemdetails) end "+
-                            " FROM ( select array_agg(CAST(ROW(detvalue,detvalue,detdate) as rs_itemdetils)) as itemdetails, it.itemid "+
-                            " from ( select t.*, z.itemid from rs_items z, UNNEST(itemdetails) as t(dettype,detvalue,detdate) "+
-                            "	     where 1=1 and t.detdate > current_timestamp - interval $1 ) y right join rs_items it on (y.itemid = it.itemid) "+
-                            "  	group by it.itemid ) AS subquery "+
+                            " FROM ( select array_agg(CAST(ROW(dettype,detvalue,detdate) as rs_itemdetils)) as itemdetails,	it.itemid "+
+                                " from ( select min(t.detvalue) OVER (PARTITION BY z.itemid, t.dettype, date_trunc('days',t.detdate)) as detvalue "+
+                                                " , z.itemid, date_trunc('days',t.detdate) as detdate , t.dettype "+
+                                                " from rs_items z, UNNEST(itemdetails) as t(dettype,detvalue,detdate) "+
+                                        " where 1=1 and t.detdate > current_timestamp - interval '7 days' "+
+                                        " group by itemid, t.dettype,date_trunc('days',t.detdate), t.detvalue "+
+                            " ) Y right join rs_items it on (y.itemid = it.itemid)  group by it.itemid ) AS subquery "+
                             " WHERE itm.itemid=subquery.itemid ";
      console.log(walmartCleanSQL);
     db.none(walmartCleanSQL, [historyInterval]);                      
@@ -601,7 +604,7 @@ exports.getUserItemList = function (req, res, next) {
    const usrId = req.user.uid;
   var obj;	
   //let itemListSql = "select asib,itemid from rs_items z where z.usrid = $1";
-  let itemListSql = "select itemrefresh,webstore, webid as itemid, itemname as name, itemimgurl as thumbnailimage, itemupc as upc, itemasib as asib,itemid as id, "+
+  let itemListSql = "select (latestItem(z.itemdetails)).* ,itemrefresh,webstore, webid as itemid, itemname as name, itemimgurl as thumbnailimage, itemupc as upc, itemasib as asib,itemid as id, "+
             " array_to_json(itemdetails) as itemdetails, array_to_json(notification) as noty  from rs_items z where z.usrid = $1 ";
   
   	db.many(itemListSql, [usrId])
