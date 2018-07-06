@@ -254,11 +254,12 @@ exports.WalmartDailyUpdate = function() {
                 if (walmartResponce.length > 0) {
                     console.log('Start processing');
                     let updateArray =[];
-                    walmartResponce.forEach(function(wItem) {
+
+                    walmartResponce.forEach(function(wItem, index) {
                        const it = items.filter( item => { return Number(item.webid) === wItem.itemId;} );
-                       console.log(`${it.length} object found`);
+                        console.log(`${it.length} object found for ${wItem.itemId}`);
                        it.forEach(function(itd) {
-                           console.log(`Item Check = ${itd.webid} and ${itd.itemid}`);
+                           console.log(`Item ${index} Check = ${itd.webid} and ${itd.itemid}`);
                             let itemDet=itd.notification.split(',');
                             itemDet.forEach(function(det) {
                                 //console.log(`Item Notification = ${det}`);
