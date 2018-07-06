@@ -2,6 +2,7 @@ const pgp = require('pg-promise')(/*options*/);
 const db = require('../connection/postgres');
 var request = require('request');
 const async = require('async');
+const WalmartScheduler = require('../schedule/walmart');
 
 var QRE = pgp.errors.QueryResultError;
 var qrec = pgp.errors.queryResultErrorCode;
@@ -314,12 +315,9 @@ exports.getDailyUpdate = function (req, res, next) {
 console.log('getDailyUpdate');
     async.waterfall([
         function( callbackfunc1) {
-            module.exports.WalmartDailyUpdate( function(err, data) {        
-            if (err) throw err;
-            console.log("Reading file completed : " + new Date().toISOString());
+                WalmartScheduler.runWalmartDailyNow();
+                console.log("Reading file completed : " + new Date().toISOString());
                 callbackfunc1(null, 'done');
-            });
-            
         }], function (err, result) {
             if (err) {
                 res.status(200).json({ error: err });

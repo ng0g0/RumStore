@@ -231,7 +231,7 @@ export function walmartDailyRefresh() {
         if (response.error) {
             showNotify(response.error, ERROR_NOTIF );
         } else {
-            let message = 'Walmart Items Updated';
+            let message = 'Schedule started for Walmart Items Updated';
             showNotify(message, SUCCESS_NOTIF );
             dispatch(fetchWalmarUserList());
         }
