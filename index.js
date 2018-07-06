@@ -77,6 +77,7 @@ const apiRoutes = express.Router(),
   // View user profile route
   userRoutes.get('/walmartList', requireAuth, WalmartController.getUserItemList);
   userRoutes.get('/walmartUpdate', requireAuth, WalmartController.getUserUpdateItems);
+  userRoutes.get('/walmart/dailyRefresh', requireAuth, WalmartController.getDailyUpdate);
   userRoutes.get('/:userId', requireAuth, UserController.viewProfile);
   //userRoutes.get('/items/:userId', requireAuth, WalmartController.getUserItems);
   

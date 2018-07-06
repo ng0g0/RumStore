@@ -220,6 +220,26 @@ export function dbToAddForm(item) {
     };        
 }
 
+export function walmartDailyRefresh() {
+    return function (dispatch) {
+    axios.get(`${API_URL}/walmart/dailyRefresh`
+    ,{ headers: { Authorization: cookie.load('token') }}) 
+    .then((response) => {
+        if (response.error) {
+            showNotify(response.error, ERROR_NOTIF );
+        } else {
+            let message = 'Walmart Items Updated';
+            showNotify(message, SUCCESS_NOTIF );
+            dispatch(fetchWalmarUserList());
+        }
+    })
+    .catch((error) => {
+		console.log(error);
+        showNotify('Error during creation', ERROR_NOTIF );
+    });
+  };
+}
+
 export function fetchWalmarUserList() {
   return function (dispatch) {
 	dispatch(requestWalmartList());

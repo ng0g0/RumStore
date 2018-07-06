@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { fetchWalmarUserList, fetchFromWalmarAPI, deleteWalmarItem, dbToAddForm } from '../../actions/walmart';
+import { fetchWalmarUserList, fetchFromWalmarAPI, deleteWalmarItem, dbToAddForm, walmartDailyRefresh } from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import AccGroup from '../accordion/accordiongroup';
 import Translation from '../locale/translate';
@@ -33,6 +33,7 @@ class UserWalmartList extends Component {
         this.handleNextPage = this.handleNextPage.bind(this);
         this.handlePrevPage = this.handlePrevPage.bind(this);
         this.handleMovePage = this.handleMovePage.bind(this);
+        this.handleDailyRefresh = this.handleDailyRefresh.bind(this);
 
         
         this.state = {
@@ -84,6 +85,9 @@ class UserWalmartList extends Component {
            10000
        );
 	}
+    handleDailyRefresh() {
+        this.props.dispatch(walmartDailyRefresh());
+    }
     
     handleAddForm(item) {
         //console.log(item);
@@ -464,6 +468,11 @@ class UserWalmartList extends Component {
                         <Translation text="WalmarItemAction" />
                     </a>
                     <ul className="dropdown-menu">
+                        <li key="Daily">
+                            <Link  className="dropdown-item" onClick={()=> this.handleDailyRefresh() }> 
+                                <Translation text="WALMAR_ITEM_REFRESH" />
+                            </Link>
+                        </li>
                         <li key="Selected">
                             <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> 
                                 <Translation text="RefreshSelected" />
@@ -511,7 +520,8 @@ const mapDispatchToProps = (dispatch) =>
     bindActionCreators({
             fetchFromWalmarAPI,
             deleteWalmarItem,
-            dbToAddForm
+            dbToAddForm,
+            walmartDailyRefresh
         }, 
         dispatch
     );

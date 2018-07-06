@@ -201,6 +201,20 @@ exports.WalmartCleanUp = function() {
     db.none(walmartCleanSQL, [historyInterval]);                      
 }
 
+exports.getDailyUpdate = function (req, res, next) { 
+    async.waterfall([
+        function( callbackfunc1) {
+            WalmartDailyUpdate();
+            callbackfunc1(null, 'done');
+        }], function (err, result) {
+            if (err) {
+                res.status(200).json({ error: err });
+            }
+            res.status(200).json({ message: result });
+            console.log(result)
+        });
+    
+};
 
 exports.WalmartDailyUpdate = function() {
     console.log('WalmartDailyUpdate');
