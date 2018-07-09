@@ -261,6 +261,27 @@ class UserWalmartList extends Component {
             return(<span className="glyphicon glyphicon-minus"></span>)
         } 
     }
+    
+    renderAttributes(att) {
+        //console.log(att);
+        if (_.isUndefined(att)) 
+            return(<div className="col-sm-12"> No Attributes -> click refesh btn</div>)    
+        let size = Object.keys(att).length;
+        if (size === 0) {
+            return(<div className="col-sm-12"> No Attributes </div>)    
+        } else {
+           // let classcl = `col-sm-${(12/size)}`;
+            let classcl = `col-sm-1`;
+            var out = Object.keys(att).map(function(key) {
+                return( <div className={classcl} key={key}>
+                            <div className="row"><b>{key}</b></div>
+                            <div className="row">{att[key]}</div>
+                        </div>);
+            });
+            return(out);
+        }
+    }
+    
     renderCellContent(item) {
         const { currentValues } = this.state;
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
@@ -269,26 +290,33 @@ class UserWalmartList extends Component {
                 { this.renderMessage(item.message) }
                <div className="col-sm-2">
                     <img alt={item.itemid} src ={itemImage} className="img-responsive"/>
-                </div>   
-                <div className="col-sm-2"> 
-                    ItemID: {item.itemid}
-                </div> 
-                <div className="col-sm-4"> 
-                    <div className="row"><div className="col"><Translation text="Name" />: <b>{item.name}</b></div></div>
-                    <div className="row"><div className="col"><Translation text="WALMAR_ITEM_UPC" />: {item.upc}</div></div>
                 </div>
-                <div className="col-sm-2">   
-                    <Translation text="WALMAR_ITEM_ASIN" />: {item.asib}
-                </div>
-                <div className="col-sm-2"> 
+                <div className="col-sm-10">                
                     <div className="row">
-                    <Translation text="WALMAR_ITEM_PRICE" />: {item.salePrice}
-                    {this.renderPriceIndicator(item.priceIndicator)}
+                        <div className="col-sm-2"> 
+                            ItemID: {item.itemid}
+                        </div> 
+                        <div className="col-sm-4"> 
+                            <div className="row"><div className="col"><Translation text="Name" />: <b>{item.name}</b></div></div>
+                            <div className="row"><div className="col"><Translation text="WALMAR_ITEM_UPC" />: {item.upc}</div></div>
+                        </div>
+                        <div className="col-sm-2">   
+                            <Translation text="WALMAR_ITEM_ASIN" />: {item.asib}
+                        </div>
+                        <div className="col-sm-2"> 
+                            <div className="row">
+                            <Translation text="WALMAR_ITEM_PRICE" />: {item.salePrice}
+                            {this.renderPriceIndicator(item.priceIndicator)}
+                            </div>
+                            <div className="row">
+                            <Translation text="Stock" />: {(item.stock == 1) ? 'Available': 'Unavailable' }
+                            </div>
+                        </div>    
                     </div>
                     <div className="row">
-                    <Translation text="Stock" />: {(item.stock == 1) ? 'Available': 'Unavailable' }
+                        {this.renderAttributes(item.attributes)} 
                     </div>
-                </div>    
+                </div>
             </div>
             <div className="row">
                 <AccGroup title="WALMAR_ITEM_HISTORY" key={item.itemid} collapsed="Y" item={item.itemid} >  

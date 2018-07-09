@@ -9,6 +9,7 @@ import {
     RECV_DB_2_FORM
 } from '../actions/types';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 const INITIAL_STATE = { 
     message: '', 
@@ -75,11 +76,42 @@ function updatePriceIndicator(itemDetails) {
     return result;
 }
 
+//function returnNotfConf(notification, item) {
+//    let conf = [];
+//    notification.forEach((notf) => {
+//        let value = { detname: notf, detvalue: item[notf]};
+//        conf.push(value);
+//        
+//    })
+//    console.log(conf);
+//    return conf;
+//}
+
+function attributeFilter(object) {
+  //  console.log(object);
+const allowed = ['color', 'size'];
+  let attr = {};  
+  if (_.isUndefined(object) || _.isNull(object)) {
+      return attr;
+  } else {
+      
+    attr =  Object.keys(object)
+            .filter(key => allowed.includes(key))
+            .reduce((obj, key) => {
+                obj[key] = object[key];
+                return obj;
+            }, {});  
+    return attr;
+  }
+}
+
 
 function convertItemList(itemList) {
+    
     let itemArray = [];
     if (itemList) {
         itemList.forEach(function(item) {
+               // console.log(item);
             let obj = {
                asib: item.asib || "N/A",
                itemid: item.itemid || item.itemId,
@@ -92,7 +124,9 @@ function convertItemList(itemList) {
                webstore: item.webstore || "walmart",
                itemdetails: convertItemDetail(item.itemdetails),
                stock: item.stock,
-               id: item.id || 0
+               id: item.id || 0,
+               //notfConf: returnNotfConf(item.noty, item),
+               attributes: attributeFilter(item.attributes)
                
             }
             itemArray.push(obj);   
@@ -126,6 +160,8 @@ function updateItemDetails(itemDetails, noty, updateItem) {
 }
 
 
+
+
 function updateItemInArray(itemList, updateItems) {
     let arrayList = [];
     if (updateItems) {
@@ -134,6 +170,7 @@ function updateItemInArray(itemList, updateItems) {
             var result = updateItems.find(function(it) { return  it.itemId == item.itemid ;  });
             var obj = {};//item;
             if(result) {
+                //console.log(result);
                 let itemDetails = updateItemDetails(item.itemdetails, item.noty, result);
                 obj = Object.assign(item, {
                         thumbnailimage: result.thumbnailImage,
@@ -142,8 +179,8 @@ function updateItemInArray(itemList, updateItems) {
                         upc: result.upc,
                         itemdetails: itemDetails,
                         message: result.message,
-                        stock: result.stock
-                        
+                        stock: result.stock,
+                        attributes: attributeFilter(result.attributes)
                 });
 
             } else {
@@ -181,12 +218,12 @@ export default function (state = INITIAL_STATE, action) {
                 itemInfo: action.data
             });
     case RECV_DB_2_FORM:
-        console.log(action);
+        //console.log(action);
         return Object.assign({}, state, {
                 itemInfo: action.data
         });
     case RECV_WALMART_INFO: {
-        console.log(action.data);
+        //console.log(action.data);
             const newItems =  updateItemInArray(state.itemList, action.data.items);
             return updateObject(state, {itemList : newItems, message: action.message});
             }    

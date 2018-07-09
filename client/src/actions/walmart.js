@@ -200,7 +200,7 @@ export function fetchFromWalmarAPI(items) {
 			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
-            console.log(response.data);
+            //console.log(response.data);
             dispatch(receiveWalmartAPI(response.data));
         })
         .catch((error) => {

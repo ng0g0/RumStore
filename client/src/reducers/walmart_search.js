@@ -10,10 +10,28 @@ const INITIAL_STATE = {
     preformSearch: false   
 };
 
+function attributeFilter(object) {
+const allowed = ['color', 'size'];
+  let attr = {};  
+  if (_.isUndefined(object) || _.isNull(object)) {
+      return attr;
+  } else {
+      
+    attr =  Object.keys(object)
+            .filter(key => allowed.includes(key))
+            .reduce((obj, key) => {
+                obj[key] = object[key];
+                return obj;
+            }, {});  
+    return attr;
+  }
+}
+
 function convertItemList(itemList) {
     let itemArray = [];
     if (itemList) {
         itemList.forEach(function(item) {
+            console.log(item);
             let obj = {
                asib: item.asib || "N/A",
                itemid: item.itemid || item.itemId,
@@ -25,7 +43,8 @@ function convertItemList(itemList) {
                upc: item.upc,
                webstore: item.webstore || "walmart",
                itemdetails: [],
-               stock: item.stock
+               stock: item.stock,
+               attributes: attributeFilter(item.attributes) 
                
             }
             itemArray.push(obj);   

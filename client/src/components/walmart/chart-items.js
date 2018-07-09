@@ -9,7 +9,8 @@ class ItemChart extends Component {
 		super(props);
         this.state = {
             options: [ { name:'test'},{ name:'test1'}],
-            selectedItem: '-1'
+            selectedItem: '-1',
+            width: 600
         };
         this.handleChange = this.handleChange.bind(this);
 	}
@@ -20,55 +21,55 @@ class ItemChart extends Component {
     renderItems(aaa) {
         return (<tbody>
                 {aaa.items.map((item, index) => {
-                    return(<tr key={index}><td>{item.y}</td><td>{item.x}</td></tr>)
+                    return(<tr key={index}><td>{item.x}</td><td>{item.y}</td></tr>)
                 })}
         </tbody>);
     }
+    
+    //componentDidMount() {
+        //const width = document.getElementById('chart').clientWidth;
+        //console.log(width);
+    //    this.setState({ width: width });
+    //}
     
     renderEasy(aaa, yAxis) {
         var yType = 'numeric';
         var maxDate = dayjs().add(1, 'day').format('DD-MMM-YY');
         var minDate = dayjs().subtract(5, 'day').format('DD-MMM-YY');
+        var minValue = _.minBy(aaa.items, 'y');
+        var maxValue = _.minBy(aaa.items, 'y');
+        var yMinVaue = 0;
+        var yMaxVaue = 1;
         
-        if (Number.isNaN(Number.parseFloat(aaa.items[0].y))) {
-             yType='text'; 
-        } else {
-            
+        if (yAxis === 'salePrice') {
+            yMinVaue = minValue.y  -1;
+            yMaxVaue = maxValue.y  +1;
         }
-        if (yType==='numeric') {
-            var minValue = _.minBy(aaa.items, 'y');
-            var maxValue = _.minBy(aaa.items, 'y');
-            return(<LineChart     
+       // if (Number.isNaN(Number.parseFloat(aaa.items[0].y))) {
+       //      yType='text'; 
+       // } else {
+            
+       // }
+       // if (yType==='numeric') {
+            
+            return(<LineChart    
                 axisLabels={{x: 'Time', y: `${yAxis}`}}
+                width={this.state.width}
+                height={this.state.width/2}
                 xType={'time'}
                 xDomainRange={[`${minDate}`, `${maxDate}`]}
-                yDomainRange={[`${(minValue.y)-2}`, `${(maxValue.y)+2}`]}
+                yDomainRange={[`${yMinVaue}`, `${yMaxVaue}`]}
                 y-axis-config='{"tickFormat": ".2s"}'
                 axes
-                width={750}
-                height={250}
+                lineColors={['#ff6600']}
                 data={[aaa.items]}
             />) 
-        } else {
-            return(<LineChart     
-                xType={'time'}
-                axisLabels={{x: 'Time', y: `${yAxis}`}}
-                xDomainRange={[`${minDate}`, `${maxDate}`]}
-                y-axis-config='{"tickFormat": ".2s"}'
-                yType={'text'}
-                interpolate={'linear'}
-                axes
-                width={750}
-                height={250}
-                data={[aaa.items]}
-            />)
-        }
     }
     
     renderGraph(detIitems) {
         if (detIitems) {
             if (Array.isArray(detIitems)) {
-                return(<div>
+                return(<div id="chart">
                 {detIitems.map((det, index) => {
                     return(<div key={index}>
                         {this.renderEasy(det, det.dettype)}
@@ -93,8 +94,8 @@ class ItemChart extends Component {
                     {detIitems.map((det, index) => {
                         return(<table className="table" key={index}>
                             <thead className="thead-dark">
-                                <tr><td><Translation text="value" /></td>
-                                    <td><Translation text="date" /></td></tr>
+                                <tr><td><Translation text="date" /></td>
+                                    <td><Translation text="value" /></td></tr>
                             </thead>            
                             {this.renderItems(det)}
                         </table>) 
@@ -147,5 +148,7 @@ class ItemChart extends Component {
 	}
 }
 export default ItemChart;
+
+
 
 

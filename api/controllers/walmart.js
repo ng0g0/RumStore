@@ -158,7 +158,7 @@ exports.getUserUpdateItems = function (req, res, next) {
                 "            from rs_items z,UNNEST(itemdetails) as t(dettype,detvalue,detdate), rbm_user u "+
                 "            where u.usrid=z.usrid and u.active = 1 and u.usrid = $1 "+ 
                 "            and array_length(z.notification , array_ndims(z.notification))>0 ) x "+  
-                "    where oldvalue is not null and  drang = 1 ) y "+ 
+                "    where oldvalue != detvalue and  drang = 1 ) y "+ 
                 " GROUP BY itemid, webid, webstore "; 
 
   	db.many(itemsSql, [usrId])
@@ -201,8 +201,13 @@ exports.WalmartCleanUp = function() {
                                         " group by itemid, t.dettype,date_trunc('days',t.detdate), t.detvalue "+
                             " ) Y right join rs_items it on (y.itemid = it.itemid)  group by it.itemid ) AS subquery "+
                             " WHERE itm.itemid=subquery.itemid ";
-     console.log(walmartCleanSQL);
-    db.none(walmartCleanSQL, [historyInterval]);                      
+     //console.log(walmartCleanSQL);
+    db.none(walmartCleanSQL, [historyInterval]); 
+    let html = '';
+    let name = 'hristov.gv@gmail.com';
+    curDate = new Date().toISOString().slice(0, 16);
+    const  subject = `RumStore Daily Clean Up ${curDate} Compelted`;
+    MailSender.sendEmail(name, subject, html);    
 }
 
 exports.WalmartDailyUpdate = function() {
@@ -323,11 +328,21 @@ console.log('getDailyUpdate');
                 console.log("Reading file completed : " + new Date().toISOString());
                 callbackfunc1(null, 'done');
         }], function (err, result) {
+            let html = '';
+            let name = 'hristov.gv@gmail.com';
+            curDate = new Date().toISOString().slice(0, 16);
+            
             if (err) {
+                const  subject = `RumStore DailyUpdate ${curDate} Failed`;
+                MailSender.sendEmail(name, subject, html)
                 res.status(200).json({ error: err });
             }
+            
+            const  subject = `RumStore DailyUpdate ${curDate} Compelted`;
+            MailSender.sendEmail(name, subject, html)
+            console.log(result);
             res.status(200).json({ message: result });
-            console.log(result)
+            
         });
     
 };
@@ -605,7 +620,7 @@ exports.getUserItemList = function (req, res, next) {
   var obj;	
   //let itemListSql = "select asib,itemid from rs_items z where z.usrid = $1";
   let itemListSql = "select (latestItem(z.itemdetails)).* ,itemrefresh,webstore, webid as itemid, itemname as name, itemimgurl as thumbnailimage, itemupc as upc, itemasib as asib,itemid as id, "+
-            " array_to_json(itemdetails) as itemdetails, array_to_json(notification) as noty  from rs_items z where z.usrid = $1 ";
+            " array_to_json(itemdetails) as itemdetails, array_to_json(notification) as noty, returnAttr(itemattributes) as attributes from rs_items z where z.usrid = $1 ";
   
   	db.many(itemListSql, [usrId])
 	.then(itemList=> {
