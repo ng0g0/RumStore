@@ -179,7 +179,7 @@ function updateItemInArray(itemList, updateItems) {
                         upc: result.upc,
                         itemdetails: itemDetails,
                         message: result.message,
-                        stock: result.stock,
+                        stock: (result.stock === "Available") ? 1 :0,
                         attributes: attributeFilter(result.attributes)
                 });
 
