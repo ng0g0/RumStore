@@ -1,10 +1,7 @@
 import { 
 	REQ_WALMART_LIST,
     RECV_WALMART_LIST,
-    //REQ_WALMART_INFO,
     RECV_WALMART_INFO,
-    //RECV_ITEM_INFO,
-//    REQ_ITEM_INFO,
     RECV_ITEM_2_FORM,
     REQ_ITEM_2_FORM,
     RECV_DB_2_FORM
@@ -79,17 +76,6 @@ function updatePriceIndicator(itemDetails) {
     return result;
 }
 
-//function returnNotfConf(notification, item) {
-//    let conf = [];
-//    notification.forEach((notf) => {
-//        let value = { detname: notf, detvalue: item[notf]};
-//        conf.push(value);
-//        
-//    })
-//    console.log(conf);
-//    return conf;
-//}
-
 function attribute2Array(object) {
     const allowed = ['color', 'size'];
     let attr = []; 
@@ -126,11 +112,9 @@ const allowed = ['color', 'size'];
 
 
 function convertItemList(itemList) {
-    
     let itemArray = [];
     if (itemList) {
         itemList.forEach(function(item) {
-               // console.log(item);
             let obj = {
                asib: item.asib || "N/A",
                itemid: item.itemid || item.itemId,
@@ -144,10 +128,8 @@ function convertItemList(itemList) {
                itemdetails: convertItemDetail(item.itemdetails),
                stock: item.stock,
                id: item.id || 0,
-               //notfConf: returnNotfConf(item.noty, item),
                attributes: attributeFilter(item.attributes),
-               attrArray:  attribute2Array(item.attributes),
-               
+               attrArray:  attribute2Array(item.attributes)
             }
             itemArray.push(obj);   
        });
@@ -179,39 +161,33 @@ function updateItemDetails(itemDetails, noty, updateItem) {
     return itemDetails;
 }
 
-
-
-
 function updateItemInArray(itemList, updateItems) {
     let arrayList = [];
     if (updateItems) {
-        
-         const updatedItems = itemList.map(item => {
+        const updatedItems = itemList.map(item => {
             var result = updateItems.find(function(it) { return  it.itemId == item.itemid ;  });
-            var obj = {};//item;
+            var obj = {};
             if(result) {
-                //console.log(result);
                 let itemDetails = updateItemDetails(item.itemdetails, item.noty, result);
                 obj = Object.assign(item, {
                         thumbnailimage: result.thumbnailImage,
                         salePrice: result.salePrice,
-                        priceIndicator: 0, //updatePriceIndicator(itemDetails),
+                        priceIndicator: 0, 
                         upc: result.upc,
                         itemdetails: itemDetails,
                         message: result.message,
                         stock: (result.stock === "Available") ? 1 :0,
-                        attributes: attributeFilter(result.attributes)
+                        attributes: attributeFilter(result.attributes),
+                        attrArray:  attribute2Array(result.attributes),
+                        noty: item.noty || []
                 });
 
             } else {
                 obj = item;
             }
-        return obj;
+            return obj;
         });
-    return updatedItems;
-        
-        
-        
+        return updatedItems;
     } else {
         return itemList;
     }
@@ -219,7 +195,6 @@ function updateItemInArray(itemList, updateItems) {
 }
 
 export default function (state = INITIAL_STATE, action) {
-  
   switch (action.type) {
 	case REQ_WALMART_LIST:
 		return Object.assign({}, state, {
@@ -233,51 +208,29 @@ export default function (state = INITIAL_STATE, action) {
 				loadingSpinner: false
 			});
     case REQ_ITEM_2_FORM:
-               // console.log(action);
-     return Object.assign({}, state, {
-                loadingSpinnerAdd: true,
-                addItem: true
-            });           
-	case RECV_ITEM_2_FORM:
-            //console.log(action);
-            let itemX = convertItemList(action.data.items);
-            //console.log(itemX);
-            return Object.assign({}, state, {
-                itemInfo: itemX[0],
-                loadingSpinnerAdd: false,
-                addItem: true
-            });
-    case RECV_DB_2_FORM:
-        //console.log(action);
         return Object.assign({}, state, {
-                itemInfo: action.data,
-                addItem: true
+            loadingSpinnerAdd: true,
+            addItem: true
+        });           
+	case RECV_ITEM_2_FORM:
+        let itemX = convertItemList(action.data.items);
+        return Object.assign({}, state, {
+            itemInfo: itemX[0],
+            loadingSpinnerAdd: false,
+            addItem: true
+        });
+    case RECV_DB_2_FORM:
+        //console.log(action.data);
+        return Object.assign({}, state, {
+            itemInfo: action.data,
+            addItem: true
         });
     case RECV_WALMART_INFO: {
-        //console.log(action.data);
-            const newItems =  updateItemInArray(state.itemList, action.data.items);
-            return updateObject(state, {itemList : newItems, message: action.message});
-            }    
+        const newItems =  updateItemInArray(state.itemList, action.data.items);
+        return updateObject(state, {itemList : newItems, message: action.message});
+        }    
 	default:
  	  return { ...state };   
   }
 }
 
-
-/*
-case REQ_ITEM_INFO:
-			return Object.assign({}, state, {
-			    loadingSpinnerInfo: true
-			});
-    case RECV_ITEM_INFO:
- 			return Object.assign({}, state, {
-				itemInfo: convertItemList(action.data.items),
-                performSearch: {stype: action.stype, search: action.search}, 
-				loadingSpinnerInfo: false
-			});
-    	case RECV_WALMART_INFO: {
-            //
-            const newItems =  updateItemInArray(state.itemList, action.data.items);
-            return updateObject(state, {itemList : newItems, message: action.message});
-            }            
-*/            
