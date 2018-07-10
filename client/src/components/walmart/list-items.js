@@ -159,7 +159,7 @@ class ListItems extends Component {
                     return element == item.itemid;});
                 const actionButton = (_.isUndefined(findItem)) ?  (
                         <Link className="btn-sm btn-default" data-toggle="modal" data-target="#addItem"
-                            onClick={()=> this.handleAddForm(item) } >
+                            onClick={()=> this.handleAddForm(item.itemid) } >
                             <Translation text="ADD_ITEM" />
                         </Link>
                     ) : (<div className="green"> <Translation text="WALMAR_ALREADY" /></div> );

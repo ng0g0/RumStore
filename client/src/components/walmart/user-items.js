@@ -239,7 +239,7 @@ class UserWalmartList extends Component {
         });
     }
     onChangeHandler(e){
-        console.log(e);
+        //console.log(e);
         switch(e.target.name) {
             case "filter":
                 this.setState({

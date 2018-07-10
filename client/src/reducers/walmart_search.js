@@ -31,7 +31,7 @@ function convertItemList(itemList) {
     let itemArray = [];
     if (itemList) {
         itemList.forEach(function(item) {
-            console.log(item);
+           // console.log(item);
             let obj = {
                asib: item.asib || "N/A",
                itemid: item.itemid || item.itemId,

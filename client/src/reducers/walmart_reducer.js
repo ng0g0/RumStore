@@ -6,6 +6,7 @@ import {
     //RECV_ITEM_INFO,
 //    REQ_ITEM_INFO,
     RECV_ITEM_2_FORM,
+    REQ_ITEM_2_FORM,
     RECV_DB_2_FORM
 } from '../actions/types';
 import dayjs from 'dayjs';
@@ -15,7 +16,9 @@ const INITIAL_STATE = {
     message: '', 
     error: '', 
     loadingSpinner: true, 
-    loadingSpinnerInfo: false, 
+    loadingSpinnerInfo: true, 
+    loadingSpinnerAdd: false,
+    addItem: false,
     performSearch: {stype: 'itemId', search: ''} 
 };
 
@@ -87,6 +90,22 @@ function updatePriceIndicator(itemDetails) {
 //    return conf;
 //}
 
+function attribute2Array(object) {
+    const allowed = ['color', 'size'];
+    let attr = []; 
+    if (_.isUndefined(object) || _.isNull(object)) {
+        return attr;
+    } else {
+      
+        Object.keys(object)
+            .filter(key => allowed.includes(key))
+            .map((obj, key) => {
+            attr.push({name: obj,value: object[obj]})
+            });  
+        return attr;
+    }
+}
+
 function attributeFilter(object) {
   //  console.log(object);
 const allowed = ['color', 'size'];
@@ -126,7 +145,8 @@ function convertItemList(itemList) {
                stock: item.stock,
                id: item.id || 0,
                //notfConf: returnNotfConf(item.noty, item),
-               attributes: attributeFilter(item.attributes)
+               attributes: attributeFilter(item.attributes),
+               attrArray:  attribute2Array(item.attributes),
                
             }
             itemArray.push(obj);   
@@ -212,15 +232,26 @@ export default function (state = INITIAL_STATE, action) {
 				message: action.message,
 				loadingSpinner: false
 			});
+    case REQ_ITEM_2_FORM:
+               // console.log(action);
+     return Object.assign({}, state, {
+                loadingSpinnerAdd: true,
+                addItem: true
+            });           
 	case RECV_ITEM_2_FORM:
-            console.log(action);
+            //console.log(action);
+            let itemX = convertItemList(action.data.items);
+            //console.log(itemX);
             return Object.assign({}, state, {
-                itemInfo: action.data
+                itemInfo: itemX[0],
+                loadingSpinnerAdd: false,
+                addItem: true
             });
     case RECV_DB_2_FORM:
         //console.log(action);
         return Object.assign({}, state, {
-                itemInfo: action.data
+                itemInfo: action.data,
+                addItem: true
         });
     case RECV_WALMART_INFO: {
         //console.log(action.data);

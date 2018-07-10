@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'; // ES6
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector, FieldArray, change   } from 'redux-form';
 import Translation from '../locale/translate';
-import { searchFunc, saveItem} from '../../actions/walmart';
+import { //searchFunc, 
+saveItem} from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import { WalmartItem } from '../../consts';
-import SearchItem from './search-item';
+//import SearchItem from './search-item';
 import AccGroup from '../accordion/accordiongroup';
 import Multiselect from 'react-widgets/lib/Multiselect'
 
@@ -23,7 +24,25 @@ const renderMultiselect = ({ input, ...rest }) => (
      onChange={input.onChange} 
     value={input.value || []} // requires value to be an array
     {...rest}/>)
-
+    
+const renderAttribute= ({ fields, meta: { error } }) => (
+    <div className="panel panel-default blockche">
+        <div className="panel-heading">Attribures: </div>
+        <div className="panel-body">
+        {fields.map((att, index) => (
+            <div className="col-sm-1" key={index}> 
+                <div className="row">    
+                    <Field name={`${att}.name`} type="text" component={renderField} />
+                </div>
+                <div className="row">        
+                        <Field name={`${att}.value`} type="text" component={renderField} />
+                </div>
+            </div>    
+        ))}
+        </div>
+    </div>
+    );    
+    
 const renderField = ({
   input,
   type,
@@ -48,17 +67,20 @@ class AddItem extends Component {
     handleMultiChange(val) {
         this.props.dispatch(change(WalmartItem, 'notification', val));
     }
-    
+    //<SearchItem />
     render () {
         const { handleSubmit ,itemURL} = this.props;
-        //console.log(this.props.loadingSpinnerInfo);
+        if (!this.props.addItem) {
+            return (<div></div>);
+        }
         var itemImage = itemURL || "/images/nopic.jpg";
-        if  (this.props.loadingSpinnerInfo) {
+        if  (this.props.loadingSpinnerAdd ) {
 		return (<div>
-                <SearchItem />
+                
                 <div className='loader'><Translation text="Loading" />...</div>
             </div>);
         } else {
+          //console.log(this.props.itemInfo);
             return(<div>
             <form onSubmit={handleSubmit}>
             <div className="row">
@@ -111,7 +133,12 @@ class AddItem extends Component {
                     <label><Translation text="WALMAR_ITEM_ASIN" /></label>
                     <Field name="asib" className="form-control" component="input" type="text"/>
                 </div>
-            </div> 
+            </div>
+            <div className="row">
+                <div className="col-md-12">
+                <FieldArray name="attrArray" component={renderAttribute} />
+                </div>
+            </div>
             <AccGroup title="WALMAR_ITEM_NOTIFICATION" key="notificationArea" item="notificationArea" > 
             <div className="row">
                 <div className="col-md-12">
@@ -132,20 +159,22 @@ class AddItem extends Component {
 }
 	
 function mapStateToProps(state) {
-   // console.log(state);
+   //console.log(state);
     const selector = formValueSelector(WalmartItem)
     const itemURL = selector(state, 'thumbnailimage')
    return {
 	errorMessage: state.walmart.error,
     initialValues: state.walmart.itemInfo,
-    loadingSpinnerInfo: state.walmart.loadingSpinnerInfo,
+    loadingSpinnerAdd: state.walmart.loadingSpinnerAdd,
     itemInfo: state.walmart.itemInfo,
-    itemURL: itemURL
+    itemURL: itemURL,
+    addItem: state.walmart.addItem
   };
 }
 const mapDispatchToProps = (dispatch) =>   
   bindActionCreators({
-    searchFunc, saveItem
+    //searchFunc, 
+    saveItem
 
 }, dispatch);
 

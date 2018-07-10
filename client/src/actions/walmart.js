@@ -14,6 +14,7 @@ import {
     REQ_WALMART_SEARCH,
     RECV_WALMART_SEARCH,
     RECV_ITEM_2_FORM,
+    REQ_ITEM_2_FORM,
     RECV_DB_2_FORM,
     RECV_WALMART_BEST,
     REQ_WALMART_BEST 
@@ -91,6 +92,12 @@ function copyItemToForm(item) {
 		data: item
 	}
 };
+
+function requestItem2Form() {
+   return {type: REQ_ITEM_2_FORM} 
+}
+
+
 function copyDBToForm(item) {
 	return{
 		type: RECV_DB_2_FORM,
@@ -177,30 +184,12 @@ export function searchFunc(props) {
 }
 
 export function fetchFromWalmarAPI(items) {
-  //  console.log(`Items:${items}`);
     return function (dispatch) {
-        var sentItems;
-        var leftItems;
-        //var itemArray = [];
-        //if (Array.isArray(items) ) {
-        //    itemArray = items.split(",");
-        //}
-        //var cnt = Math.ceil(itemArray.length/WALMART_MAX_ITEMS);
-        //if (cnt > 1) {
-        //    sentItems =  itemArray.splice(0,WALMART_MAX_ITEMS).join();
-        //    leftItems = items.split(",").splice(WALMART_MAX_ITEMS).join();
-        //    setTimeout(function() { dispatch(fetchFromWalmarAPI(leftItems)); }, 500);
-        //    
-        //} else {
-            sentItems = items;
-        //}
-     //   console.log(`Sent Items:${sentItems}`);
-        return axios({ url: `${API_URL}/walmart/item/${sentItems}`,
+        return axios({ url: `${API_URL}/walmart/item/${items}`,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
-            //console.log(response.data);
             dispatch(receiveWalmartAPI(response.data));
         })
         .catch((error) => {
@@ -208,9 +197,21 @@ export function fetchFromWalmarAPI(items) {
 		});
     };    
 }
-export function itemToAddForm(item) {
+export function itemToAddForm(items) {
+    //console.log(`itemToAddForm: ${items}`)
     return function (dispatch) {
-       dispatch(copyItemToForm(item)); 
+        dispatch(requestItem2Form());
+        return axios({ url: `${API_URL}/walmart/item/${items}`,
+			method: 'get',
+			headers: { Authorization: cookie.load('token') }
+            })
+        .then((response) => {
+           // console.log(`itemToAddForm: DATA`)
+            dispatch(copyItemToForm(response.data));
+        })
+        .catch((error) => {
+            console.log(error)
+		});
     };        
 }
 
