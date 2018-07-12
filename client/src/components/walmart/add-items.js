@@ -10,6 +10,7 @@ import { WalmartItem } from '../../consts';
 //import SearchItem from './search-item';
 import AccGroup from '../accordion/accordiongroup';
 import Multiselect from 'react-widgets/lib/Multiselect'
+import VariantItems from './var-items';
 
 function validate(formProps) {
   const errors = {};
@@ -29,8 +30,9 @@ const renderAttribute= ({ fields, meta: { error } }) => (
     <div className="panel panel-default blockche">
         <div className="panel-heading">Attribures: </div>
         <div className="panel-body">
-        {fields.map((att, index) => (
-            <div className="col-sm-1" key={index}> 
+        {fields
+        .map((att, index) => (
+            <div className="col-md-auto" key={index}> 
                 <div className="row">    
                     <Field name={`${att}.name`} type="text" component={renderField} />
                 </div>
@@ -74,13 +76,14 @@ class AddItem extends Component {
             return (<div></div>);
         }
         var itemImage = itemURL || "/images/nopic.jpg";
+        //const allowed = ['color', 'size','clothingSize'];
         if  (this.props.loadingSpinnerAdd ) {
 		return (<div>
                 
                 <div className='loader'><Translation text="Loading" />...</div>
             </div>);
         } else {
-          //console.log(this.props.itemInfo);
+          console.log(this.props.itemInfo);
             return(<div>
             <form onSubmit={handleSubmit}>
             <div className="row">
@@ -151,6 +154,8 @@ class AddItem extends Component {
                 </div>
             </div>
             </AccGroup>
+            <VariantItems vars={this.props.itemInfo.variants} name="itemVars" {...this.props} />
+            
           </form>
           </div>); 
         }

@@ -17,7 +17,9 @@ import {
     REQ_ITEM_2_FORM,
     RECV_DB_2_FORM,
     RECV_WALMART_BEST,
-    REQ_WALMART_BEST 
+    REQ_WALMART_BEST,
+    REQ_VAR_ITEMS,
+    RECV_VAR_ITEMS    
  //CLEAR_BLOCK_INFO
  } 
 from './types';
@@ -27,6 +29,17 @@ import {API_URL, CLIENT_ROOT_URL, API_WALMART_URL, WALMART_API_KEY, WALMART_MAX_
 //= ===============================
 // Customer actions
 //= ===============================
+
+function requestItemVars() {
+   return {type: REQ_VAR_ITEMS} 
+}
+
+function receiveItemVars(json) {
+	return{
+		type: RECV_VAR_ITEMS,
+		data: json
+	}
+};
 
 function requestWalmartList() {
    return {type: REQ_WALMART_LIST} 
@@ -183,6 +196,23 @@ export function searchFunc(props) {
     }
 }
 
+export function fetchItemVarsAPI(items) {
+    return function (dispatch) {
+        dispatch(requestItemVars());
+        return axios({ url: `${API_URL}/walmart/item/${items}`,
+			method: 'get',
+			headers: { Authorization: cookie.load('token') }
+            })
+        .then((response) => {
+            dispatch(receiveItemVars(response.data));
+        })
+        .catch((error) => {
+            console.log(error)
+		});
+    };        
+}
+
+
 export function fetchFromWalmarAPI(items) {
     return function (dispatch) {
         return axios({ url: `${API_URL}/walmart/item/${items}`,
@@ -197,6 +227,7 @@ export function fetchFromWalmarAPI(items) {
 		});
     };    
 }
+
 export function itemToAddForm(items) {
     //console.log(`itemToAddForm: ${items}`)
     return function (dispatch) {

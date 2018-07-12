@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 };
 
 function attributeFilter(object) {
-const allowed = ['color', 'size'];
+const allowed = ['color', 'size','clothingSize'];
   let attr = {};  
   if (_.isUndefined(object) || _.isNull(object)) {
       return attr;
@@ -44,7 +44,8 @@ function convertItemList(itemList) {
                webstore: item.webstore || "walmart",
                itemdetails: [],
                stock: item.stock,
-               attributes: attributeFilter(item.attributes) 
+               attributes: attributeFilter(item.attributes),
+               variants: item.variants               
                
             }
             itemArray.push(obj);   

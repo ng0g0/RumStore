@@ -1,29 +1,21 @@
 import { 
-	REQ_WALMART_LIST,
-    RECV_WALMART_LIST,
-    RECV_WALMART_INFO,
-    RECV_ITEM_2_FORM,
-    REQ_ITEM_2_FORM,
-    RECV_DB_2_FORM
+    REQ_VAR_ITEMS,
+    RECV_VAR_ITEMS    
 } from '../actions/types';
-import dayjs from 'dayjs';
+//import dayjs from 'dayjs';
 import _ from 'lodash';
 
 const INITIAL_STATE = { 
     message: '', 
     error: '', 
-    loadingSpinner: true, 
-    loadingSpinnerInfo: true, 
-    loadingSpinnerAdd: false,
-    loadingSpinnerVar: true,
-    addItem: false,
-    performSearch: {stype: 'itemId', search: ''} 
+    loadingSpinnerVar: false,
+    itemVars: []
 };
 
-
-function updateObject(oldObject, newValues) {
-    return Object.assign({}, oldObject, newValues);
-}
+/*
+//function updateObject(oldObject, newValues) {
+//    return Object.assign({}, oldObject, newValues);
+//}
 
 function updateItemInfo(oldInfo, newInfo ) {
     return Object.assign(oldInfo, {
@@ -77,25 +69,10 @@ function updatePriceIndicator(itemDetails) {
     return result;
 }
 
-function attribute2Array(object) {
-    const allowed = ['color', 'size','clothingSize'];
-    let attr = []; 
-    if (_.isUndefined(object) || _.isNull(object)) {
-        return attr;
-    } else {
-      
-        Object.keys(object)
-            .filter(key => allowed.includes(key))
-            .map((obj, key) => {
-            attr.push({name: obj,value: object[obj]})
-            });  
-        return attr;
-    }
-}
 
 function attributeFilter(object) {
   //  console.log(object);
-const allowed = ['color', 'size','clothingSize'];
+const allowed = ['color', 'size'];
   let attr = {};  
   if (_.isUndefined(object) || _.isNull(object)) {
       return attr;
@@ -112,32 +89,6 @@ const allowed = ['color', 'size','clothingSize'];
 }
 
 
-function convertItemList(itemList) {
-    let itemArray = [];
-    if (itemList) {
-        itemList.forEach(function(item) {
-            let obj = {
-               asib: item.asib || "N/A",
-               itemid: item.itemid || item.itemId,
-               name: item.name,
-               noty: item.noty || [],
-               thumbnailimage: item.thumbnailimage || item.thumbnailImage,
-               salePrice: item.salePrice || item.saleprice,
-               priceIndicator: updatePriceIndicator(item.itemDetails),
-               upc: item.upc,
-               webstore: item.webstore || "walmart",
-               itemdetails: convertItemDetail(item.itemdetails),
-               stock: item.stock,
-               id: item.id || 0,
-               attributes: attributeFilter(item.attributes),
-               attrArray:  attribute2Array(item.attributes),
-               variants: item.variants
-            }
-            itemArray.push(obj);   
-       });
-    }
-    return itemArray;
-}
 
 function updateItemDetails(itemDetails, noty, updateItem) {
     if (updateItem) {
@@ -195,15 +146,82 @@ function updateItemInArray(itemList, updateItems) {
     }
     return itemArray;
 }
+*/
+
+function attributeFilter(object) {
+  //  console.log(object);
+const allowed = ['color', 'size','clothingSize'];
+  let attr = {};  
+  if (_.isUndefined(object) || _.isNull(object)) {
+      return attr;
+  } else {
+      
+    attr =  Object.keys(object)
+            .filter(key => allowed.includes(key))
+            .reduce((obj, key) => {
+                obj[key] = object[key];
+                return obj;
+            }, {});  
+    return attr;
+  }
+}
+
+
+function attribute2Array(object) {
+    const allowed = ['color', 'size','clothingSize'];
+    let attr = []; 
+    if (_.isUndefined(object) || _.isNull(object)) {
+        return attr;
+    } else {
+      
+        Object.keys(object)
+            .filter(key => allowed.includes(key))
+            .map((obj, key) => {
+            attr.push({name: obj,value: object[obj]})
+            });  
+        return attr;
+    }
+}
+
+
+function convertItemList(itemList) {
+    let itemArray = [];
+    if (itemList) {
+        itemList.forEach(function(item) {
+            let obj = {
+               asib: item.asib || "N/A",
+               itemid: item.itemid || item.itemId,
+               name: item.name,
+               noty: item.noty || [],
+               thumbnailimage: item.thumbnailimage || item.thumbnailImage,
+               salePrice: item.salePrice || item.saleprice,
+               priceIndicator: 0,
+               upc: item.upc,
+               webstore: item.webstore || "walmart",
+               itemdetails: item.itemdetails || [],
+               stock: item.stock,
+               id: item.id || 0,
+               attributes: attributeFilter(item.attributes),
+               attrArray:  attribute2Array(item.attributes),
+               variants: item.variants
+            }
+            itemArray.push(obj);   
+       });
+    }
+    return itemArray;
+}
+
+
 
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
-	case REQ_WALMART_LIST:
-		return Object.assign({}, state, {
-		    loadingSpinner: true
-		});
-	case RECV_WALMART_LIST:
-			return Object.assign({}, state, {
+      /*
+	//case REQ_WALMART_LIST:
+	//	return Object.assign({}, state, {
+	//	    loadingSpinner: true
+//		});
+//	case RECV_WALMART_LIST:
+//			return Object.assign({}, state, {
 				itemList: convertItemList(action.data.itemList),
                 items: action.data.items,
 				message: action.message,
@@ -226,11 +244,23 @@ export default function (state = INITIAL_STATE, action) {
         return Object.assign({}, state, {
             itemInfo: action.data,
             addItem: true
+        });*/
+    case REQ_VAR_ITEMS: 
+        return Object.assign({}, state, {
+            loadingSpinnerVar: true,
+            itemVars: [],
         });
-    case RECV_WALMART_INFO: {
+    case RECV_VAR_ITEMS: 
+        console.log(action.data);
+        return Object.assign({}, state, {
+            itemVars: convertItemList(action.data.items),
+            loadingSpinnerVar: false
+        });
+    
+    /*case RECV_WALMART_INFO: {
         const newItems =  updateItemInArray(state.itemList, action.data.items);
         return updateObject(state, {itemList : newItems, message: action.message});
-        }    
+        } */   
 	default:
  	  return { ...state };   
   }

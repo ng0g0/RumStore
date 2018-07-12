@@ -88,6 +88,10 @@ body {
     fill: black;
 }
 
+.item{
+text-align:center;
+}
+
 .chart: {
     -webkit-scrollbar {
     height: 10px;

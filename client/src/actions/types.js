@@ -53,6 +53,8 @@ export const RECV_DB_2_FORM = 'RECV_DB_2_FORM';
 export const REQ_ITEM_2_FORM = 'REQ_ITEM_2_FORM';
 export const RECV_WALMART_BEST = 'RECV_WALMART_BEST';
 export const REQ_WALMART_BEST = 'REQ_WALMART_BEST';
+export const REQ_VAR_ITEMS = 'REQ_VAR_ITEMS';
+export const RECV_VAR_ITEMS = 'RECV_VAR_ITEMS';
 
 
 //= =====================

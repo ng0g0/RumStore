@@ -141,10 +141,8 @@ exports.getWalmartItems = function (req, res, next) {
                 callbackfunc2(null, 'done');
                 
             }
-        ], function (err, result) {
-            console.log(result)
-            // result now equals 'done'
-        });
+            ], function (err, result) { console.log(result); }
+    );
 };
 
 exports.getUserUpdateItems = function (req, res, next) {
@@ -188,7 +186,7 @@ function IsJsonString(str) {
 
 
 function convertArrributeArr( array) {
-    var allow = ['color', 'size'];
+    var allow = ['color', 'size', 'clothingSize'];
     var attr = '{';
     var items = 0;
     var i  = 0;
@@ -207,7 +205,7 @@ function convertArrributeArr( array) {
     return attr;
 }
 function convertAttributes( object ) {
-    var allow = ['color', 'size'];
+    var allow = ['color', 'size', 'clothingSize'];
     var attr = '{';
     var items = 0;
     var i  = 0;
@@ -323,7 +321,7 @@ exports.WalmartDailyUpdate = function() {
                                         itemId: itd.webid, 
                                         dettype: det, 
                                         newValue: wDet
-                                        ,attributes: convertAttributes(wItem.attributes)
+                                    //    ,attributes: convertAttributes(wItem.attributes)
                                     })
                             })
                        })
@@ -334,9 +332,9 @@ exports.WalmartDailyUpdate = function() {
                         updateArray.forEach((det) => {
                      //       console.log(` ID= ${det.id} Type=${det.dettype} Value = ${det.newValue} ${det.attributes}`)
                             let addDetaild = "update rs_items set itemdetails = array_append(itemdetails, CAST(ROW($2,$3,now()) as rs_itemdetils)) "+
-                                              ", itemattributes = $4"  +
+                                            //  ", itemattributes = $4"  +
                                             " where itemid = $1";
-                            queries.push(t.none(addDetaild, [det.id, det.dettype, det.newValue,det.attributes]));
+                            queries.push(t.none(addDetaild, [det.id, det.dettype, det.newValue])); //,det.attributes
                         });
                         return t.batch(queries);
                     })

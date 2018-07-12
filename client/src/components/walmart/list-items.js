@@ -214,6 +214,7 @@ class ListItems extends Component {
         if ( loadingSpinner &&  preformSearch) {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
+            console.log(itemSearch);
             return (<div className="panel panel-default">
                 <div className="panel-body">
                     {this.renderAddItemLayer()}
