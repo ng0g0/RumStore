@@ -1,6 +1,7 @@
 import { 
     REQ_VAR_ITEMS,
-    RECV_VAR_ITEMS    
+    RECV_VAR_ITEMS,
+    REQ_ITEM_2_FORM    
 } from '../actions/types';
 //import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -245,6 +246,11 @@ export default function (state = INITIAL_STATE, action) {
             itemInfo: action.data,
             addItem: true
         });*/
+    case REQ_ITEM_2_FORM:
+        return Object.assign({}, state, {
+            loadingSpinnerVar: false,
+            itemVars: [],
+        });
     case REQ_VAR_ITEMS: 
         return Object.assign({}, state, {
             loadingSpinnerVar: true,

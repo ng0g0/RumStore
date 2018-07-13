@@ -68,9 +68,10 @@ exports.getWalmartSearchedItems = function (req, res, next) {
                     obj = JSON.parse(body);
                 } catch(e) {
                     console.log(body);
-                    res.status(200).json({ message: err});    
+                    res.status(200).json({ message: e});    
                     //alert(e); // error in the above string (in this case, yes)!
                 }
+                //console.log(obj);
                if (obj.errors) {
                    console.log(body);
                    res.status(200).json({ message: obj.errors.message }); 

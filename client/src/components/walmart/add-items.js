@@ -32,7 +32,7 @@ const renderAttribute= ({ fields, meta: { error } }) => (
         <div className="panel-body">
         {fields
         .map((att, index) => (
-            <div className="col-md-auto" key={index}> 
+            <div className="col-md-2" key={index}> 
                 <div className="row">    
                     <Field name={`${att}.name`} type="text" component={renderField} />
                 </div>
@@ -87,73 +87,68 @@ class AddItem extends Component {
             return(<div>
             <form onSubmit={handleSubmit}>
             <div className="row">
-                <div className="col-md-6">
-                    <label><Translation text="WALMAR_ITEM_ID" /></label>
-                    <Field name="itemid" className="form-control" component={renderField} type="text"/>
-                    <Field name="id" style={{ height: 0 }} component="input" type="hidden" />
-                </div>
-                <div className="col-md-6">
-                    <label><Translation text="WALMART_STORE" /></label>
-                    <Field name="webstore" className="form-control" component="select">
-                    <option />
-                    <option value="walmart">Walmart</option>
-                    </Field>
-                </div>
-            </div>
-            <div className="row">
                 <div className="col-md-12">
                     <label><Translation text="WALMAR_ITEM_NAME" /></label>
                     <Field name="name" className="form-control" component={renderField} type="text"/>
                 </div>
             </div> 
             <div className="row">
-                <div className="col-md-12">
-                    <img alt='image' src ={itemImage} />    
-                    <Field name="thumbnailimage" style={{ height: 0 }}  component={renderField} type="text"/>
-                 </div>
-            </div> 
-            <div className="row">
-                <div className="col-md-12">
+                <div className="col-md-4">
+                    <label><Translation text="WALMAR_ITEM_ID" /></label>
+                    <Field name="itemid" className="form-control" component={renderField} type="text"/>
+                    <Field name="id" style={{ height: 0 }} component="input" type="hidden" />
+                </div>
+                <div className="col-md-4">
+                    <label><Translation text="WALMART_STORE" /></label>
+                    <Field name="webstore" className="form-control" component="select">
+                    <option />
+                    <option value="walmart">Walmart</option>
+                    </Field>
+                </div>
+                <div className="col-md-4">
                     <label><Translation text="WALMAR_ITEM_UPC" /></label>
                     <Field name="upc" className="form-control" component={renderField} type="text"/>
                 </div>
+            </div>
+            
+            <div className="row">
+                <div className="col-md-4">
+                    <img alt='image' src ={itemImage} />    
+                    <Field name="thumbnailimage" style={{ height: 0 }}  component={renderField} type="hidden"/>
+                 </div>
+                 <div className="col-md-8">
+                    <FieldArray name="attrArray" component={renderAttribute} />
+                </div>
             </div> 
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-4">
+                    <label><Translation text="WALMAR_ITEM_ASIN" /></label>
+                    <Field name="asib" className="form-control" component="input" type="text"/>
+                </div>
+                <div className="col-md-4">
                     <label><Translation text="WALMAR_ITEM_PRICE" /></label>
                     <Field name="salePrice" className="form-control" component={renderField} type="text"/>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-4">
                     <label><Translation text="WALMAR_ITEM_ONSTOCK" /></label>
                     <Field name="stock" className="form-control" component="select">
                     <option value="Available">Available</option>
                     <option value="Not available">Not available</option>
                     </Field>
                 </div>
-            </div> 
-            <div className="row">
-                <div className="col-md-12">
-                    <label><Translation text="WALMAR_ITEM_ASIN" /></label>
-                    <Field name="asib" className="form-control" component="input" type="text"/>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-md-12">
-                <FieldArray name="attrArray" component={renderAttribute} />
-                </div>
             </div>
             <AccGroup title="WALMAR_ITEM_NOTIFICATION" key="notificationArea" item="notificationArea" > 
-            <div className="row">
-                <div className="col-md-12">
-                <Field
-                    name="noty"
-                    component={renderMultiselect}
-                    data={this.state.result}
-                    onChange={(e) => this.handleMultiChange(e)}
-                    />
+                <div className="row">
+                    <div className="col-md-12">
+                        <Field
+                            name="noty"
+                            component={renderMultiselect}
+                            data={this.state.result}
+                            onChange={(e) => this.handleMultiChange(e)}
+                        />
+                    </div>
                 </div>
-            </div>
-            </AccGroup>
+            </AccGroup>            
             <VariantItems vars={this.props.itemInfo.variants} name="itemVars" {...this.props} />
             
           </form>

@@ -162,7 +162,10 @@ class ListItems extends Component {
                             onClick={()=> this.handleAddForm(item.itemid) } >
                             <Translation text="ADD_ITEM" />
                         </Link>
-                    ) : (<div className="green"> <Translation text="WALMAR_ALREADY" /></div> );
+                    ) : (<Link className="btn-sm btn-default" data-toggle="modal" data-target="#addItem"
+                            onClick={()=> this.handleAddForm(item.itemid) } >
+                            <Translation text="WALMAR_ALREADY" />
+                        </Link>);
                 return(<div className="panel panel-default blockche" key={item.itemid}>
                         <div className="panel-body">
                             <div className="row" >
