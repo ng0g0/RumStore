@@ -34,7 +34,7 @@ class SearchItem extends Component {
           <Field name="search" component="input" type="text"/>
           <button type="submit"><Translation text="WALMAR_SEARCH" /></button>
           <div className="btn-group pull-right">
-            <a className="nounderline white" href={`#panel-col-search`}
+            <a className="nounderline black" href={`#panel-col-search`}
                data-toggle="collapse" onClick={() => this.toggleClick()}>
               {this.state.isToggleOn ?
                   <span className="glyphicon glyphicon-chevron-right"></span> :

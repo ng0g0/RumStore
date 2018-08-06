@@ -204,8 +204,13 @@ p.copyright>span {
     color: #FF0000;
 }
 
+.black {
+  color: #000000;
+}
+
 .centerText {
   text-align: center;
+  color: #000000;
 }
 
 .white {

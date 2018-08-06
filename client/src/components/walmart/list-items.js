@@ -19,6 +19,7 @@ class ListItems extends Component {
 		super(props);
         this.handleAddItem = this.handleAddItem.bind(this);
         this.handleAddForm = this.handleAddForm.bind(this);
+				this.openInNewTab = this.openInNewTab.bind(this);
 	}
     handleAddItem(item) {
           this.props.dispatch(submit(WalmartItem));
@@ -89,10 +90,10 @@ class ListItems extends Component {
     renderAttributes(att) {
         //console.log(att);
         if (_.isUndefined(att))
-            return(<div className="col-sm-12"> NO Attributes </div>)
+            return(<div className="col-sm-12"></div>)
         let size = Object.keys(att).length;
         if (size === 0) {
-            return(<div className="col-sm-12"> NO Attributes </div>)
+            return(<div className="col-sm-12"></div>)
         } else {
            // let classcl = `col-sm-${(12/size)}`;
             let classcl = `col-sm-1`;
@@ -106,44 +107,40 @@ class ListItems extends Component {
         }
     }
 
+		openInNewTab(url) {
+  		var win = window.open(url, '_blank');
+  		win.focus();
+		}
+
     renderCellContent(item) {
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
         return(<div>
             <div className="row">
                 { this.renderMessage(item.message) }
-               <div className="col-sm-2">
+              <div className="col-sm-2">
                     <img alt={item.itemid} src ={itemImage} />
+            	</div>
+              <div className="col-sm-10">
+              	<div className="row">
+                  <div className="col-sm-12">
+										<div className="row">
+                    	<a href={`${item.productUrl}`} onClick={()=> this.openInNewTab(item.productUrl) }>{item.name}</a>
+										</div>
+										<div className="row">
+											<div className="col-sm-6"><Translation text="WALMAR_ITEM_UPC" />:{item.upc}</div>
+											<div className="col-sm-6">Walmart# {item.itemid}</div>
+										</div>
+									</div>
+								</div>
+								<div className="row">
+	              	<div className="col-sm-4"><Translation text="Stock" />:<b>{item.stock}</b></div>
+	                <div className="col-sm-4"><Translation text="WALMAR_ITEM_PRICE" />:{item.salePrice}</div>
+								</div>
+                <div className="row">
+                	{this.renderAttributes(item.attributes)}
                 </div>
-                <div className="col-sm-10">
-                    <div className="row">
-                        <div className="col-sm-2">
-                            ItemID: {item.itemid}
-                        </div>
-                        <div className="col-sm-4">
-                            <div className="row">
-                                <div className="col">
-                                    <Translation text="Name" />:<b>{item.name}</b>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
-                                    <Translation text="WALMAR_ITEM_UPC" />:{item.upc}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-sm-2">
-                            <Translation text="Stock" />:<b>{item.stock}</b>
-                        </div>
-                        <div className="col-sm-2">
-                            <Translation text="WALMAR_ITEM_PRICE" />:{item.salePrice}
-                        </div>
-                    </div>
-                    <div className="row">
-                        {this.renderAttributes(item.attributes)}
-                    </div>
-                </div>
-
-            </div>
+              </div>
+						</div>
         </div>);
     }
 

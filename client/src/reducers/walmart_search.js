@@ -45,7 +45,8 @@ function convertItemList(itemList) {
                itemdetails: [],
                stock: item.stock,
                attributes: attributeFilter(item.attributes),
-               variants: item.variants
+               variants: item.variants,
+							 productUrl: item.productUrl
 
             }
             itemArray.push(obj);
