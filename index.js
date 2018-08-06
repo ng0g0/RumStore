@@ -26,14 +26,12 @@ app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials');
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
-}); 
+});
 
 const apiRoutes = express.Router(),
     authRoutes = express.Router(),
     userRoutes = express.Router(),
     walmartRouter = express.Router();
-
-	
 	// Set auth routes as subgroup/middleware to apiRoutes
   apiRoutes.use('/auth', authRoutes);
   // Registration route
@@ -46,27 +44,6 @@ const apiRoutes = express.Router(),
   // Password reset route (change password using token)
   authRoutes.post('/reset-password/:token', UserController.verifyToken);
 
-  //==========================
-  //  Entry
-  // =========================
-  //apiRoutes.use('/entry', entryRoutes);
-  //entryRoutes.get('/list', requireAuth, EntryController.listEntry);
-  //entryRoutes.post('/add', requireAuth, EntryController.entryAdd);
-  //entryRoutes.post('/:entryId/floor', requireAuth, EntryController.updateFloor);
-  //entryRoutes.post('/:entryId/appartment', requireAuth, EntryController.updateAppartment);
-  // entryRoutes.post('/:entryId/:apartId', requireAuth, EntryController.apartmentInfo);
-  //entryRoutes.get('/:entryId', requireAuth, EntryController.viewEntry);
-  
-
-  //---------------------
-  //  Block 
-  
-  //apiRoutes.use('/block', blockRoutes);
-  //blockRoutes.post('/add', requireAuth, BlockController.blockAdd);
-  //blockRoutes.get('/list', requireAuth, BlockController.blockList);
-  //blockRoutes.get('/:blockId', requireAuth, BlockController.blockInfo);
-  //blockRoutes.delete('/:blockId', requireAuth, BlockController.blockDelete);
-  
   //= ========================
   // User Routes
   //= ========================
@@ -79,20 +56,21 @@ const apiRoutes = express.Router(),
   userRoutes.get('/walmartUpdate', requireAuth, WalmartController.getUserUpdateItems);
   userRoutes.get('/:userId', requireAuth, UserController.viewProfile);
   //userRoutes.get('/items/:userId', requireAuth, WalmartController.getUserItems);
-  
+
   userRoutes.post('/:userId', requireAuth, UserController.userUpdate);
   userRoutes.delete('/:userId', requireAuth, UserController.userDelete);
 
     apiRoutes.use('/walmart', walmartRouter);
-    walmartRouter.post('/item', requireAuth, WalmartController.WalmartAddItems);	
+    walmartRouter.post('/item', requireAuth, WalmartController.WalmartAddItems);
     walmartRouter.get('/item/:itemId', requireAuth, WalmartController.getWalmartItems);
 	walmartRouter.get('/bestitem', requireAuth, WalmartController.getWalmartBestItems);
     walmartRouter.get('/dailyRefresh', requireAuth, WalmartController.getDailyUpdate);
-    walmartRouter.get('/item/search/:sType/:itemId/:page/:items/:sort', requireAuth, WalmartController.getWalmartSearchedItems);	
-    
-    walmartRouter.delete('/:itemId', requireAuth, WalmartController.deleteWalmartItems);	
+    //walmartRouter.get('/item/search/:sType/:itemId/:page/:items/:sort', requireAuth, WalmartController.getWalmartSearchedItems);
+    walmartRouter.get('/item/search/:sType/:itemId/:page/:items/:sort', WalmartController.getWalmartSearchedItems);	    
 
-  
+    walmartRouter.delete('/:itemId', requireAuth, WalmartController.deleteWalmartItems);
+
+
   // Test protected route
    apiRoutes.get('/protected', requireAuth, (req, res) => {
     res.send({ content: 'The protected test route is functional!' });

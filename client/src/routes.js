@@ -29,15 +29,16 @@ import TabItems from './components/walmart/tab-items';
 
 // Import admin pages
 import AdminDashboard from './components/admin/dashboard';
+import SearchItem from './components/walmart/search-item';
 
 // Import higher order components
 import RequireAuth from './components/auth/require_auth';
 
 export default (
   <Route path="/" component={App}>
-    <IndexRoute component={RequireAuth(Dashboard)} />
-    
-    
+    //<IndexRoute component={RequireAuth(Dashboard)} />
+    <IndexRoute component={SearchItem} />
+    <Route path="search" component={SearchItem} />
     <Route path="register" component={Register} />
     <Route path="login" component={Login} />
     <Route path="logout" component={Logout} />
@@ -48,7 +49,6 @@ export default (
     <Route path="dashboard">
       <IndexRoute component={RequireAuth(Dashboard)} />
     </Route>
-	
     <Route path="*" component={NotFoundPage} />
   </Route>
 );

@@ -10,16 +10,16 @@ class TabItems extends Component {
         this.handleTabChange = this.handleTabChange.bind(this);
        this.state = {
            tabName: 'USER_LISTITEMS'
-       }           
+       }
      }
-    
+
     handleTabChange(value) {
         //console.log(value);
         this.setState({
             tabName : value
             })
-    }    
-     
+    }
+
     render () {
         const content = this.state.tabName === "USER_LISTITEMS" ?  (
             <div id="USER_LISTITEMS" className="tab-pane fade in active">
@@ -47,10 +47,8 @@ class TabItems extends Component {
         </ul>
         <div className="tab-content">
             {content}
-        </div>    
+        </div>
         </div>);
 	}
 }
 export default TabItems;
-
-

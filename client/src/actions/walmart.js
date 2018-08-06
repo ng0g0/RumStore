@@ -4,7 +4,7 @@ import { showNotify } from './toast';
 import {SUCCESS_NOTIF, ERROR_NOTIF} from '../consts';
 //import jsonp from 'jsonp';
 
-import { 
+import {
     REQ_WALMART_LIST,
     RECV_WALMART_LIST,
     REQ_WALMART_INFO,
@@ -19,19 +19,19 @@ import {
     RECV_WALMART_BEST,
     REQ_WALMART_BEST,
     REQ_VAR_ITEMS,
-    RECV_VAR_ITEMS    
+    RECV_VAR_ITEMS
  //CLEAR_BLOCK_INFO
- } 
+ }
 from './types';
 
-import {API_URL, CLIENT_ROOT_URL, API_WALMART_URL, WALMART_API_KEY, WALMART_MAX_ITEMS} from './index'; 
+import {API_URL, CLIENT_ROOT_URL, API_WALMART_URL, WALMART_API_KEY, WALMART_MAX_ITEMS} from './index';
 
 //= ===============================
 // Customer actions
 //= ===============================
 
 function requestItemVars() {
-   return {type: REQ_VAR_ITEMS} 
+   return {type: REQ_VAR_ITEMS}
 }
 
 function receiveItemVars(json) {
@@ -42,7 +42,7 @@ function receiveItemVars(json) {
 };
 
 function requestWalmartList() {
-   return {type: REQ_WALMART_LIST} 
+   return {type: REQ_WALMART_LIST}
 }
 
 function receiveWalmartList(json) {
@@ -53,10 +53,10 @@ function receiveWalmartList(json) {
 };
 
 function requestWalmartAPI() {
-   return {type: REQ_WALMART_INFO} 
+   return {type: REQ_WALMART_INFO}
 }
 function requestWalmartBEST() {
-   return {type: REQ_WALMART_BEST} 
+   return {type: REQ_WALMART_BEST}
 }
 
 
@@ -68,7 +68,7 @@ function receiveWalmartBest(json) {
 };
 
 //function receiveWalmartAPI() {
-//   return {type: RECV_WALMART_INFO}  
+//   return {type: RECV_WALMART_INFO}
 //}
 function requestItemInfo(stype, search, sort, itemPage, pageNum) {
     return {
@@ -78,7 +78,7 @@ function requestItemInfo(stype, search, sort, itemPage, pageNum) {
         sort: sort,
         itemPage: itemPage,
         pageNum: pageNum
-    } 
+    }
 }
 
 function receiveItemInfo(json, stype, search, sort, itemPage, pageNum ) {
@@ -107,7 +107,7 @@ function copyItemToForm(item) {
 };
 
 function requestItem2Form() {
-   return {type: REQ_ITEM_2_FORM} 
+   return {type: REQ_ITEM_2_FORM}
 }
 
 
@@ -142,7 +142,7 @@ return function (dispatch) {
 export function saveItem(props) {
     return function (dispatch) {
     axios.post(`${API_URL}/walmart/item`, { props }
-    ,{ headers: { Authorization: cookie.load('token') }}) 
+    ,{ headers: { Authorization: cookie.load('token') }})
     .then((response) => {
 		//console.log(response);
         if (response.error) {
@@ -171,7 +171,7 @@ export function bestItems() {
         })
         .catch((error) => {
             console.log(error)
-		}); 
+		});
     }
 }
 
@@ -181,18 +181,18 @@ export function searchFunc(props) {
     return function (dispatch) {
         dispatch(requestItemInfo(props.stype, props.search, props.sort, props.itemPage, props.pageNum));
         return axios({ url: `${API_URL}/walmart/item/search/${props.stype}/${props.search}/${props.pageNum}/${props.itemPage}/${props.sort}`,
-			method: 'get',
-			headers: { Authorization: cookie.load('token') }
+			method: 'get'
+      //,headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
-            //console.log(response.data);
-            
+            console.log(response.data);
+
            //, sort, itemPage, pageNum
             dispatch(receiveItemInfo(response.data, props.stype, props.search, props.sort, props.itemPage, props.pageNum));
         })
         .catch((error) => {
             console.log(error)
-		}); 
+		});
     }
 }
 
@@ -209,7 +209,7 @@ export function fetchItemVarsAPI(items) {
         .catch((error) => {
             console.log(error)
 		});
-    };        
+    };
 }
 
 
@@ -225,7 +225,7 @@ export function fetchFromWalmarAPI(items) {
         .catch((error) => {
             console.log(error)
 		});
-    };    
+    };
 }
 
 export function itemToAddForm(items) {
@@ -237,19 +237,20 @@ export function itemToAddForm(items) {
 			headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
-           // console.log(`itemToAddForm: DATA`)
+            //console.log(response.data)
             dispatch(copyItemToForm(response.data));
         })
         .catch((error) => {
             console.log(error)
 		});
-    };        
+    };
 }
 
 export function dbToAddForm(item) {
     return function (dispatch) {
-       dispatch(copyDBToForm(item)); 
-    };        
+
+       dispatch(copyDBToForm(item));
+    };
 }
 
 export function walmartDailyRefresh() {
@@ -258,7 +259,7 @@ export function walmartDailyRefresh() {
     return axios({ url: `${API_URL}/walmart/dailyRefresh`,
 			method: 'get',
 			headers: { Authorization: cookie.load('token') }
-    })    
+    })
     .then((response) => {
         if (response.error) {
             showNotify(response.error, ERROR_NOTIF );
@@ -294,9 +295,3 @@ export function fetchWalmarUserList() {
 	});
   };
 }
-
-
-
-    
-
-

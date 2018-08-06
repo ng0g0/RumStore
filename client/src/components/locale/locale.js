@@ -92,12 +92,12 @@ const TRANSLATIONS = {
     'WALMAR_ITEM_ASIN': 'ASIN',
     'WALMAR_ALREADY': 'Already Added',
     'WALMAR_ITEM_REFRESH': 'Refresh Item',
-    'WALMAR_ITEM_SEARCH': 'Search Items',
+    'WALMAR_ITEM_SEARCH': 'Walmart Search',
     'WALMAR_ITEM_HISTORY': 'Product history',
     'WALMAR_ITEM_PRICE': 'Price',
     'WALMAR_ITEM_ONSTOCK': 'OnStock',
     'WALMAR_ITEM_NOTIFICATION': 'Notifications',
-    'WALMAR_SEARCH': 'Walmart Search',
+    'WALMAR_SEARCH': 'Search',
     'WALMAR_PAGE_SIZE': 'Items per Page',
     'WALMAR_ITEM_SORT': 'Sort by',
     'Administrator': 'Administrator',
@@ -120,8 +120,8 @@ const TRANSLATIONS = {
     'Settings': 'Settings',
     'NO_UPDATE_FOUND': 'There is not changed items',
     'Clear': 'Clear'
-    
-    
+
+
   },
   bg: {
     'Refresh' : 'Обновяване',
@@ -229,7 +229,7 @@ const TRANSLATIONS = {
     'SHOW_MORE': 'Покажи още 5',
     'SHOW_PMORE': 'Покажи предишните 5',
     'WALMAR_ITEM_REFRESH': 'Обнови продукт',
-    'WALMAR_ITEM_SEARCH': 'Намери продукт',
+    'WALMAR_ITEM_SEARCH': 'Намери в Walmart',
     'WALMAR_ITEM_HISTORY': 'История на продукта',
     'WALMAR_ITEM_PRICE': 'Цена',
     'WALMAR_ITEM_ONSTOCK': 'Наличен',
@@ -245,7 +245,7 @@ const TRANSLATIONS = {
     'Settings': 'Settings',
     'NO_UPDATE_FOUND': 'Няма променени продукти',
     'Clear': 'Изчисти'
-    
+
   }
 };
 
@@ -259,4 +259,3 @@ export default {
 	TRANSLATIONS,
 	LANG_NAMES
 };
-

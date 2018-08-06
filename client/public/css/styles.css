@@ -3,7 +3,7 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
-/* 
+/*
     Created on : Aug 21, 2017, 4:18:16 PM
     Author     : cpt2geh
 */
@@ -81,10 +81,10 @@ body {
 
 .btnborder {
     margin-top: 10px;
-    margin-bottom: 10px;  
+    margin-bottom: 10px;
 }
 
-.label: { 
+.label: {
     fill: black;
 }
 
@@ -99,17 +99,17 @@ text-align:center;
     }
 
     -webkit-scrollbar-track {
-        background: #f1f1f1; 
+        background: #f1f1f1;
     }
- 
+
     ::-webkit-scrollbar-thumb {
-    background: #888; 
+    background: #888;
     }
 
     -webkit-scrollbar-thumb:hover {
-    background: #555; 
+    background: #555;
     }
-}    
+}
 
 .errormsg {
     margin: auto;
@@ -151,14 +151,14 @@ text-align:center;
     margin-left: auto;
     margin-right: auto;
  }
- 
+
 .bigshit {
     font-size: 30px;
-} 
+}
 
 .dropdown-menu li:hover {
     cursor: pointer;
-} 
+}
 
 
 #myNavbar > ul > li > a > span {
@@ -202,6 +202,17 @@ p.copyright>span {
 }
 .red {
     color: #FF0000;
+}
+
+.centerText {
+  text-align: center;
+}
+
+.white {
+  color: #000000;
+  &:hover {
+    color:#000000;
+  }
 }
 
 
@@ -340,5 +351,3 @@ input:checked + .slider:before {
 .green {
     color: 	008000;
 }
-
-  

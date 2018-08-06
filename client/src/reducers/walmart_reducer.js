@@ -1,4 +1,4 @@
-import { 
+import {
 	REQ_WALMART_LIST,
     RECV_WALMART_LIST,
     RECV_WALMART_INFO,
@@ -9,15 +9,15 @@ import {
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
-const INITIAL_STATE = { 
-    message: '', 
-    error: '', 
-    loadingSpinner: true, 
-    loadingSpinnerInfo: true, 
+const INITIAL_STATE = {
+    message: '',
+    error: '',
+    loadingSpinner: true,
+    loadingSpinnerInfo: true,
     loadingSpinnerAdd: false,
     loadingSpinnerVar: true,
     addItem: false,
-    performSearch: {stype: 'itemId', search: ''} 
+    performSearch: {stype: 'itemId', search: ''}
 };
 
 
@@ -46,12 +46,12 @@ function convertItemDetail(itemDetails) {
                     var date = dayjs(it.detdate).format('DD-MMM-YY');
                     var value = Number.parseFloat(it.detvalue) || it.detvalue;
                     newObject.push(Object.assign({y:value, x:date}))
-                }); 
+                });
                 newObject.sort(function(a,b) {
                      a = new Date(a.x);
                      b = new Date(b.x);
                     return (a > b) ? 1 : ((b > a) ? -1 : 0);
-                }); 
+                });
                 var newArray = [currentItem[0],newObject];
                 return _.zipObject(["dettype","items"], newArray);
             }).value();
@@ -71,7 +71,7 @@ function updatePriceIndicator(itemDetails) {
                 let b = item.items[item.items.length -2];
                 if (a.y > b.y) {result = 1;}
                 if (a.y < b.y) {result = -1;}
-            } 
+            }
         }
     }
     return result;
@@ -79,16 +79,16 @@ function updatePriceIndicator(itemDetails) {
 
 function attribute2Array(object) {
     const allowed = ['color', 'size','clothingSize'];
-    let attr = []; 
+    let attr = [];
     if (_.isUndefined(object) || _.isNull(object)) {
         return attr;
     } else {
-      
+
         Object.keys(object)
             .filter(key => allowed.includes(key))
             .map((obj, key) => {
             attr.push({name: obj,value: object[obj]})
-            });  
+            });
         return attr;
     }
 }
@@ -96,17 +96,17 @@ function attribute2Array(object) {
 function attributeFilter(object) {
   //  console.log(object);
 const allowed = ['color', 'size','clothingSize'];
-  let attr = {};  
+  let attr = {};
   if (_.isUndefined(object) || _.isNull(object)) {
       return attr;
   } else {
-      
+
     attr =  Object.keys(object)
             .filter(key => allowed.includes(key))
             .reduce((obj, key) => {
                 obj[key] = object[key];
                 return obj;
-            }, {});  
+            }, {});
     return attr;
   }
 }
@@ -133,7 +133,7 @@ function convertItemList(itemList) {
                attrArray:  attribute2Array(item.attributes),
                variants: item.variants
             }
-            itemArray.push(obj);   
+            itemArray.push(obj);
        });
     }
     return itemArray;
@@ -148,17 +148,17 @@ function updateItemDetails(itemDetails, noty, updateItem) {
                 let elemValue = updateItem[notification];
                 if (elem ==="stock") {
                     elemValue = (elemValue === "Available")? 1: 0;
-                }   
+                }
                 var curDate = dayjs().format('DD-MMM-YY');
                 let x = {y: elemValue, x: curDate};
                 itemDetails.forEach((element, index) => {
                     if(element.dettype === elem) {
-                       itemDetails[index].items = itemDetails[index].items.concat(x); 
+                       itemDetails[index].items = itemDetails[index].items.concat(x);
                     }
                 });
-            }); 
-            return    itemDetails;         
-        } 
+            });
+            return    itemDetails;
+        }
     }
     return itemDetails;
 }
@@ -174,7 +174,7 @@ function updateItemInArray(itemList, updateItems) {
                 obj = Object.assign(item, {
                         thumbnailimage: result.thumbnailImage,
                         salePrice: result.salePrice,
-                        priceIndicator: 0, 
+                        priceIndicator: 0,
                         upc: result.upc,
                         itemdetails: itemDetails,
                         message: result.message,
@@ -213,8 +213,9 @@ export default function (state = INITIAL_STATE, action) {
         return Object.assign({}, state, {
             loadingSpinnerAdd: true,
             addItem: true
-        });           
+        });
 	case RECV_ITEM_2_FORM:
+			//console.log(action.data.items);
         let itemX = convertItemList(action.data.items);
         return Object.assign({}, state, {
             itemInfo: itemX[0],
@@ -222,7 +223,7 @@ export default function (state = INITIAL_STATE, action) {
             addItem: true
         });
     case RECV_DB_2_FORM:
-        //console.log(action.data);
+      //  console.log(action.data);
         return Object.assign({}, state, {
             itemInfo: action.data,
             addItem: true
@@ -230,9 +231,8 @@ export default function (state = INITIAL_STATE, action) {
     case RECV_WALMART_INFO: {
         const newItems =  updateItemInArray(state.itemList, action.data.items);
         return updateObject(state, {itemList : newItems, message: action.message});
-        }    
+        }
 	default:
- 	  return { ...state };   
+ 	  return { ...state };
   }
 }
-

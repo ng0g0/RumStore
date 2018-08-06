@@ -13,7 +13,7 @@ import {SUCCESS_NOTIF, ERROR_NOTIF} from '../consts';
 export function setLanguage(lang) {
 	return function (dispatch) {
 		cookie.save('i18n', lang);
-		dispatch({ type: LANG_CHANGE, payload: { lang: lang } 
+		dispatch({ type: LANG_CHANGE, payload: { lang: lang }
 		});
 	};
 }
@@ -32,17 +32,17 @@ export function loginUser({ email, password }) {
     })
     .catch((error) => {
         //console.log('loginUser Error : ', error);
-	  console.log(error); 	
+	  console.log(error);
       errorHandler(dispatch, error.response, AUTH_ERROR);
     });
   };
 }
 
 export function registerUser(props) {
- console.log(props)   
+ console.log(props)
   return function (dispatch) {
     axios.post(`${API_URL}/auth/register`, { props }
-    ,{ headers: { Authorization: cookie.load('token') }})   
+    ,{ headers: { Authorization: cookie.load('token') }})
     .then((response) => {
       //cookie.save('token', response.data.token, { path: '/' });
       //cookie.save('user', response.data.user, { path: '/' });
@@ -51,7 +51,7 @@ export function registerUser(props) {
       window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
     })
     .catch((error) => {
-	   console.log(error);	
+	   console.log(error);
        //errorHandler(dispatch, error, AUTH_ERROR);
     });
   };
@@ -63,7 +63,7 @@ export function logoutUser(error) {
     cookie.remove('token', { path: '/' });
     cookie.remove('user', { path: '/' });
 
-    window.location.href = `${CLIENT_ROOT_URL}/login`;
+    window.location.href = `${CLIENT_ROOT_URL}`;
   };
 }
 
@@ -95,7 +95,7 @@ export function resetPassword(token, { password }) {
 		cookie.remove('token', { path: '/' });
 		cookie.remove('user', { path: '/' });
 		browserHistory.push('/login');
-	  
+
     })
     .catch((error) => {
       errorHandler(dispatch, error.response, AUTH_ERROR);

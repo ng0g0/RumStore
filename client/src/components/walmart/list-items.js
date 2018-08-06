@@ -27,9 +27,9 @@ class ListItems extends Component {
         //console.log(item);
          this.props.dispatch(itemToAddForm(item));
     }
-    
+
     handleCancelClick(item) {
-        console.log('Cancel'); 
+        console.log('Cancel');
     }
     handleChangePage(maxPage, type) {
         let minPage = 1;
@@ -37,62 +37,62 @@ class ListItems extends Component {
         //console.log(type);
         switch(type) {
             case "FIRST":
-                newValue =  1;  
+                newValue =  1;
                 break;
             case "NEXT":
                 if (maxPage >= this.props.formSearch.pageNum) {
-                   newValue =   this.props.formSearch.pageNum + 1;    
+                   newValue =   this.props.formSearch.pageNum + 1;
                 }
                 break;
             case "PRIOR":
                 if (minPage < this.props.formSearch.pageNum) {
-                    newValue =   this.props.formSearch.pageNum - 1;    
+                    newValue =   this.props.formSearch.pageNum - 1;
                 }
                 break;
             default:
                 newValue =  maxPage;
-                
-            } 
-            
+
+            }
+
             if (newValue != -1) {
                 this.props.dispatch(change(searchWalmart, 'pageNum', newValue));
-                setTimeout(() => { 
+                setTimeout(() => {
                     //console.log(this.props.formSearch);
-                    this.props.dispatch(submit(searchWalmart)); 
+                    this.props.dispatch(submit(searchWalmart));
                }, 2500);
             }
-           
+
     }
 
-  
+
     renderMessage(msg) {
         if (msg) {
-            return (<div className="row"> 
-                <div className="col-sm-6">{msg} </div>  
+            return (<div className="row">
+                <div className="col-sm-6">{msg} </div>
             </div>);
         } else {
             return(<div></div>);
         }
     }
-    
+
     renderAddItemLayer() {
         let layerid = 'addItem'
         let label = 'ADD_ITEM';
 		return (<LayerMask layerid={layerid} header={label} key={layerid}
                     onOkClick={this.handleAddItem.bind(this)}
-                    onCancelClick={this.handleCancelClick.bind(this)}                    
+                    onCancelClick={this.handleCancelClick.bind(this)}
                     actionbtn="Save">
-                    <AddItem /> 
+                    <AddItem />
                 </LayerMask>);
     }
-    
+
     renderAttributes(att) {
         //console.log(att);
-        if (_.isUndefined(att)) 
-            return(<div className="col-sm-12"> NO Attributes </div>)    
+        if (_.isUndefined(att))
+            return(<div className="col-sm-12"> NO Attributes </div>)
         let size = Object.keys(att).length;
         if (size === 0) {
-            return(<div className="col-sm-12"> NO Attributes </div>)    
+            return(<div className="col-sm-12"> NO Attributes </div>)
         } else {
            // let classcl = `col-sm-${(12/size)}`;
             let classcl = `col-sm-1`;
@@ -105,7 +105,7 @@ class ListItems extends Component {
             return(out);
         }
     }
-   
+
     renderCellContent(item) {
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
         return(<div>
@@ -113,13 +113,13 @@ class ListItems extends Component {
                 { this.renderMessage(item.message) }
                <div className="col-sm-2">
                     <img alt={item.itemid} src ={itemImage} />
-                </div>   
+                </div>
                 <div className="col-sm-10">
                     <div className="row">
-                        <div className="col-sm-2"> 
+                        <div className="col-sm-2">
                             ItemID: {item.itemid}
-                        </div> 
-                        <div className="col-sm-4"> 
+                        </div>
+                        <div className="col-sm-4">
                             <div className="row">
                                 <div className="col">
                                     <Translation text="Name" />:<b>{item.name}</b>
@@ -131,28 +131,35 @@ class ListItems extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-sm-2"> 
+                        <div className="col-sm-2">
                             <Translation text="Stock" />:<b>{item.stock}</b>
                         </div>
-                        <div className="col-sm-2"> 
+                        <div className="col-sm-2">
                             <Translation text="WALMAR_ITEM_PRICE" />:{item.salePrice}
-                        </div>    
+                        </div>
                     </div>
                     <div className="row">
-                        {this.renderAttributes(item.attributes)} 
+                        {this.renderAttributes(item.attributes)}
                     </div>
                 </div>
-                
+
             </div>
         </div>);
     }
-    
+
 	renderListContent(items) {
+		const { authenticated } = this.props;
+		console.log(authenticated);
         if (!items) {
             return(<div> </div>);
         }
 		if (items.length > 0) {
-            let userItems = this.props.items.list.split(",");
+					//console.log(this.props.items);
+					let userItems = [];
+						if (this.props.items) {
+							userItems = this.props.items.list.split(",");
+						}
+
 			return (<div>
             {items.map((item) => {
                 const findItem = userItems.find(function(element) {
@@ -173,13 +180,13 @@ class ListItems extends Component {
                                 {this.renderCellContent(item)}
                                 </div>
                                 <div className="col-sm-1">
-                                    {actionButton}
-                                </div> 
-                            </div> 
+                                    {authenticated && actionButton }
+                                </div>
+                            </div>
                         </div>
                 </div>)
             })}
-            </div>);	
+            </div>);
 		}
 		else {
             if (this.props.preformSearch) {
@@ -194,7 +201,7 @@ class ListItems extends Component {
 			;
 		}
 	}
-    
+
     rentderFoundItems() {
         //console.log(this.props);
         const {totalItems, preformSearch, loadingSpinner } = this.props;
@@ -203,10 +210,10 @@ class ListItems extends Component {
             return (<div className="row">
                 <div className="col-sm-4"> Total Items: {totalItems} </div>
                 <div className="col-sm-4"> <a href="#" onClick={()=> this.handleChangePage(maxPage, "FIRST") } ><span className="glyphicon glyphicon-step-backward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "PRIOR") }><span className="glyphicon glyphicon-backward"></span></a> 
+                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "PRIOR") }><span className="glyphicon glyphicon-backward"></span></a>
                     &nbsp;<Translation text="WALMAR_PAGE" />:{this.props.formSearch.pageNum} /{maxPage}
                     &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "NEXT") }><span className="glyphicon glyphicon-forward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "LAST") }><span className="glyphicon glyphicon-step-forward"></span></a> 
+                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "LAST") }><span className="glyphicon glyphicon-step-forward"></span></a>
                 </div>
             </div>);
         }
@@ -224,7 +231,7 @@ class ListItems extends Component {
                     {this.rentderFoundItems()}
                     {this.renderListContent(itemSearch)}
                 </div>
-            </div>);	
+            </div>);
         }
     }
 }
@@ -233,20 +240,19 @@ function mapStateToProps(state) {
   return {
     loadingSpinner: state.walmartSearch.searchSpinner,
     itemSearch: state.walmartSearch.itemSearch,
-    items: state.walmart.items,  
+    items: state.walmart.items,
     preformSearch: state.walmartSearch.preformSearch,
     formSearch: state.walmartSearch.formSearch,
     totalItems: state.walmartSearch.totalItems,
+		authenticated: state.auth.authenticated
   };
 }
 
-const mapDispatchToProps = (dispatch) =>   
+const mapDispatchToProps = (dispatch) =>
     bindActionCreators({
             itemToAddForm
-        }, 
+        },
         dispatch
     );
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListItems);
-
-
