@@ -44,6 +44,9 @@ exports.getWalmartSearchedItems = function (req, res, next) {
     //console.log(searchType);
     if (itemId.length >0) {
         switch(searchType) {
+           case "terra":
+              url = `https://www.walmart.com/product/terra/${itemId}`;
+              break;
             case "upc":
                 url = `https://api.walmartlabs.com/v1/items?apiKey=${walmar_key}&upc=${itemId}`;
                 break;
@@ -397,12 +400,12 @@ console.log('getDailyUpdate');
 exports.WalmartNotification = function() {
     console.log('WalmartNotification');
 
-    let walmartItemsSQL = "select '['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue|| '\"}',',')||']' itemDet, itemid, notification, webid, username, itemname "+
-        " from ( select distinct dettype, detvalue,itemid , notification, webid, username, itemname  "+
-        "   from ( select max(t.detdate) OVER (PARTITION BY itemid, dettype) maxdate ,z.itemid, t.* , z.notification , z.webid, u.username, itemname "+
+    let walmartItemsSQL = "select '['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue|| '\"}',',')||']' itemDet, itemid, notification, webid, username, itemname, itemasib "+
+        " from ( select distinct dettype, detvalue,itemid , notification, webid, username, itemname, itemasib  "+
+        "   from ( select max(t.detdate) OVER (PARTITION BY itemid, dettype) maxdate ,z.itemid, t.* , z.notification , z.webid, u.username, itemname, itemasib "+
         "     from rs_items z,UNNEST(itemdetails) as t(dettype,detvalue,detdate), rbm_user u "+
         "     where u.usrid=z.usrid and u.active = 1 and array_length(z.notification , array_ndims(z.notification))>$1 "+
-        "   ) x where x.maxdate = x.detdate ) y GROUP BY itemid, notification, webid, username, itemname ";
+        "   ) x where x.maxdate = x.detdate ) y GROUP BY itemid, notification, webid, username, itemname, itemasib ";
 
     db.many(walmartItemsSQL, [0])
 	.then(itemsList => {
@@ -480,7 +483,8 @@ exports.WalmartNotification = function() {
                                            dettype: det.dettype,
                                            detvalue: det.detvalue,
                                            productUrl: wItem.productUrl,
-                                           newValue: wDet
+                                           newValue: wDet,
+                                           asin: itd.itemasib
                                         })
                                 }
                             })
@@ -509,6 +513,7 @@ exports.WalmartNotification = function() {
                                 html +=`<p>Following Items was updated</p>
                                   <table border="1">
                                     <tr>
+                                      <td>ASIN</td>
                                       <td>Item</td>
                                       <td>Name</td>
                                       <td>Detail</td>
@@ -518,6 +523,7 @@ exports.WalmartNotification = function() {
 
                                 items.forEach((item) => {
                                     html += `<tr>
+                                      <td>${item.asin}</td>
                                       <td>${item.itemId}</td>
                                       <td><a href="${item.productUrl}">${item.itemname}</a></td>
                                       <td>${item.dettype}</td>

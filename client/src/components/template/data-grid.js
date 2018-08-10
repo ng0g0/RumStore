@@ -10,9 +10,9 @@ class DataGrid extends Component {
         this.state = {
            start: 0 ,
            end: 5
-        } 
+        }
     }
-    
+
     handleShowNextFive() {
         let newStart = this.state.end;
         let newEnd = this.state.end + 5;
@@ -28,16 +28,16 @@ class DataGrid extends Component {
             this.setState({
                 start : newStart,
                 end : newEnd
-            })    
+            })
         }
-        
+
     }
     renderHeader(columns) {
         return(<div className="row" >
             {columns.map((col) => {
                 let classcl = `col-sm-${col.size || 2}`;
                 const colValue = col.name;
-                return(<div className={classcl}>
+                return(<div className={classcl} key={colValue}>
                     {colValue}
                     </div>)
             })}
@@ -52,7 +52,7 @@ class DataGrid extends Component {
             console.log('No Columns defined');
             return(<div> </div>);
         }
-        
+
         if (items.length > 0) {
            return (<div>
            {this.renderHeader(columns)}
@@ -66,25 +66,25 @@ class DataGrid extends Component {
                                 const colValue = col.type === "image" ?
                                     (<img alt={item["itemId"]} src ={item[col.name]} className="img-responsive"/>) :
                                     (<span>{item[col.name]}</span>);
-                                return(<div className={classcl}>
+                                return(<div className={classcl} key={colValue}>
                                     {colValue}
                                     </div>)
                             })}
                             {/*<div className="col-sm-4">
                                     <img alt={item.itemId} src ={itemImage} />
                                 </div>
-                                <div className="col-sm-8"> 
+                                <div className="col-sm-8">
                                     <div className="row" ><b>ItemID</b>: {item.itemId}</div>
                                     <div className="row" >Name:{item.name}</div>
                                     <div className="row" ><Translation text="WALMAR_ITEM_PRICE" />:{item.salePrice}</div>
                             </div>*/}
-                            </div> 
+                            </div>
                         </div>
                 </div>)
            })}
             <a href="#" onClick={()=> this.handleShowPrevFive() }><span className="glyphicon glyphicon-backward"></span></a>&nbsp;
-            <a href="#" onClick={()=> this.handleShowNextFive() }><span className="glyphicon glyphicon-forward"></span></a> 
-            </div>)           
+            <a href="#" onClick={()=> this.handleShowNextFive() }><span className="glyphicon glyphicon-forward"></span></a>
+            </div>)
         } else {
             return (<div> <Translation text="NO_DATE_FOUND" /> </div>);
         }
@@ -98,9 +98,9 @@ class DataGrid extends Component {
                 <div className="panel-body">
                     {this.renderTable(data)}
                 </div>
-            </div>);	
+            </div>);
         }
-	} 
+	}
 }
 
 DataGrid.PropTypes = {
@@ -110,6 +110,5 @@ DataGrid.PropTypes = {
 
 	};
 
-  
-export default DataGrid;  
-  
+
+export default DataGrid;

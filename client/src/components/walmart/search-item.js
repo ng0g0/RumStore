@@ -29,7 +29,7 @@ class SearchItem extends Component {
   <div className="panel-body">
     <form onSubmit={handleSubmit}>
       <div className="panel panel-primary">
-        <div className="panel-heading centerText">
+        <div className="panel-heading centerText black">
           <Translation text="WALMAR_ITEM_SEARCH" />
           <Field name="search" component="input" type="text"/>
           <button type="submit"><Translation text="WALMAR_SEARCH" /></button>

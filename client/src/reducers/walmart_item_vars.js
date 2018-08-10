@@ -96,7 +96,7 @@ export default function (state = INITIAL_STATE, action) {
             itemVars: [],
         });
     case RECV_VAR_ITEMS:
-        //console.log(action.data);
+        console.log(action.data);
         return Object.assign({}, state, {
             itemVars: convertItemList(action.data.items),
             loadingSpinnerVar: false

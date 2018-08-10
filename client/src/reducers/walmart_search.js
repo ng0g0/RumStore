@@ -46,7 +46,8 @@ function convertItemList(itemList) {
                stock: item.stock,
                attributes: attributeFilter(item.attributes),
                variants: item.variants,
-							 productUrl: item.productUrl
+							 productUrl: item.productUrl,
+							 msrp: item.msrp
 
             }
             itemArray.push(obj);
