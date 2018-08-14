@@ -63,6 +63,8 @@ const apiRoutes = express.Router(),
     apiRoutes.use('/walmart', walmartRouter);
     walmartRouter.post('/item', requireAuth, WalmartController.WalmartAddItems);
     walmartRouter.get('/item/:itemId', requireAuth, WalmartController.getWalmartItems);
+    walmartRouter.get('/itemterra/:itemId', requireAuth, WalmartController.getWalmartTerra);
+
 	walmartRouter.get('/bestitem', requireAuth, WalmartController.getWalmartBestItems);
     walmartRouter.get('/dailyRefresh', requireAuth, WalmartController.getDailyUpdate);
     //walmartRouter.get('/item/search/:sType/:itemId/:page/:items/:sort', requireAuth, WalmartController.getWalmartSearchedItems);

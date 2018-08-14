@@ -202,6 +202,8 @@ class ListItems extends Component {
     rentderFoundItems() {
         //console.log(this.props);
         const {totalItems, preformSearch, loadingSpinner } = this.props;
+				console.log(totalItems);
+				console.log(this.props.formSearch.itemPage);
         let maxPage = Math.ceil( totalItems /this.props.formSearch.itemPage);
         if (preformSearch && !loadingSpinner) {
             return (<div className="row">

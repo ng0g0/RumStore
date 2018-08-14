@@ -111,6 +111,52 @@ const allowed = ['color', 'size','clothingSize'];
   }
 }
 
+function terra2attribute(object) {
+	var attr = [];
+	console.log(object);
+	if (_.isUndefined(object) || _.isNull(object)) {
+		console.log('empty');
+		return attr;
+	} else {
+		let item = object.productId.productId;
+		console.log(item);
+		if (object.variantInformation.variantProducts) {
+			let variants = object.variantInformation.variantProducts
+			variants.filter((vars) => {
+				return vars.productId === item;
+			}).map((obj, key) => {
+				Object.keys(obj.variants).map((obj1, key) => {
+					console.log(obj.variants[obj1])
+						attr.push({name: obj1,value: obj.variants[obj1].name})
+					});
+				});
+		}
+    return attr;
+  }
+}
+
+
+function convertTerraItem(item) {
+	let obj = {
+		 asib: "N/A",
+		 itemid: item.productId.usItemId,
+		 name: item.productAttributes.productName,
+	   noty: [],
+		 thumbnailimage: item.productImages.imageAssets[0].assetSizeUrls.IMAGE_SIZE_60,
+		 salePrice: item.offers[0].pricesInfo.priceMap.CURRENT.price,
+		 //priceIndicator: updatePriceIndicator(item.itemDetails),
+		 upc: item.productAttributes.upc,
+		 webstore: item.webstore || "walmart",
+		 //itemdetails: convertItemDetail(item.itemdetails),
+		 stock: item.offers[0].productAvailability.availabilityStatus,
+		 id: item.id || 0,
+		 attributes: {}, //attributeFilter(item.attributes),
+		 attrArray:  terra2attribute(item), //attribute2Array(item.attributes),
+		 variants: item.variantInformation.variantProducts
+	}
+	console.log(obj);
+	return obj;
+}
 
 function convertItemList(itemList) {
     let itemArray = [];
@@ -215,10 +261,10 @@ export default function (state = INITIAL_STATE, action) {
             addItem: true
         });
 	case RECV_ITEM_2_FORM:
-			//console.log(action.data.items);
-        let itemX = convertItemList(action.data.items);
+			console.log(action.data);
+        let itemX = convertTerraItem(action.data.product);
         return Object.assign({}, state, {
-            itemInfo: itemX[0],
+            itemInfo: itemX,
             loadingSpinnerAdd: false,
             addItem: true
         });

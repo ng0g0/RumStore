@@ -5,8 +5,9 @@ import { PropTypes } from 'prop-types';
 import  * as lang2 from './locale';
 
 class Translation extends Component {
-	
+
   render() {
+		//console.log(this.props.text);
     var str = lang2.default.TRANSLATIONS[this.props.locale][this.props.text];
     var res = str;
     if (this.props.items) {
@@ -19,8 +20,8 @@ class Translation extends Component {
         });
         } else {
             res = res.replace('$1', this.props.items);
-        }        
-    }    
+        }
+    }
     return (<span>{res}</span>);
   }
 }
@@ -44,6 +45,3 @@ Translation.propTypes = {
 PropTypes.checkPropTypes(Translation.propTypes, props, 'prop', 'Translation');
 
 export default connect(mapStateToProps, null)(Translation);
-
-
-

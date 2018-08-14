@@ -93,6 +93,88 @@ exports.getWalmartSearchedItems = function (req, res, next) {
     }
 };
 
+exports.getWalmartTerra = function (req, res, next) {
+  const itemId = req.params.itemId;
+  if (itemId === '') {
+      console.log('Item Empty');
+      return res.status(200).json({ items: [] });
+  }
+  var url = `https://www.walmart.com/product/terra/${itemId}`;
+  let options = { url: url };
+  let obj;
+  return request(options, function (error, response, body) {
+    try {
+          obj = JSON.parse(body);
+    } catch(e) {
+        console.log(body);
+        res.status(200).json({ message: e});
+    }
+    if (obj.errors) {
+       console.log(body);
+       res.status(200).json({ message: obj.errors.message });
+    } else {
+      res.status(200).json(obj);
+    }
+  }).on('error', function(err) {
+      console.log('ERROR');
+      console.log(err)
+      res.status(200).json({ message: err});
+  });
+}
+
+exports.getWalmartTerraItems = function (req, res, next) {
+  const itemId = req.params.itemId;
+  if (itemId === '') {
+      console.log('Item Empty');
+      return res.status(200).json({ items: [] });
+  }
+  let walmartItems = itemId.split(',');
+   async.waterfall([
+          function( callbackfunc1) {
+             let walmartResponce = [];
+             var cnt = walmartItems.length;
+             var i = 0;
+             async.whilst(
+                  function() { return i < cnt; },
+                  function( callbackwh) {
+                      let sentItems =  walmartItems[i];
+                     // console.log(`Page ${i} =${sentItems}`);
+                      setTimeout(function() {
+                          request.get(`https://www.walmart.com/product/terra/${sentItems}`, function (err, res, body) {
+                              if (IsJsonString(body)) {
+                                  let wItemRet = JSON.parse(body); //{items: []}; //
+                                  if (wItemRet.product.productId) {
+                                     // console.log(`Items Retreved = ${wItemRet.items.length}`);
+                                      walmartResponce = walmartResponce.concat(wItemRet.product.productId);
+                                  } else {
+                                     console.log(`Items missing`);
+                                  }
+
+                              } else {
+                                  console.log('NOT JSON');
+                              }
+                          i++;
+                          //console.log(`Left Items${walmartItems.join()}`);
+                          callbackwh(null, walmartResponce);
+                          });
+                      }, 1000);
+                  },
+                  function (err, result) {
+                     //console.log(`Items Retreved = ${result.length}`);
+                     callbackfunc1(null, result);
+                  }
+              );
+          },
+          function( walmartResponce, callbackfunc2) {
+              console.log(`Total Items Retreved = ${walmartResponce.length}`);
+              return res.status(200).json({ items: walmartResponce });
+              callbackfunc2(null, 'done');
+
+          }
+          ], function (err, result) { console.log(result); }
+  );
+};
+
 exports.getWalmartItems = function (req, res, next) {
     const itemId = req.params.itemId;
     if (itemId === '') {

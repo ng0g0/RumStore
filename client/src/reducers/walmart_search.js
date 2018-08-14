@@ -83,7 +83,7 @@ export default function (state = INITIAL_STATE, action) {
                     pageNum: action.pageNum
                 },
 				itemSearch: convertItemList(action.data.items),
-                totalItems: action.data.totalResults
+                totalItems: action.data.totalResults || 1
             });
 	default:
  	  return { ...state };

@@ -19,7 +19,9 @@ import {
     RECV_WALMART_BEST,
     REQ_WALMART_BEST,
     REQ_VAR_ITEMS,
-    RECV_VAR_ITEMS
+    RECV_VAR_ITEMS,
+    REQ_ITEM_PRICE_2_FORM,
+    RECV_ITEM_PRICE_2_FORM,
  //CLEAR_BLOCK_INFO
  }
 from './types';
@@ -110,6 +112,16 @@ function requestItem2Form() {
    return {type: REQ_ITEM_2_FORM}
 }
 
+function requestItemPrice2Form() {
+     return {type: REQ_ITEM_PRICE_2_FORM}
+}
+
+function addItemPriceToForm(item) {
+  return{
+    type: RECV_ITEM_PRICE_2_FORM,
+    data: item
+  }
+}
 
 function copyDBToForm(item) {
 	return{
@@ -228,17 +240,39 @@ export function fetchFromWalmarAPI(items) {
     };
 }
 
+export function itemPriceToAddForm(item) {
+  return function (dispatch) {
+    dispatch(requestItemPrice2Form());
+    return axios({
+        url: `${API_URL}/walmart/item/${item}`,
+        method: 'get',
+        headers: { Authorization: cookie.load('token') }
+      }).then((response) => {
+        console.log(response.data);
+        dispatch(addItemPriceToForm(response.data));
+      }).catch((error) => {
+        console.log(error)
+      });
+    };
+
+}
+
 export function itemToAddForm(items) {
     //console.log(`itemToAddForm: ${items}`)
     return function (dispatch) {
+        dispatch(requestItemPrice2Form());
         dispatch(requestItem2Form());
-        return axios({ url: `${API_URL}/walmart/item/${items}`,
-			method: 'get',
-			headers: { Authorization: cookie.load('token') }
-            })
+        return axios({
+          url: `${API_URL}/walmart/itemterra/${items}`,
+			    method: 'get',
+			    headers: { Authorization: cookie.load('token') }
+        })
         .then((response) => {
-            //console.log(response.data)
+            console.log(response.data);
+            //product.productId.usItemId
+            //dispatch(itemPriceToAddForm(response.data));
             dispatch(copyItemToForm(response.data));
+
         })
         .catch((error) => {
             console.log(error)

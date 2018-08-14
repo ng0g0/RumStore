@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'; // ES6
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector, FieldArray, change   } from 'redux-form';
 import Translation from '../locale/translate';
+import { itemToAddForm } from '../../actions/walmart';
 import { //searchFunc,
 saveItem} from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
@@ -10,7 +11,8 @@ import { WalmartItem } from '../../consts';
 //import SearchItem from './search-item';
 import AccGroup from '../accordion/accordiongroup';
 import Multiselect from 'react-widgets/lib/Multiselect'
-import VariantItems from './var-items';
+//import VariantItems from './var-items';
+import VariantItems from './item-variants';
 
 function validate(formProps) {
   const errors = {};
@@ -33,28 +35,37 @@ const renderAttribute= ({ fields, meta: { error } }) => (
         {fields
         .map((att, index) => (
             <div className="col-md-2" key={index}>
-                <div className="row">
-                    <Field name={`${att}.name`} type="text" component={renderField} />
+                <div className="row attributesHead">
+                  <Field name={`${att}.name`} type="text" component={renderText} />
                 </div>
-                <div className="row">
-                        <Field name={`${att}.value`} type="text" component={renderField} />
+                <div className="row attributes">
+                 <Field name={`${att}.value`} type="value" component={renderText} />
                 </div>
             </div>
         ))}
         </div>
     </div>
     );
-
+//<Field name={`${att}.name`} type="text" component={renderField} />
+//<Field name={`${att}.value`} type="text" component={renderField} style="text" />
 const renderField = ({
   input,
   type,
+  style,
   meta: { touched, error, warning },
 }) =>
   ( <div>
-      <input className="form-control" {...input} type={type} disabled />
+      <input className={style || "form-control"} {...input} type={type} disabled />
 	  {touched &&  error &&   <div className="error"><Translation text={error} /></div>}
     </div>
   );
+
+  const renderText = ({ input, type }) =>
+    ( <div>
+      {(type === "value") ? input.value :
+        <Translation text={input.value} />}
+      </div>
+    );
 
 
 class AddItem extends Component {
@@ -64,7 +75,13 @@ class AddItem extends Component {
             result: ['salePrice', 'stock']
         }
         this.handleMultiChange = this.handleMultiChange.bind(this);
+        this.handleAddForm = this.handleAddForm.bind(this);
 	}
+
+    handleAddForm(item) {
+      //console.log(item);
+       this.props.dispatch(itemToAddForm(item));
+     }
 
     handleMultiChange(val) {
         this.props.dispatch(change(WalmartItem, 'notification', val));
@@ -140,6 +157,7 @@ class AddItem extends Component {
             <AccGroup title="WALMAR_ITEM_NOTIFICATION" key="notificationArea" item="notificationArea" >
                 <div className="row">
                     <div className="col-md-12">
+                        <label><Translation text="WALMAR_ITEM_NOTIFICATION" /></label>
                         <Field
                             name="noty"
                             component={renderMultiselect}
@@ -149,7 +167,9 @@ class AddItem extends Component {
                     </div>
                 </div>
             </AccGroup>
-            <VariantItems vars={this.props.itemInfo.variants} name="itemVars" {...this.props} />
+            <label><Translation text="WALMAR_VARIATIONS" /></label>
+            <VariantItems vars={this.props.itemInfo.variants} onUpdate={this.handleAddForm}/>
+            {/*<VariantItems vars={this.props.itemInfo.variants} name="itemVars" {...this.props} />*/}
 
           </form>
           </div>);
@@ -174,7 +194,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     //searchFunc,
-    saveItem
+    saveItem,
+    itemToAddForm
 
 }, dispatch);
 

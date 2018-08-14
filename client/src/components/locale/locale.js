@@ -4,6 +4,11 @@ const TRANSLATIONS = {
     'Save': 'Save',
     'Reports': 'Reports',
     'FirstName': 'First Name',
+    'clothing_size': 'Size',
+    'actual_color': 'Color',
+    'curtain_and_valance_panel_style': 'Style',
+    'weight': 'Weight',
+    'number_of_pieces': 'Count',
 	'LastName': 'Last Name',
 	'Email': 'Email',
 	'Password': 'Password',
@@ -119,13 +124,19 @@ const TRANSLATIONS = {
     'USER_LISTITEMS': 'User Products',
     'Settings': 'Settings',
     'NO_UPDATE_FOUND': 'There is not changed items',
-    'Clear': 'Clear'
+    'Clear': 'Clear',
+    'WALMAR_VARIATIONS': 'Variations'
 
 
   },
   bg: {
     'Refresh' : 'Обновяване',
     'Save': 'Запази',
+    'clothing_size': 'Размер',
+    'actual_color': 'Цвят',
+    'weight': 'Тежест',
+    'curtain_and_valance_panel_style': 'Стил',
+    'number_of_pieces': 'Брой',
 	'Reports': 'Справки',
 	'FirstName': 'Лично име',
 	'LastName': 'Фамилия',
@@ -244,7 +255,8 @@ const TRANSLATIONS = {
     'USER_LISTITEMS': 'Продукти',
     'Settings': 'Settings',
     'NO_UPDATE_FOUND': 'Няма променени продукти',
-    'Clear': 'Изчисти'
+    'Clear': 'Изчисти',
+    'WALMAR_VARIATIONS': 'Избери Модели'
 
   }
 };

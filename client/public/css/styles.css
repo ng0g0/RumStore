@@ -213,6 +213,22 @@ p.copyright>span {
   color: #000000 !important;
 }
 
+.text {
+  border: 0px;
+  color: #000000;
+  background: #FFFFFF;
+}
+.attributes {
+  border-style: groove;
+  text-align: center;
+}
+.attributesHead {
+  border-style: groove;
+  text-align: center;
+  background: gray;
+  color: white;
+}
+
 .white {
   color: #000000;
   &:hover {

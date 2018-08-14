@@ -29,8 +29,8 @@ export const RECV_USER_DATA = 'RECV_USER_DATA';
 
 //===================
 //   Block
-//export const REQ_BLOCK_LIST = 'REQ_BLOCK_LIST'; 
-//export const RECV_BLOCK_LIST = 'RECV_BLOCK_LIST'; 
+//export const REQ_BLOCK_LIST = 'REQ_BLOCK_LIST';
+//export const RECV_BLOCK_LIST = 'RECV_BLOCK_LIST';
 //export const REQ_BLOCK_INFO = 'REQ_BLOCK_INFO';
 //export const RECV_BLOCK_INFO = 'RECV_BLOCK_INFO';
 //export const CLEAR_BLOCK_INFO ='CLEAR_BLOCK_INFO';
@@ -55,7 +55,8 @@ export const RECV_WALMART_BEST = 'RECV_WALMART_BEST';
 export const REQ_WALMART_BEST = 'REQ_WALMART_BEST';
 export const REQ_VAR_ITEMS = 'REQ_VAR_ITEMS';
 export const RECV_VAR_ITEMS = 'RECV_VAR_ITEMS';
-
+export const REQ_ITEM_PRICE_2_FORM= 'REQ_ITEM_PRICE_2_FORM';
+export const RECV_ITEM_PRICE_2_FORM= 'RECV_ITEM_PRICE_2_FORM';
 
 //= =====================
 // Messaging Actions
@@ -85,4 +86,3 @@ export const RECV_VAR_ITEMS = 'RECV_VAR_ITEMS';
 
   export const ERROR_RESPONSE = 'error_response';
   export const LANG_CHANGE = 'LANG_CHANGE';
-  
