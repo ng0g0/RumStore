@@ -222,6 +222,21 @@ p.copyright>span {
   border-style: groove;
   text-align: center;
 }
+.varButton {
+    width: 70px;
+    height: 70px;
+    white-space: normal;
+    padding: 0px 10px;
+}
+.varButtonActive {
+      width: 70px;
+      height: 70px;
+      white-space: normal;
+      padding: 0px 10px;
+      border: 2px;
+      border-color: black;
+      border-style: solid;
+}
 .attributesHead {
   border-style: groove;
   text-align: center;

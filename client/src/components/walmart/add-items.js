@@ -148,9 +148,9 @@ class AddItem extends Component {
                 </div>
                 <div className="col-md-4">
                     <label><Translation text="WALMAR_ITEM_ONSTOCK" /></label>
-                    <Field name="stock" className="form-control" component="select">
+                    <Field name="stock" className="form-control" component="select" disabled="true">
                     <option value="Available">Available</option>
-                    <option value="Not available">Not available</option>
+                    <option value="not available">Not available</option>
                     </Field>
                 </div>
             </div>
@@ -167,8 +167,9 @@ class AddItem extends Component {
                     </div>
                 </div>
             </AccGroup>
-            <label><Translation text="WALMAR_VARIATIONS" /></label>
-            <VariantItems vars={this.props.itemInfo.variants} onUpdate={this.handleAddForm}/>
+            <VariantItems vars={this.props.itemInfo.variants}
+             currentProduct={this.props.itemInfo.productId}
+            onUpdate={this.handleAddForm}/>
             {/*<VariantItems vars={this.props.itemInfo.variants} name="itemVars" {...this.props} />*/}
 
           </form>

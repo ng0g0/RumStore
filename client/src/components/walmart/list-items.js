@@ -96,7 +96,7 @@ class ListItems extends Component {
             return(<div className="col-sm-12"></div>)
         } else {
            // let classcl = `col-sm-${(12/size)}`;
-            let classcl = `col-sm-1`;
+            let classcl = `col-sm-2`;
             var out = Object.keys(att).map(function(key) {
                 return( <div className={classcl} key={key}>
                             <div className="row"><b>{key}</b></div>
@@ -117,10 +117,10 @@ class ListItems extends Component {
         return(<div>
             <div className="row">
                 { this.renderMessage(item.message) }
-              <div className="col-sm-2">
+              <div className="col-sm-3">
                     <img alt={item.itemid} src ={itemImage} />
             	</div>
-              <div className="col-sm-10">
+              <div className="col-sm-9">
               	<div className="row">
                   <div className="col-sm-12">
 										<div className="row">

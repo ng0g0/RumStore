@@ -14,11 +14,12 @@ class VariantItems extends Component {
 
     render() {
       //console.log(this.props.vars);
-      const { vars } = this.props;
+      const { vars, currentProduct } = this.props;
       if (!vars) {
           return(<div> </div>);
       }
       return (<div>
+            <label><Translation text="WALMAR_VARIATIONS" /></label><br/>
             {vars.map((variant,index) => {
               //console.log(variant);
               let btnLabel  = "";
@@ -35,7 +36,11 @@ class VariantItems extends Component {
                   const btnLbl = (vk === 'number_of_pieces') ? ` ${vk_name} ct` : `${vk_name}`;
                   btnLabel += btnLbl;
                })
-              return(<button type="button" className="btn btn-default" key={index}
+              const btnclass =  (currentProduct === variant.productId) ?
+                                "btn btn-default varButtonActive"
+                              : "btn btn-default varButton"
+
+              return(<button type="button" className={btnclass} key={index}
                         onClick={this.handleClickItem.bind(this, variant.productId)}
                         >
                         {btnLabel}

@@ -137,18 +137,21 @@ function terra2attribute(object) {
 
 
 function convertTerraItem(item) {
+	const price = (item.offers) ? item.offers[0].pricesInfo.priceMap.CURRENT.price : 0;
+	const stock = (item.offers) ? item.offers[0].productAvailability.availabilityStatus : "not available";
 	let obj = {
 		 asib: "N/A",
 		 itemid: item.productId.usItemId,
 		 name: item.productAttributes.productName,
+		 productId: item.productId.productId,
 	   noty: [],
-		 thumbnailimage: item.productImages.imageAssets[0].assetSizeUrls.IMAGE_SIZE_60,
-		 salePrice: item.offers[0].pricesInfo.priceMap.CURRENT.price,
+		 thumbnailimage: item.productImages.imageAssets[0].assetSizeUrls.IMAGE_SIZE_100,
+		 salePrice: price,
 		 //priceIndicator: updatePriceIndicator(item.itemDetails),
-		 upc: item.productAttributes.upc,
+		 upc: item.productId.upc,
 		 webstore: item.webstore || "walmart",
 		 //itemdetails: convertItemDetail(item.itemdetails),
-		 stock: item.offers[0].productAvailability.availabilityStatus,
+		 stock: stock,
 		 id: item.id || 0,
 		 attributes: {}, //attributeFilter(item.attributes),
 		 attrArray:  terra2attribute(item), //attribute2Array(item.attributes),
