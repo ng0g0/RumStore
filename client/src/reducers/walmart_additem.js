@@ -18,20 +18,20 @@ const INITIAL_STATE = {
 
 function terra2attribute(object) {
   var attr = [];
-  console.log(object);
+  //console.log(object);
   if (_.isUndefined(object) || _.isNull(object)) {
-		console.log('empty');
+		//console.log('empty');
 		return attr;
   } else {
 	   let item = object.productId.productId;
-	    console.log(item);
+	    //console.log(item);
 	    let variants = object.variantInformation.variantProducts
       if (variants) {
   		  variants.filter((vars) => {
   			     return vars.productId === item;
   		  }).map((obj, key) => {
   			  Object.keys(obj.variants).map((obj1, key) => {
-  				    console.log(obj.variants[obj1])
+  				    //console.log(obj.variants[obj1])
   						attr.push({name: obj1,value: obj.variants[obj1].name})
   					});
   		  });
@@ -41,7 +41,7 @@ function terra2attribute(object) {
 }
 
 function convertTerraItem(item, dbitem) {
-	console.log(dbitem);
+	//console.log(dbitem);
 	const price = (item.offers) ? item.offers[0].pricesInfo.priceMap.CURRENT.price : 0;
 	const stock = (item.offers) ? item.offers[0].productAvailability.availabilityStatus : "not available";
 	const asib = (dbitem) ? dbitem.asib : "N/A";
@@ -78,7 +78,7 @@ export default function (state = INITIAL_STATE, action) {
             addItem: true
         });
 	case RECV_ITEM_2_FORM:
-			console.log(action.data);
+			//console.log(action.data);
         let itemX = convertTerraItem(action.data.product);
         return Object.assign({}, state, {
             itemInfo: itemX,
