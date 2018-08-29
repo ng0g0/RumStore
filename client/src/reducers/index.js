@@ -7,6 +7,7 @@ import walmartReducer from './walmart_reducer';
 import dashboardReducer from './dashboard_reducer';
 import walmartSReducer from './walmart_search';
 import walmartVReducer from './walmart_item_vars';
+import walmartItemInfo from './walmart_additem';
 //import walmartAReducer from './walmart_additem'
 
 const rootReducer = combineReducers({
@@ -15,10 +16,10 @@ const rootReducer = combineReducers({
   user: userReducer,
   lang: langReducer,
   walmart: walmartReducer,
+  walmartItem: walmartItemInfo,
   dashboard: dashboardReducer,
   walmartSearch: walmartSReducer,
-  walmartVars: walmartVReducer,
-//  walmartAdd: walmartAReducer
+  walmartVars: walmartVReducer
 });
 
 export default rootReducer;

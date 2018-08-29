@@ -1,11 +1,9 @@
 import {
 	REQ_WALMART_LIST,
-    RECV_WALMART_LIST,
-    RECV_WALMART_INFO,
-    RECV_ITEM_2_FORM,
-    REQ_ITEM_2_FORM,
-    RECV_DB_2_FORM
+  RECV_WALMART_LIST,
+  RECV_WALMART_INFO,
 } from '../actions/types';
+
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
@@ -94,7 +92,6 @@ function attribute2Array(object) {
 }
 
 function attributeFilter(object) {
-  //  console.log(object);
 const allowed = ['color', 'size','clothingSize'];
   let attr = {};
   if (_.isUndefined(object) || _.isNull(object)) {
@@ -109,56 +106,6 @@ const allowed = ['color', 'size','clothingSize'];
             }, {});
     return attr;
   }
-}
-
-function terra2attribute(object) {
-	var attr = [];
-	console.log(object);
-	if (_.isUndefined(object) || _.isNull(object)) {
-		console.log('empty');
-		return attr;
-	} else {
-		let item = object.productId.productId;
-		console.log(item);
-		if (object.variantInformation.variantProducts) {
-			let variants = object.variantInformation.variantProducts
-			variants.filter((vars) => {
-				return vars.productId === item;
-			}).map((obj, key) => {
-				Object.keys(obj.variants).map((obj1, key) => {
-					console.log(obj.variants[obj1])
-						attr.push({name: obj1,value: obj.variants[obj1].name})
-					});
-				});
-		}
-    return attr;
-  }
-}
-
-
-function convertTerraItem(item) {
-	const price = (item.offers) ? item.offers[0].pricesInfo.priceMap.CURRENT.price : 0;
-	const stock = (item.offers) ? item.offers[0].productAvailability.availabilityStatus : "not available";
-	let obj = {
-		 asib: "N/A",
-		 itemid: item.productId.usItemId,
-		 name: item.productAttributes.productName,
-		 productId: item.productId.productId,
-	   noty: [],
-		 thumbnailimage: item.productImages.imageAssets[0].assetSizeUrls.IMAGE_SIZE_100,
-		 salePrice: price,
-		 //priceIndicator: updatePriceIndicator(item.itemDetails),
-		 upc: item.productId.upc,
-		 webstore: item.webstore || "walmart",
-		 //itemdetails: convertItemDetail(item.itemdetails),
-		 stock: stock,
-		 id: item.id || 0,
-		 attributes: {}, //attributeFilter(item.attributes),
-		 attrArray:  terra2attribute(item), //attribute2Array(item.attributes),
-		 variants: item.variantInformation.variantProducts
-	}
-	console.log(obj);
-	return obj;
 }
 
 function convertItemList(itemList) {
@@ -221,16 +168,16 @@ function updateItemInArray(itemList, updateItems) {
             if(result) {
                 let itemDetails = updateItemDetails(item.itemdetails, item.noty, result);
                 obj = Object.assign(item, {
-                        thumbnailimage: result.thumbnailImage,
-                        salePrice: result.salePrice,
-                        priceIndicator: 0,
-                        upc: result.upc,
-                        itemdetails: itemDetails,
-                        message: result.message,
-                        stock: (result.stock === "Available") ? 1 :0,
-                        attributes: attributeFilter(result.attributes),
-                        attrArray:  attribute2Array(result.attributes),
-                        noty: item.noty || []
+                    thumbnailimage: result.thumbnailImage,
+                    salePrice: result.salePrice,
+                    priceIndicator: 0,
+                    upc: result.upc,
+                    itemdetails: itemDetails,
+                    message: result.message,
+                    stock: (result.stock === "Available") ? 1 :0,
+                    attributes: attributeFilter(result.attributes),
+                    attrArray:  attribute2Array(result.attributes),
+                    noty: item.noty || []
                 });
 
             } else {
@@ -247,41 +194,22 @@ function updateItemInArray(itemList, updateItems) {
 
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
-	case REQ_WALMART_LIST:
-		return Object.assign({}, state, {
+		case REQ_WALMART_LIST:
+			return Object.assign({}, state, {
 		    loadingSpinner: true
-		});
-	case RECV_WALMART_LIST:
+			});
+		case RECV_WALMART_LIST:
 			return Object.assign({}, state, {
 				itemList: convertItemList(action.data.itemList),
-                items: action.data.items,
+        items: action.data.items,
 				message: action.message,
 				loadingSpinner: false
 			});
-    case REQ_ITEM_2_FORM:
-        return Object.assign({}, state, {
-            loadingSpinnerAdd: true,
-            addItem: true
-        });
-	case RECV_ITEM_2_FORM:
-			console.log(action.data);
-        let itemX = convertTerraItem(action.data.product);
-        return Object.assign({}, state, {
-            itemInfo: itemX,
-            loadingSpinnerAdd: false,
-            addItem: true
-        });
-    case RECV_DB_2_FORM:
-      //  console.log(action.data);
-        return Object.assign({}, state, {
-            itemInfo: action.data,
-            addItem: true
-        });
     case RECV_WALMART_INFO: {
         const newItems =  updateItemInArray(state.itemList, action.data.items);
         return updateObject(state, {itemList : newItems, message: action.message});
         }
-	default:
- 	  return { ...state };
+	 default:
+ 	  	return { ...state };
   }
 }

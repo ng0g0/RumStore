@@ -126,18 +126,64 @@ exports.getWalmartTerraItems = function (req, res, next) {
   const itemId = req.params.itemId;
   if (itemId === '') {
       console.log('Item Empty');
-      return res.status(200).json({ items: [] });
+      return res.status(200).json({ items: [], message: 'Item List Empty' });
   }
-  let walmartItems = itemId.split(',');
+  //let walmartItems = itemId.split(',');
    async.waterfall([
-          function( callbackfunc1) {
-             let walmartResponce = [];
-             var cnt = walmartItems.length;
+          function (callbackTerra) {
+            var walmartTerraResponce = {};
+            setTimeout(function() {
+                request.get(`https://www.walmart.com/product/terra/${itemId}`, function (err, res, body) {
+                    if (IsJsonString(body)) {
+                        let wItemRet = JSON.parse(body); //{items: []}; //
+                        if ((wItemRet.product.productId)
+                            &&(wItemRet.product.productAttributes)
+                            &&(wItemRet.product.productImages)) {
+                              const {productId, usItemId, upc} = wItemRet.product.productId;
+                              const {productName, canonicalUrl} = wItemRet.product.productAttributes;
+                              const {primaryImageUrl} = wItemRet.product.productImages;
+                              walmartTerraResponce = Object.assign({
+                                productId: productId,
+                                itemId: usItemId,
+                                upc: upc,
+                                productName: productName,
+                                productUrl: canonicalUrl,
+                                productImageUrl: primaryImageUrl
+                                }, null);
+                            if (wItemRet.product.variantInformation) {
+                              let  vars = [];
+                              const {variantProducts} = wItemRet.product.variantInformation;
+                              variantProducts.forEach(function(element) {
+    	                           const v  = Object.keys(element.variants);
+                                 let variant = {};
+                                 v.forEach(function(vk) {
+                                    const vk_name = element.variants[vk].name
+                                    variant = Object.assign({ [vk] : vk_name},variant);
+                                  })
+                                  vars.push({productId : element.productId, itemId: null, variants: variant })
+                              });
+                              walmartTerraResponce = Object.assign(walmartTerraResponce, { variantProducts: vars } );
+                            }
+                        } else {
+                           console.log(`Items missing`);
+                        }
+
+                    } else {
+                        console.log('NOT JSON');
+                    }
+                callbackTerra(null, walmartTerraResponce);
+                });
+            }, 1000);
+          },
+          function( walmartTerraResponce, callbackfunc1) {
+            // let walmartResponce = [];
+             var cnt = walmartTerraResponce.variantProducts.length;
+             console.log(cnt);
              var i = 0;
              async.whilst(
                   function() { return i < cnt; },
                   function( callbackwh) {
-                      let sentItems =  walmartItems[i];
+                      let sentItems =  walmartTerraResponce.variantProducts[i].productId;
                      // console.log(`Page ${i} =${sentItems}`);
                       setTimeout(function() {
                           request.get(`https://www.walmart.com/product/terra/${sentItems}`, function (err, res, body) {
@@ -145,7 +191,11 @@ exports.getWalmartTerraItems = function (req, res, next) {
                                   let wItemRet = JSON.parse(body); //{items: []}; //
                                   if (wItemRet.product.productId) {
                                      // console.log(`Items Retreved = ${wItemRet.items.length}`);
-                                      walmartResponce = walmartResponce.concat(wItemRet.product.productId);
+                                     if (wItemRet.product.productId.productId === walmartTerraResponce.variantProducts[i].productId) {
+                                        walmartTerraResponce.variantProducts[i].itemId = wItemRet.product.productId.usItemId
+                                     } else {
+                                       console.log(`${wItemRet.product.productId.productId} problem with ID`);
+                                     }
                                   } else {
                                      console.log(`Items missing`);
                                   }
@@ -155,7 +205,7 @@ exports.getWalmartTerraItems = function (req, res, next) {
                               }
                           i++;
                           //console.log(`Left Items${walmartItems.join()}`);
-                          callbackwh(null, walmartResponce);
+                          callbackwh(null, walmartTerraResponce);
                           });
                       }, 1000);
                   },
@@ -165,11 +215,10 @@ exports.getWalmartTerraItems = function (req, res, next) {
                   }
               );
           },
-          function( walmartResponce, callbackfunc2) {
+          function( walmartTerraResponce, callbackfunc2) {
               console.log(`Total Items Retreved = ${walmartResponce.length}`);
-              return res.status(200).json({ items: walmartResponce });
+              return res.status(200).json({ items: walmartTerraResponce });
               callbackfunc2(null, 'done');
-
           }
           ], function (err, result) { console.log(result); }
   );
@@ -294,6 +343,7 @@ function convertArrributeArr( array) {
     attr += "}";
     return attr;
 }
+
 function convertAttributes( object ) {
     var allow = ['color', 'size', 'clothingSize'];
     var attr = '{';
@@ -310,8 +360,8 @@ function convertAttributes( object ) {
       	i ++;
   	}
     attr += "}";
-//    console.log(attr);
-//'{"(colors,White)"}'
+   //    console.log(attr);
+   //'{"(colors,White)"}'
     return attr;
 }
 
@@ -453,7 +503,7 @@ exports.WalmartDailyUpdate = function() {
 }
 
 exports.getDailyUpdate = function (req, res, next) {
-console.log('getDailyUpdate');
+    console.log('getDailyUpdate');
     async.waterfall([
         function( callbackfunc1) {
                 WalmartScheduler.runWalmartDailyNow();
@@ -652,15 +702,15 @@ exports.WalmartAddItems = function (req, res, next) {
 
   const asib = req.body.props.asib;
   const notification = req.body.props.notification || {};
-  //console.log(attributes);
-  //console.log(notification);
+
+  console.log(req.body.props.stock);
   let noty ='{';
   var details = [];
   Object.keys(notification).forEach(function (key) {
     let elem = notification[key];
     //console.log(elem);
     if (notification[key] === "stock") {
-            var valStock = (req.body.props.stock === 'Available') ? 1 : 0;
+            var valStock = (req.body.props.stock === 'IN_STOCK') ? 1 : 0;
             details.push({type: 'stock', val: valStock, not: `{${elem}}`})
     }
     if (notification[key] === "salePrice") {

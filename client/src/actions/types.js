@@ -15,26 +15,6 @@ export const FETCH_USER = 'fetch_user';
 export const REQ_USER_DATA = 'REQ_USER_DATA';
 export const RECV_USER_DATA = 'RECV_USER_DATA';
 
-//======================
-//  Entry
-//======================
-//export const FETCH_ENTRY = 'FETCH_ENTRY';
-//export const REQ_ENTRY_DATA = 'REQ_ENTRY_DATA';
-//export const RECV_ENTRY_DATA = 'RECV_ENTRY_DATA';
-//export const REQ_VIEW_DATA = 'REQ_VIEW_DATA';
-//export const RECV_VIEW_DATA = 'RECV_VIEW_DATA';
-
-//export const REQ_APART_INFO = 'REQ_APART_INFO';
-//export const RECV_APART_INFO = 'RECV_APART_INFO';
-
-//===================
-//   Block
-//export const REQ_BLOCK_LIST = 'REQ_BLOCK_LIST';
-//export const RECV_BLOCK_LIST = 'RECV_BLOCK_LIST';
-//export const REQ_BLOCK_INFO = 'REQ_BLOCK_INFO';
-//export const RECV_BLOCK_INFO = 'RECV_BLOCK_INFO';
-//export const CLEAR_BLOCK_INFO ='CLEAR_BLOCK_INFO';
-
 //-------------------
 //  walmart
 export const REQ_WALMART_LIST = 'REQ_WALMART_LIST';
@@ -49,6 +29,7 @@ export const RECV_ITEM_UPDATE = 'RECV_ITEM_UPDATE';
 export const REQ_WALMART_SEARCH = 'REQ_WALMART_SEARCH';
 export const RECV_WALMART_SEARCH = 'RECV_WALMART_SEARCH';
 export const RECV_ITEM_2_FORM = 'RECV_ITEM_2_FORM';
+export const REQ_DB_2_FORM = 'REQ_DB_2_FORM';
 export const RECV_DB_2_FORM = 'RECV_DB_2_FORM';
 export const REQ_ITEM_2_FORM = 'REQ_ITEM_2_FORM';
 export const RECV_WALMART_BEST = 'RECV_WALMART_BEST';

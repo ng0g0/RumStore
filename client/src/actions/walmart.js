@@ -15,6 +15,7 @@ import {
     RECV_WALMART_SEARCH,
     RECV_ITEM_2_FORM,
     REQ_ITEM_2_FORM,
+    REQ_DB_2_FORM,
     RECV_DB_2_FORM,
     RECV_WALMART_BEST,
     REQ_WALMART_BEST,
@@ -101,6 +102,7 @@ function receiveWalmartAPI(json) {
 		data: json
 	}
 };
+
 function copyItemToForm(item) {
 	return{
 		type: RECV_ITEM_2_FORM,
@@ -123,10 +125,15 @@ function addItemPriceToForm(item) {
   }
 }
 
-function copyDBToForm(item) {
+function requestDB2Form() {
+   return {type: REQ_DB_2_FORM}
+}
+
+function copyDBToForm(item, terra) {
 	return{
 		type: RECV_DB_2_FORM,
-		data: item
+		data: item,
+    terra: terra
 	}
 };
 
@@ -197,8 +204,7 @@ export function searchFunc(props) {
       //,headers: { Authorization: cookie.load('token') }
             })
         .then((response) => {
-            console.log(response.data);
-
+            //console.log(response.data);
            //, sort, itemPage, pageNum
             dispatch(receiveItemInfo(response.data, props.stype, props.search, props.sort, props.itemPage, props.pageNum));
         })
@@ -268,7 +274,7 @@ export function itemToAddForm(items) {
 			    headers: { Authorization: cookie.load('token') }
         })
         .then((response) => {
-            console.log(response.data);
+            //console.log(response.data);
             //product.productId.usItemId
             //dispatch(itemPriceToAddForm(response.data));
             dispatch(copyItemToForm(response.data));
@@ -281,14 +287,26 @@ export function itemToAddForm(items) {
 }
 
 export function dbToAddForm(item) {
+  //console.log(item);
     return function (dispatch) {
-
-       dispatch(copyDBToForm(item));
+      dispatch(requestDB2Form());
+      return axios({
+        url: `${API_URL}/walmart/itemterra/${item.itemid}`,
+        method: 'get',
+        headers: { Authorization: cookie.load('token') }
+      })
+      .then((response) => {
+          //console.log(response.data);
+          dispatch(copyDBToForm(item, response.data));
+      })
+      .catch((error) => {
+    		console.log(error)
+    	});
     };
 }
 
 export function walmartDailyRefresh() {
-    console.log('walmartDailyRefresh');
+    //console.log('walmartDailyRefresh');
     return function (dispatch) {
     return axios({ url: `${API_URL}/walmart/dailyRefresh`,
 			method: 'get',

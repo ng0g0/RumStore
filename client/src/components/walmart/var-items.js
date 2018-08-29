@@ -1,41 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-//import { Link } from 'react-router';
 import { fetchItemVarsAPI } from '../../actions/walmart';
-//import { itemToAddForm } from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
-//import AccGroup from '../accordion/accordiongroup';
 import Translation from '../locale/translate';
-//import LayerMask from '../layerMask/layermask';
-//import DeleteItem from './delete-items'
-//import PropTypes from 'prop-types'; // ES6
-//import AddItem from './add-items';
-//import { WalmartItem, searchWalmart } from '../../consts';
 import { initialize } from 'redux-form';
-//import _ from 'lodash';
 
 import { WalmartItem } from '../../consts';
 
 class VariantItems extends Component {
 	constructor(props) {
 		super(props);
-        //this.handleClickItem = this.handleClickItem.bind(this);
         this.handleLoadVars = this.handleLoadVars.bind(this);
-        //    this.handleAddItem = this.handleAddItem.bind(this);
-    //    this.handleAddForm = this.handleAddForm.bind(this);
-    //this.handleFetchAll = this.handleFetchAll.bind(this);
 	}
 
    handleClickItem( item) {
-       //console.log(item);
         this.props.dispatch(initialize(WalmartItem, item))
    }
-
-
-        handleLoadVars(items) {
-            this.props.dispatch(fetchItemVarsAPI(items));
-
-        }
+    handleLoadVars(items) {
+        this.props.dispatch(fetchItemVarsAPI(items));
+  }
 
     componentDidMount() {
 		if (this.props.vars) {

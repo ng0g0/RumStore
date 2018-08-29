@@ -146,7 +146,7 @@ class ListItems extends Component {
 
 	renderListContent(items) {
 		const { authenticated } = this.props;
-		console.log(authenticated);
+		//console.log(authenticated);
         if (!items) {
             return(<div> </div>);
         }
@@ -202,8 +202,8 @@ class ListItems extends Component {
     rentderFoundItems() {
         //console.log(this.props);
         const {totalItems, preformSearch, loadingSpinner } = this.props;
-				console.log(totalItems);
-				console.log(this.props.formSearch.itemPage);
+				//console.log(totalItems);
+				//console.log(this.props.formSearch.itemPage);
         let maxPage = Math.ceil( totalItems /this.props.formSearch.itemPage);
         if (preformSearch && !loadingSpinner) {
             return (<div className="row">
@@ -223,7 +223,7 @@ class ListItems extends Component {
         if ( loadingSpinner &&  preformSearch) {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
-            console.log(itemSearch);
+            //console.log(itemSearch);
             return (<div className="panel panel-default">
                 <div className="panel-body">
                     {this.renderAddItemLayer()}

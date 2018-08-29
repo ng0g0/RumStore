@@ -92,6 +92,7 @@ class AddItem extends Component {
         if (!this.props.addItem) {
             return (<div></div>);
         }
+        //console.log('ADDD');
         var itemImage = itemURL || "/images/nopic.jpg";
         //const allowed = ['color', 'size','clothingSize'];
         if  (this.props.loadingSpinnerAdd ) {
@@ -100,7 +101,7 @@ class AddItem extends Component {
                 <div className='loader'><Translation text="Loading" />...</div>
             </div>);
         } else {
-          console.log(this.props.itemInfo);
+          //console.log(this.props.itemInfo);
             return(<div>
             <form onSubmit={handleSubmit}>
             <div className="row">
@@ -149,8 +150,8 @@ class AddItem extends Component {
                 <div className="col-md-4">
                     <label><Translation text="WALMAR_ITEM_ONSTOCK" /></label>
                     <Field name="stock" className="form-control" component="select" disabled="true">
-                    <option value="Available">Available</option>
-                    <option value="not available">Not available</option>
+                    <option value="IN_STOCK">Available</option>
+                    <option value="OUT_OF_STOCK">Not available</option>
                     </Field>
                 </div>
             </div>
@@ -184,12 +185,12 @@ function mapStateToProps(state) {
     const selector = formValueSelector(WalmartItem)
     const itemURL = selector(state, 'thumbnailimage')
    return {
-	errorMessage: state.walmart.error,
-    initialValues: state.walmart.itemInfo,
-    loadingSpinnerAdd: state.walmart.loadingSpinnerAdd,
-    itemInfo: state.walmart.itemInfo,
+	errorMessage: state.walmartItem.error,
+    initialValues: state.walmartItem.itemInfo,
+    loadingSpinnerAdd: state.walmartItem.loadingSpinnerAdd,
+    itemInfo: state.walmartItem.itemInfo,
     itemURL: itemURL,
-    addItem: state.walmart.addItem
+    addItem: state.walmartItem.addItem
   };
 }
 const mapDispatchToProps = (dispatch) =>
