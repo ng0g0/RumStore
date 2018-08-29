@@ -88,17 +88,18 @@ class AddItem extends Component {
     }
     //<SearchItem />
     render () {
+      //console.log(this.props);
+      //console.log(`ItemID=${this.props.itemInfo.dbItemId} , ProductID=${this.props.itemInfo.dbProductId}`);
         const { handleSubmit ,itemURL} = this.props;
         if (!this.props.addItem) {
             return (<div></div>);
         }
-        //console.log('ADDD');
+        //console.log(this.props.itemInfo.id);
         var itemImage = itemURL || "/images/nopic.jpg";
         //const allowed = ['color', 'size','clothingSize'];
         if  (this.props.loadingSpinnerAdd ) {
-		return (<div>
-
-                <div className='loader'><Translation text="Loading" />...</div>
+		     return (<div>
+              <div className='loader'><Translation text="Loading" />...</div>
             </div>);
         } else {
           //console.log(this.props.itemInfo);

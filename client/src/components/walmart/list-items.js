@@ -79,10 +79,12 @@ class ListItems extends Component {
     renderAddItemLayer() {
         let layerid = 'addItem'
         let label = 'ADD_ITEM';
+				console.log(this.props.itemId);
+				let btnLbl = (this.props.itemId === 0)? "ADD_ITEM" : "Save";
 		return (<LayerMask layerid={layerid} header={label} key={layerid}
-                    onOkClick={this.handleAddItem.bind(this)}
+										onOkClick={this.handleAddItem.bind(this)}
                     onCancelClick={this.handleCancelClick.bind(this)}
-                    actionbtn="Save">
+                    actionbtn={btnLbl}>
                     <AddItem />
                 </LayerMask>);
     }
@@ -239,6 +241,7 @@ function mapStateToProps(state) {
   return {
     loadingSpinner: state.walmartSearch.searchSpinner,
     itemSearch: state.walmartSearch.itemSearch,
+		itemId: state.walmartItem.itemInfo.id,
     items: state.walmart.items,
     preformSearch: state.walmartSearch.preformSearch,
     formSearch: state.walmartSearch.formSearch,

@@ -8,18 +8,18 @@ import Translation from '../locale/translate';
 import LayerMask from '../layerMask/layermask';
 import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
-import ItemChart from './chart-items'; 
+import ItemChart from './chart-items';
 import AddItem from './add-items';
 import { WalmartItem } from '../../consts';
 import { submit } from 'redux-form'
-import TabItems from './tab-items'; 
+import TabItems from './tab-items';
 import _ from 'lodash';
 
 class UserWalmartList extends Component {
 	static contextTypes = {
 		router: PropTypes.object,
 	}
-	
+
 	constructor(props) {
 		super(props);
         this.handleRefreshItem = this.handleRefreshItem.bind(this);
@@ -35,7 +35,7 @@ class UserWalmartList extends Component {
         this.handleMovePage = this.handleMovePage.bind(this);
         this.handleDailyRefresh = this.handleDailyRefresh.bind(this);
 
-        
+
         this.state = {
             allChecked: false,
             checkedCount: 2,
@@ -47,15 +47,15 @@ class UserWalmartList extends Component {
             itemPage: 20,
         }
 	}
-    
+
     handleMovePage(page) {
        this.setState({
             page : page
-            }) 
+            })
     }
     handleNextPage() {
         let page = this.state.page;
-        let itemcount = (this.props.itemList) ? this.props.itemList.length : 0; 
+        let itemcount = (this.props.itemList) ? this.props.itemList.length : 0;
         let maxPage = Math.ceil( itemcount /this.state.itemPage);
         let newPage = (page < maxPage)? page + 1: page;
         this.setState({
@@ -68,20 +68,20 @@ class UserWalmartList extends Component {
         this.setState({
             page : newPage
             })
-        
+
     }
-    
-    
-  
+
+
+
 	componentDidMount() {
         //console.log(this.props);
 		if (!this.props.items) {
 			 this.handleFetchAll();//,
-            //this.handleRefreshItem(this.props.items);             
-		} 
-        
+            //this.handleRefreshItem(this.props.items);
+		}
+
        //this.interval = setInterval(
-       //    this.handleRefreshItem(this.props.items), 
+       //    this.handleRefreshItem(this.props.items),
        //    10000
        //);
 	}
@@ -89,16 +89,16 @@ class UserWalmartList extends Component {
         console.log('handleDailyRefresh');
         this.props.dispatch(walmartDailyRefresh());
     }
-    
+
     handleAddForm(item) {
         //console.log(item);
          this.props.dispatch(dbToAddForm(item));
     }
-    
+
     handleFetchAll() {
         this.props.dispatch(fetchWalmarUserList());
     }
-    
+
     handleCheckBoxItem(event) {
         var item = event.target.value;
         //console.log(item);
@@ -108,15 +108,15 @@ class UserWalmartList extends Component {
                     allChecked : false,
                     checkedCount: 0,
                     currentValues: []
-                });    
+                });
             }  else {
                 this.setState({
                     allChecked : true,
                     checkedCount: this.props.itemList.length,
                     currentValues: this.props.items.list.split(",")
-                }); 
+                });
             }
-            
+
         } else {
             if (this.state.currentValues.indexOf(item) == -1 ) {
                 var newX = this.state.currentValues;
@@ -133,7 +133,7 @@ class UserWalmartList extends Component {
 
             } else {
                 var newX = this.state.currentValues;
-                var index  = this.state.currentValues.indexOf(item); 
+                var index  = this.state.currentValues.indexOf(item);
                 if (index > -1) {
                     newX.splice(index, 1);
                     this.setState({
@@ -142,40 +142,40 @@ class UserWalmartList extends Component {
                     currentValues: newX
                 });
                 }
-                
+
             }
         }
         //console.log(this.state.currentValues);
     }
-    
+
     handleCancelClick(item) {
-        this.setState({clickedItem: ''},() => { 
-            console.log('new state', this.state); 
+        this.setState({clickedItem: ''},() => {
+            console.log('new state', this.state);
         });
     }
-    
+
     handleDeleteClick(item) {
-        this.setState({clickedItem: item},() => { 
-            console.log('new state', this.state); 
+        this.setState({clickedItem: item},() => {
+            console.log('new state', this.state);
         });
-    }        
-    
+    }
+
     handleDeleteItem() {
         var newX = this.state.currentValues;
         var selAll = false;
         if (this.state.clickedItem.length > 0 ) {
-            this.props.dispatch(deleteWalmarItem(this.state.clickedItem)); 
-                newX = newX.filter(function(e) { 
-                return e !== this.state.clickedItem; 
+            this.props.dispatch(deleteWalmarItem(this.state.clickedItem));
+                newX = newX.filter(function(e) {
+                return e !== this.state.clickedItem;
                 });
         } else {
-            this.props.dispatch(deleteWalmarItem(this.state.currentValues.join())); 
-            newX = newX.filter(function(e) { 
-                return !newX.some(function(s) { 
-                    return s === e; 
+            this.props.dispatch(deleteWalmarItem(this.state.currentValues.join()));
+            newX = newX.filter(function(e) {
+                return !newX.some(function(s) {
+                    return s === e;
                 });
-            }); 
-           
+            });
+
         }
         this.setState({
             allChecked : (this.props.itemList.length === newX.length)? true : false,
@@ -183,59 +183,61 @@ class UserWalmartList extends Component {
             currentValues: newX
         });
     }
-	
+
     handleRefreshItem(items) {
         if (items) {
-            this.props.dispatch(fetchFromWalmarAPI(items)); 
-        } 
+            this.props.dispatch(fetchFromWalmarAPI(items));
+        }
     }
-    
+
 
     renderDeleteLayer() {
         let layerid = 'deleteItem'
         let label = 'DELETE_QUESTION';
-      	return (<LayerMask layerid={layerid} header={label} key={layerid} 
-                    onOkClick={this.handleDeleteItem.bind(this)} 
+      	return (<LayerMask layerid={layerid} header={label} key={layerid}
+                    onOkClick={this.handleDeleteItem.bind(this)}
                     onCancelClick={this.handleCancelClick.bind(this)}
                     actionbtn="Delete" >
-                    <DeleteItem deleteItems={this.state.clickedItem || this.state.currentValues.join()} />    
+                    <DeleteItem deleteItems={this.state.clickedItem || this.state.currentValues.join()} />
                </LayerMask>);
    }
-   
+
    handleAddItem({ dispatch }) {
        this.props.dispatch(submit(WalmartItem));
         //console.log('Add Items');
-        
+
     }
-   
+
     renderAddItemLayer() {
         let layerid = 'addItem'
         let label = 'ADD_ITEM';
+				console.log(this.props.itemId);
+				let btnLbl = (this.props.itemId === 0)? "ADD_ITEM" : "Save";
 		return (<LayerMask layerid={layerid} header={label} key={layerid}
                     onOkClick={this.handleAddItem.bind(this)}
-                    onCancelClick={this.handleCancelClick.bind(this)}                    
-                    actionbtn="Save">
-                    <AddItem /> 
+                    onCancelClick={this.handleCancelClick.bind(this)}
+                    actionbtn={btnLbl}>
+                    <AddItem />
                 </LayerMask>);
-   }  
+   }
     renderMessage(msg) {
         if (msg) {
-            return (<div className="row"> 
-                <div className="col-sm-6">{msg} </div>  
+            return (<div className="row">
+                <div className="col-sm-6">{msg} </div>
             </div>);
         } else {
             return(<div></div>);
         }
     }
-    
+
     handlePage(pageItems) {
-       this.setState({itemPage: pageItems},() => { 
-            console.log('new itemPage ', pageItems); 
-        }); 
+       this.setState({itemPage: pageItems},() => {
+            console.log('new itemPage ', pageItems);
+        });
     }
     handleSort(sort) {
-        this.setState({sort: sort},() => { 
-            console.log('new sort ', sort); 
+        this.setState({sort: sort},() => {
+            console.log('new sort ', sort);
         });
     }
     onChangeHandler(e){
@@ -247,7 +249,7 @@ class UserWalmartList extends Component {
                     page: 1
                 });
                 break;
-            default: 
+            default:
               console.log(e);
         }
     }
@@ -259,16 +261,16 @@ class UserWalmartList extends Component {
             return(<span className="glyphicon glyphicon-arrow-up green"></span>)
         default:
             return(<span className="glyphicon glyphicon-minus"></span>)
-        } 
+        }
     }
-    
+
     renderAttributes(att) {
         //console.log(att);
-        if (_.isUndefined(att)) 
-            return(<div className="col-sm-12"> No Attributes -> click refesh btn</div>)    
+        if (_.isUndefined(att))
+            return(<div className="col-sm-12"> No Attributes -> click refesh btn</div>)
         let size = Object.keys(att).length;
         if (size === 0) {
-            return(<div className="col-sm-12"> No Attributes </div>)    
+            return(<div className="col-sm-12"> No Attributes </div>)
         } else {
            // let classcl = `col-sm-${(12/size)}`;
             let classcl = `col-sm-1`;
@@ -281,7 +283,7 @@ class UserWalmartList extends Component {
             return(out);
         }
     }
-    
+
     renderCellContent(item) {
         const { currentValues } = this.state;
         var itemImage = item.thumbnailimage || "/images/nopic.jpg";
@@ -291,19 +293,19 @@ class UserWalmartList extends Component {
                <div className="col-sm-2">
                     <img alt={item.itemid} src ={itemImage} className="img-responsive"/>
                 </div>
-                <div className="col-sm-10">                
+                <div className="col-sm-10">
                     <div className="row">
-                        <div className="col-sm-2"> 
+                        <div className="col-sm-2">
                             ItemID: {item.itemid}
-                        </div> 
-                        <div className="col-sm-4"> 
+                        </div>
+                        <div className="col-sm-4">
                             <div className="row"><div className="col"><Translation text="Name" />: <b>{item.name}</b></div></div>
                             <div className="row"><div className="col"><Translation text="WALMAR_ITEM_UPC" />: {item.upc}</div></div>
                         </div>
-                        <div className="col-sm-2">   
+                        <div className="col-sm-2">
                             <Translation text="WALMAR_ITEM_ASIN" />: {item.asib}
                         </div>
-                        <div className="col-sm-2"> 
+                        <div className="col-sm-2">
                             <div className="row">
                             <Translation text="WALMAR_ITEM_PRICE" />: {item.salePrice}
                             {this.renderPriceIndicator(item.priceIndicator)}
@@ -311,23 +313,23 @@ class UserWalmartList extends Component {
                             <div className="row">
                             <Translation text="Stock" />: {(item.stock == 1) ? 'Available': 'Unavailable' }
                             </div>
-                        </div>    
+                        </div>
                     </div>
                     <div className="row">
-                        {this.renderAttributes(item.attributes)} 
+                        {this.renderAttributes(item.attributes)}
                     </div>
                 </div>
             </div>
             <div className="row">
-                <AccGroup title="WALMAR_ITEM_HISTORY" key={item.itemid} collapsed="Y" item={item.itemid} >  
-                    <ItemChart itemDetails={item.itemdetails} key={item.itemid} />    
-                 </AccGroup> 
+                <AccGroup title="WALMAR_ITEM_HISTORY" key={item.itemid} collapsed="Y" item={item.itemid} >
+                    <ItemChart itemDetails={item.itemdetails} key={item.itemid} />
+                 </AccGroup>
             </div>
         </div>);
     }
-    
+
     renderItemPerPage() {
-        let pageArray = [10,20,30];  
+        let pageArray = [10,20,30];
         let pageSize = this.state.itemPage;
         return(<div className="btn-group">
                 <button type="button" className="btn btn dropdown-toggle" data-toggle="dropdown">
@@ -338,14 +340,14 @@ class UserWalmartList extends Component {
                     return( <li key={sp}>
                                 <a href="#" onClick={()=> this.handlePage(sp) }>{sp}</a>
                             </li>);
-                })}    
+                })}
                 </ul>
             </div>);
     }
     renderSortButton() {
-        let sortArray = [ 
-                {lable: 'ASIBDESC', key: '-asib'}, 
-                {lable: 'ASIBASC', key: '+asib'}, 
+        let sortArray = [
+                {lable: 'ASIBDESC', key: '-asib'},
+                {lable: 'ASIBASC', key: '+asib'},
                 {lable: 'UPCDESC', key: '-upc'},
                 {lable: 'UPCASC', key: '+upc'},
                 {lable: 'NameDESC', key: '-name'},
@@ -356,7 +358,7 @@ class UserWalmartList extends Component {
                 {lable: 'PriceASC', key: '+salePrice'},
                 {lable: 'Clear', key: ''},
             ];
-            
+
         let sortLabel = this.state.sort.length > 0 && this.state.sort.substring(1);
         let arrowicon = this.state.sort.length > 0 && ((this.state.sort[0] === "-") ? <span className="glyphicon glyphicon-arrow-down"></span>:<span className="glyphicon glyphicon-arrow-up"></span>);
         return(<div className="btn-group">
@@ -370,11 +372,11 @@ class UserWalmartList extends Component {
                                     <Translation text={sp.lable}/>
                                 </a>
                             </li>);
-                })}    
+                })}
                 </ul>
             </div>);
     }
-    
+
 	renderListContent(items) {
         function dynamicSort(property) {
             var sortOrder = 1;
@@ -387,21 +389,21 @@ class UserWalmartList extends Component {
                 return result * sortOrder;
             }
         }
-        
+
         const { currentValues, filter, itemPage, sort } = this.state
 		if (items) {
             var filtered= _.filter(items, function(item) {
                 if (filter.length > 0) {
                     if (item.itemid.toUpperCase().indexOf(filter.toUpperCase())== -1){
-                        if (item.name.toUpperCase().indexOf(filter.toUpperCase()) == -1){ 
-                            //if (item.upc.toUpperCase().indexOf(filter.toUpperCase()) == -1){ 
-                                if (item.asib.toUpperCase().indexOf(filter.toUpperCase()) == -1){ 
-                                    return false; 
+                        if (item.name.toUpperCase().indexOf(filter.toUpperCase()) == -1){
+                            //if (item.upc.toUpperCase().indexOf(filter.toUpperCase()) == -1){
+                                if (item.asib.toUpperCase().indexOf(filter.toUpperCase()) == -1){
+                                    return false;
                                 //}
                             }
                         }
-                    }                    
-                        
+                    }
+
                 }
                 return true;
             });
@@ -418,15 +420,15 @@ class UserWalmartList extends Component {
 			return (<div>
                 <div className="row">
                     <div className="col-sm-2">
-                        <input type="checkbox" className="form-check-input  allcheck" name="all"  
-                              checked={this.state.allChecked} value="all"  
-                              onClick={(event )=> this.handleCheckBoxItem(event) }/> 
+                        <input type="checkbox" className="form-check-input  allcheck" name="all"
+                              checked={this.state.allChecked} value="all"
+                              onClick={(event )=> this.handleCheckBoxItem(event) }/>
                     </div>
                     <div className="col-sm-4">
-                    <Translation text="WALMAR_ITEM_SEARCH" />: 
+                    <Translation text="WALMAR_ITEM_SEARCH" />:
                         <input value={filter} type="text" name="filter" onChange={this.onChangeHandler.bind(this)}/>
                     </div>
-                    
+
                     <div className="col-sm-2">
                     {this.renderItemPerPage()}
                     </div>
@@ -439,7 +441,7 @@ class UserWalmartList extends Component {
                         <div className="panel-body">
                     <div className="row" >
                     <div className="col-sm-1">
-                        <input type="checkbox" className="form-check-input" name={item.itemid} key={item.itemid} 
+                        <input type="checkbox" className="form-check-input" name={item.itemid} key={item.itemid}
                         checked={currentValues.indexOf(item.itemid) !== -1}
                         value={item.itemid} onClick={(event )=> this.handleCheckBoxItem(event) }/>
                     </div>
@@ -478,14 +480,14 @@ class UserWalmartList extends Component {
             <div className="row">
                 <div className="col-sm-4"> Total Items: {totaItems} </div>
                 <div className="col-sm-4"> <a href="#" onClick={()=> this.handleMovePage(1) }><span className="glyphicon glyphicon-step-backward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handlePrevPage() }><span className="glyphicon glyphicon-backward"></span></a> 
+                    &nbsp;<a href="#" onClick={()=> this.handlePrevPage() }><span className="glyphicon glyphicon-backward"></span></a>
                     &nbsp;<Translation text="WALMAR_PAGE" />:{this.state.page} /{maxPage}
                     &nbsp;<a href="#" onClick={()=> this.handleNextPage() }><span className="glyphicon glyphicon-forward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handleMovePage(maxPage) }><span className="glyphicon glyphicon-step-forward"></span></a> 
+                    &nbsp;<a href="#" onClick={()=> this.handleMovePage(maxPage) }><span className="glyphicon glyphicon-step-forward"></span></a>
                 </div>
             </div>
-        
-            </div>);	
+
+            </div>);
 		}
 		else {
 			return(<div className="panel panel-default">
@@ -493,7 +495,7 @@ class UserWalmartList extends Component {
             </div>);
 		}
 	}
-    
+
     renderItemMenuBar(items) {
         return(<div className="row">
             <div className="col-sm-12">
@@ -503,12 +505,12 @@ class UserWalmartList extends Component {
                     </a>
                     <ul className="dropdown-menu">
                         <li key="Daily">
-                            <Link  className="dropdown-item" onClick={()=> this.handleDailyRefresh() }> 
+                            <Link  className="dropdown-item" onClick={()=> this.handleDailyRefresh() }>
                                 <Translation text="WALMAR_ITEM_REFRESH" />
                             </Link>
                         </li>
                         <li key="Selected">
-                            <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }> 
+                            <Link  className="dropdown-item" onClick={()=> this.handleRefreshItem(this.state.currentValues.join()) }>
                                 <Translation text="RefreshSelected" />
                             </Link>
                         </li>
@@ -517,12 +519,12 @@ class UserWalmartList extends Component {
                                 <Translation text="DeleteSeleected" />
                             </Link>
                         </li>
-                    </ul>            
+                    </ul>
                 </div>
             </div>
         </div>);
-    } 
-   
+    }
+
     render() {
         if ( this.props.loadingSpinner ) {
             return (<div className='loader'><Translation text="Loading" />...</div>);
@@ -535,31 +537,31 @@ class UserWalmartList extends Component {
                     {this.renderItemMenuBar(items)}
                     {this.renderListContent(itemList)}
                 </div>
-            </div>);	
+            </div>);
 	}
-    
+
   }
 }
 
 function mapStateToProps(state) {
+	//console.log(state.walmartItem.itemInfo);
   return {
-    items: state.walmart.items,  
+    items: state.walmart.items,
     itemList: state.walmart.itemList,
+		itemId: state.walmartItem.itemInfo.id,
 	errorMessage: state.walmart.error,
 	loadingSpinner: state.walmart.loadingSpinner
   };
 }
 
-const mapDispatchToProps = (dispatch) =>   
+const mapDispatchToProps = (dispatch) =>
     bindActionCreators({
             fetchFromWalmarAPI,
             deleteWalmarItem,
             dbToAddForm,
             walmartDailyRefresh
-        }, 
+        },
         dispatch
     );
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserWalmartList);
-
-

@@ -6,10 +6,10 @@ class LayerMask extends Component {
    constructor(props) {
     super(props);
   }
-  
+
 
   render() {
-    const { layerid, header } = this.props
+    const { layerid, header,newItem } = this.props
     return (
       <div className="modal fade" id={layerid} role="dialog" data-keyboard="false" data-backdrop="static">
 		<div className="modal-dialog modal-lg">
@@ -28,8 +28,8 @@ class LayerMask extends Component {
                 onClick={this.props.onOkClick} ><Translation text={this.props.actionbtn} />
             </button>
             <button type="button" className="btn btn-danger" data-dismiss="modal"
-            onClick={this.props.onCancelClick}> 
-            
+            onClick={this.props.onCancelClick}>
+
                 <Translation text="Close" />
             </button>
          </div>

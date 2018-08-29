@@ -274,11 +274,7 @@ export function itemToAddForm(items) {
 			    headers: { Authorization: cookie.load('token') }
         })
         .then((response) => {
-            //console.log(response.data);
-            //product.productId.usItemId
-            //dispatch(itemPriceToAddForm(response.data));
             dispatch(copyItemToForm(response.data));
-
         })
         .catch((error) => {
             console.log(error)

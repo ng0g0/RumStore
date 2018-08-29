@@ -13,7 +13,9 @@ const INITIAL_STATE = {
     loadingSpinnerAdd: false,
     loadingSpinnerVar: true,
 		loadingSpinnerPrice: true,
-    addItem: false
+    addItem: false,
+    itemInfo : {id: 0},
+    itemDB: {}
 };
 
 function terra2attribute(object) {
@@ -40,17 +42,19 @@ function terra2attribute(object) {
     }
 }
 
-function convertTerraItem(item, dbitem) {
-	//console.log(dbitem);
+function convertTerraItem(item, dbitem, itemDB) {
+	console.log(itemDB);
+  const itemid = item.productId.usItemId;
 	const price = (item.offers) ? item.offers[0].pricesInfo.priceMap.CURRENT.price : 0;
 	const stock = (item.offers) ? item.offers[0].productAvailability.availabilityStatus : "not available";
 	const asib = (dbitem) ? dbitem.asib : "N/A";
 	const noty = (dbitem) ? dbitem.noty : [];
-	const id = (dbitem) ? dbitem.id : 0;
+	const id = (dbitem) ? dbitem.id : ((itemDB.itemid === itemid) ? itemDB.id : 0);
+  console.log(id);
 	const attributes = (dbitem) ? dbitem.attributes : {};
 	let obj = {
 		 asib: asib,
-		 itemid: item.productId.usItemId,
+		 itemid: itemid,
 		 name: item.productAttributes.productName,
 		 productId: item.productId.productId,
 	   noty: noty,
@@ -70,34 +74,38 @@ function convertTerraItem(item, dbitem) {
 
 
 export default function (state = INITIAL_STATE, action) {
+  let { itemDB } = state;
   switch (action.type) {
   case REQ_ITEM_2_FORM:
         return Object.assign({}, state, {
             loadingSpinnerAdd: true,
 						loadingSpinnerPrice: true,
+            itemDB,
             addItem: true
         });
 	case RECV_ITEM_2_FORM:
-			//console.log(action.data);
-        let itemX = convertTerraItem(action.data.product);
+        let itemX = convertTerraItem(action.data.product, null, itemDB );
         return Object.assign({}, state, {
             itemInfo: itemX,
             loadingSpinnerAdd: false,
 						loadingSpinnerPrice: true,
-            addItem: true
+            addItem: true,
+            itemDB
         });
     case REQ_DB_2_FORM:
     		return Object.assign({}, state, {
           loadingSpinnerAdd: true,
           loadingSpinnerPrice: true,
+          itemDB,
     			addItem: true
     		});
     case RECV_DB_2_FORM:
-				let itemTerra = convertTerraItem(action.terra.product, action.data);
+				let itemTerra = convertTerraItem(action.terra.product, action.data, action.data );
         return Object.assign({}, state, {
 					itemInfo: itemTerra,
           loadingSpinnerAdd: false,
 					loadingSpinnerPrice: true,
+          itemDB: action.data,
 					addItem: true
         });
 	default:
