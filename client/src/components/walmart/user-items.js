@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { fetchWalmarUserList, fetchFromWalmarAPI, deleteWalmarItem, dbToAddForm, walmartDailyRefresh } from '../../actions/walmart';
+import {
+	fetchWalmarUserList,
+	fetchFromWalmarAPI,
+	deleteWalmarItem,
+	dbToAddForm,
+	walmartDailyRefresh
+} from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import AccGroup from '../accordion/accordiongroup';
 import Translation from '../locale/translate';
@@ -11,8 +17,10 @@ import PropTypes from 'prop-types'; // ES6
 import ItemChart from './chart-items';
 import AddItem from './add-items';
 import { WalmartItem } from '../../consts';
-import { submit } from 'redux-form'
+import { submit, change } from 'redux-form';
 import TabItems from './tab-items';
+import PriceIndicator from '../template/price-indicator';
+
 import _ from 'lodash';
 
 class UserWalmartList extends Component {
@@ -22,114 +30,99 @@ class UserWalmartList extends Component {
 
 	constructor(props) {
 		super(props);
-        this.handleRefreshItem = this.handleRefreshItem.bind(this);
-        this.handleCheckBoxItem = this.handleCheckBoxItem.bind(this);
-        this.handleDeleteItem = this.handleDeleteItem.bind(this);
-        this.handleDeleteClick = this.handleDeleteClick.bind(this);
-        this.handleSort = this.handleSort.bind(this);
-        this.handlePage = this.handlePage.bind(this);
-        this.handleFetchAll = this.handleFetchAll.bind(this);
-        this.handleAddForm = this.handleAddForm.bind(this);
-        this.handleNextPage = this.handleNextPage.bind(this);
-        this.handlePrevPage = this.handlePrevPage.bind(this);
-        this.handleMovePage = this.handleMovePage.bind(this);
-        this.handleDailyRefresh = this.handleDailyRefresh.bind(this);
-
-
-        this.state = {
-            allChecked: false,
-            checkedCount: 2,
-            currentValues: [],
-            clickedItem: '',
-            filter: '',
-            sort: '',
-            page: 1,
-            itemPage: 20,
-        }
+    this.handleRefreshItem = this.handleRefreshItem.bind(this);
+    this.handleCheckBoxItem = this.handleCheckBoxItem.bind(this);
+    this.handleDeleteItem = this.handleDeleteItem.bind(this);
+    this.handleDeleteClick = this.handleDeleteClick.bind(this);
+    this.handleSort = this.handleSort.bind(this);
+    this.handlePage = this.handlePage.bind(this);
+    this.handleFetchAll = this.handleFetchAll.bind(this);
+    this.handleAddForm = this.handleAddForm.bind(this);
+    this.handleNextPage = this.handleNextPage.bind(this);
+    this.handlePrevPage = this.handlePrevPage.bind(this);
+    this.handleMovePage = this.handleMovePage.bind(this);
+    this.handleDailyRefresh = this.handleDailyRefresh.bind(this);
+    this.state = {
+      allChecked: false,
+      checkedCount: 2,
+      currentValues: [],
+      clickedItem: '',
+      filter: '',
+      sort: '',
+    	page: 1,
+      itemPage: 20,
+			addItemClick: false,
+			deleteItemClick: false
+    }
 	}
 
-    handleMovePage(page) {
-       this.setState({
-            page : page
-            })
-    }
-    handleNextPage() {
-        let page = this.state.page;
-        let itemcount = (this.props.itemList) ? this.props.itemList.length : 0;
-        let maxPage = Math.ceil( itemcount /this.state.itemPage);
-        let newPage = (page < maxPage)? page + 1: page;
-        this.setState({
-            page : newPage
-            })
-    }
-    handlePrevPage() {
-        let page = this.state.page;
-        let newPage = (this.state.page > 1) ? page - 1: page;
-        this.setState({
-            page : newPage
-            })
+  handleMovePage(page) {
+   this.setState({ page : page })
+  }
 
+	handleNextPage() {
+    let page = this.state.page;
+    let itemcount = (this.props.itemList) ? this.props.itemList.length : 0;
+    let maxPage = Math.ceil( itemcount /this.state.itemPage);
+    let newPage = (page < maxPage)? page + 1: page;
+    this.setState({ page : newPage })
     }
 
-
+  handlePrevPage() {
+  	let page = this.state.page;
+    let newPage = (this.state.page > 1) ? page - 1: page;
+    this.setState({ page : newPage })
+  }
 
 	componentDidMount() {
-        //console.log(this.props);
 		if (!this.props.items) {
 			 this.handleFetchAll();//,
-            //this.handleRefreshItem(this.props.items);
 		}
-
-       //this.interval = setInterval(
-       //    this.handleRefreshItem(this.props.items),
-       //    10000
-       //);
 	}
-    handleDailyRefresh() {
-        console.log('handleDailyRefresh');
-        this.props.dispatch(walmartDailyRefresh());
-    }
 
-    handleAddForm(item) {
-        //console.log(item);
-         this.props.dispatch(dbToAddForm(item));
-    }
+  handleDailyRefresh() {
+    this.props.dispatch(walmartDailyRefresh());
+  }
 
-    handleFetchAll() {
-        this.props.dispatch(fetchWalmarUserList());
-    }
+  handleAddForm(item) {
+		this.setState({ addItemClick: true},() => {
+    	this.props.dispatch(dbToAddForm(item));
+    });
+  }
 
-    handleCheckBoxItem(event) {
-        var item = event.target.value;
-        //console.log(item);
-        if (item === "all") {
-            if (this.state.allChecked) {
-                this.setState({
-                    allChecked : false,
-                    checkedCount: 0,
-                    currentValues: []
-                });
-            }  else {
-                this.setState({
-                    allChecked : true,
-                    checkedCount: this.props.itemList.length,
-                    currentValues: this.props.items.list.split(",")
-                });
-            }
+  handleFetchAll() {
+  	this.props.dispatch(fetchWalmarUserList());
+  }
 
-        } else {
-            if (this.state.currentValues.indexOf(item) == -1 ) {
-                var newX = this.state.currentValues;
-                var selAll = false;
-                 newX.push(item);
-                 if (this.props.itemList.length === newX.length) {
-                     selAll = true;
-                 }
-                 this.setState({
-                    allChecked : selAll,
-                    checkedCount: newX.length,
-                    currentValues: newX
-                });
+  handleCheckBoxItem(event) {
+    var item = event.target.value;
+    if (item === "all") {
+      if (this.state.allChecked) {
+        this.setState({
+          allChecked : false,
+          checkedCount: 0,
+          currentValues: []
+        });
+      }  else {
+        this.setState({
+          allChecked : true,
+          checkedCount: this.props.itemList.length,
+          currentValues: this.props.items.list.split(",")
+      	});
+      }
+    } else {
+      if (this.state.currentValues.indexOf(item) == -1 ) {
+          var newX = this.state.currentValues;
+          var selAll = false;
+           newX.push(item);
+           if (this.props.itemList.length === newX.length) {
+               selAll = true;
+           }
+           this.setState({
+              allChecked : selAll,
+              checkedCount: newX.length,
+              currentValues: newX
+          });
 
             } else {
                 var newX = this.state.currentValues;
@@ -149,13 +142,20 @@ class UserWalmartList extends Component {
     }
 
     handleCancelClick(item) {
-        this.setState({clickedItem: ''},() => {
+        this.setState({
+					clickedItem: '',
+					addItemClick: false,
+					deleteItemClick: false
+				},() => {
             console.log('new state', this.state);
         });
     }
 
     handleDeleteClick(item) {
-        this.setState({clickedItem: item},() => {
+        this.setState({
+					clickedItem: item,
+					deleteItemClick: true
+				},() => {
             console.log('new state', this.state);
         });
     }
@@ -180,7 +180,8 @@ class UserWalmartList extends Component {
         this.setState({
             allChecked : (this.props.itemList.length === newX.length)? true : false,
             checkedCount: newX.length,
-            currentValues: newX
+            currentValues: newX,
+						deleteItemClick: false
         });
     }
 
@@ -194,11 +195,14 @@ class UserWalmartList extends Component {
     renderDeleteLayer() {
         let layerid = 'deleteItem'
         let label = 'DELETE_QUESTION';
+				const Deleteform = (this.state.deleteItemClick) ?
+								<DeleteItem deleteItems={this.state.clickedItem || this.state.currentValues.join()} />
+								: <div></div>;
       	return (<LayerMask layerid={layerid} header={label} key={layerid}
                     onOkClick={this.handleDeleteItem.bind(this)}
                     onCancelClick={this.handleCancelClick.bind(this)}
                     actionbtn="Delete" >
-                    <DeleteItem deleteItems={this.state.clickedItem || this.state.currentValues.join()} />
+                    {Deleteform}
                </LayerMask>);
    }
 
@@ -210,14 +214,23 @@ class UserWalmartList extends Component {
 
     renderAddItemLayer() {
         let layerid = 'addItem'
-        let label = 'ADD_ITEM';
-				console.log(this.props.itemId);
-				let btnLbl = (this.props.itemId === 0)? "ADD_ITEM" : "Save";
-		return (<LayerMask layerid={layerid} header={label} key={layerid}
+				let label = 'ADD_ITEM';
+				if (this.props.itemList && this.state.addItemClick) {
+					let itemExist = this.props.itemList.find(e => e.itemid === this.props.itemId);
+				  if (itemExist) {
+						label = 'SAVE_ITEM';
+							//this.props.dispatch(change(WalmartItem, 'id', itemExist.id));
+					} else {
+						label = "ADD_ITEM";
+					}
+				}
+				const additemForm = (this.state.addItemClick) ? <AddItem /> : <div></div>;
+
+				return (<LayerMask layerid={layerid} header={label} key={layerid}
                     onOkClick={this.handleAddItem.bind(this)}
                     onCancelClick={this.handleCancelClick.bind(this)}
-                    actionbtn={btnLbl}>
-                    <AddItem />
+                    actionbtn={label}>
+                    {additemForm}
                 </LayerMask>);
    }
     renderMessage(msg) {
@@ -251,16 +264,6 @@ class UserWalmartList extends Component {
                 break;
             default:
               console.log(e);
-        }
-    }
-    renderPriceIndicator(value) {
-        switch(value) {
-        case -1:
-            return(<span className="glyphicon glyphicon-arrow-down red"></span>)
-        case 1:
-            return(<span className="glyphicon glyphicon-arrow-up green"></span>)
-        default:
-            return(<span className="glyphicon glyphicon-minus"></span>)
         }
     }
 
@@ -308,7 +311,7 @@ class UserWalmartList extends Component {
                         <div className="col-sm-2">
                             <div className="row">
                             <Translation text="WALMAR_ITEM_PRICE" />: {item.salePrice}
-                            {this.renderPriceIndicator(item.priceIndicator)}
+														<PriceIndicator indicator={item.priceIndicator} />
                             </div>
                             <div className="row">
                             <Translation text="Stock" />: {(item.stock == 1) ? 'Available': 'Unavailable' }
@@ -530,10 +533,11 @@ class UserWalmartList extends Component {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
             const { itemList, items} = this.props;
+						//console.log(addItem);
             return (<div className="panel panel-default">
                 <div className="panel-body">
                     {this.renderAddItemLayer()}
-                    {this.renderDeleteLayer() }
+                    {this.renderDeleteLayer()}
                     {this.renderItemMenuBar(items)}
                     {this.renderListContent(itemList)}
                 </div>
@@ -548,9 +552,9 @@ function mapStateToProps(state) {
   return {
     items: state.walmart.items,
     itemList: state.walmart.itemList,
-		itemId: state.walmartItem.itemInfo.id,
-	errorMessage: state.walmart.error,
-	loadingSpinner: state.walmart.loadingSpinner
+		itemId: state.walmartItem.itemInfo.itemid,
+		errorMessage: state.walmart.error,
+		loadingSpinner: state.walmart.loadingSpinner
   };
 }
 

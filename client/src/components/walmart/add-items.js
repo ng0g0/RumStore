@@ -46,14 +46,8 @@ const renderAttribute= ({ fields, meta: { error } }) => (
         </div>
     </div>
     );
-//<Field name={`${att}.name`} type="text" component={renderField} />
-//<Field name={`${att}.value`} type="text" component={renderField} style="text" />
-const renderField = ({
-  input,
-  type,
-  style,
-  meta: { touched, error, warning },
-}) =>
+
+const renderField = ({ input, type, style, meta: { touched, error, warning }, }) =>
   ( <div>
       <input className={style || "form-control"} {...input} type={type} disabled />
 	  {touched &&  error &&   <div className="error"><Translation text={error} /></div>}
@@ -86,23 +80,38 @@ class AddItem extends Component {
     handleMultiChange(val) {
         this.props.dispatch(change(WalmartItem, 'notification', val));
     }
-    //<SearchItem />
-    render () {
-      //console.log(this.props);
-      //console.log(`ItemID=${this.props.itemInfo.dbItemId} , ProductID=${this.props.itemInfo.dbProductId}`);
-        const { handleSubmit ,itemURL} = this.props;
-        if (!this.props.addItem) {
-            return (<div></div>);
+
+    componentDidMount() {
+      if (this.props.itemList) {
+        let itemExist = this.props.itemList.find(e => e.itemid === this.props.itemId);
+        if (itemExist) {
+          console.log('exist');
+          this.props.dispatch(change(WalmartItem, 'id', itemExist.id));
         }
-        //console.log(this.props.itemInfo.id);
+      }
+  	}
+
+    componentWillReceiveProps(nextProps) {
+      if (nextProps.itemList) {
+        let itemExist = nextProps.itemList.find(e => e.itemid === nextProps.itemId);
+        if (itemExist) {
+          console.log('exist');
+          this.props.dispatch(change(WalmartItem, 'id', itemExist.id));
+        }
+      }
+    }
+
+
+
+
+    render () {
+       const { handleSubmit ,itemURL} = this.props;
         var itemImage = itemURL || "/images/nopic.jpg";
-        //const allowed = ['color', 'size','clothingSize'];
         if  (this.props.loadingSpinnerAdd ) {
 		     return (<div>
               <div className='loader'><Translation text="Loading" />...</div>
             </div>);
         } else {
-          //console.log(this.props.itemInfo);
             return(<div>
             <form onSubmit={handleSubmit}>
             <div className="row">
@@ -189,7 +198,9 @@ function mapStateToProps(state) {
 	errorMessage: state.walmartItem.error,
     initialValues: state.walmartItem.itemInfo,
     loadingSpinnerAdd: state.walmartItem.loadingSpinnerAdd,
+    itemId: state.walmartItem.itemInfo.itemid,
     itemInfo: state.walmartItem.itemInfo,
+    itemList:  state.walmart.itemList,
     itemURL: itemURL,
     addItem: state.walmartItem.addItem
   };

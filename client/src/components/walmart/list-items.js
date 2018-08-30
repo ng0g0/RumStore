@@ -10,6 +10,7 @@ import LayerMask from '../layerMask/layermask';
 import DeleteItem from './delete-items'
 import PropTypes from 'prop-types'; // ES6
 import AddItem from './add-items';
+import PageNavigator from '../template/page-navigator';
 import { WalmartItem, searchWalmart } from '../../consts';
 import { submit, change } from 'redux-form';
 import _ from 'lodash';
@@ -20,51 +21,23 @@ class ListItems extends Component {
         this.handleAddItem = this.handleAddItem.bind(this);
         this.handleAddForm = this.handleAddForm.bind(this);
 				this.openInNewTab = this.openInNewTab.bind(this);
+				this.navChangePage = this.navChangePage.bind(this);
+				this.state = {
+					addItemClick: false
+				}
 	}
     handleAddItem(item) {
           this.props.dispatch(submit(WalmartItem));
     }
     handleAddForm(item) {
-        //console.log(item);
+        this.setState({addItemClick: true});
          this.props.dispatch(itemToAddForm(item));
     }
 
     handleCancelClick(item) {
         console.log('Cancel');
+				this.setState({addItemClick: false});
     }
-    handleChangePage(maxPage, type) {
-        let minPage = 1;
-        let newValue = -1;
-        //console.log(type);
-        switch(type) {
-            case "FIRST":
-                newValue =  1;
-                break;
-            case "NEXT":
-                if (maxPage >= this.props.formSearch.pageNum) {
-                   newValue =   this.props.formSearch.pageNum + 1;
-                }
-                break;
-            case "PRIOR":
-                if (minPage < this.props.formSearch.pageNum) {
-                    newValue =   this.props.formSearch.pageNum - 1;
-                }
-                break;
-            default:
-                newValue =  maxPage;
-
-            }
-
-            if (newValue != -1) {
-                this.props.dispatch(change(searchWalmart, 'pageNum', newValue));
-                setTimeout(() => {
-                    //console.log(this.props.formSearch);
-                    this.props.dispatch(submit(searchWalmart));
-               }, 2500);
-            }
-
-    }
-
 
     renderMessage(msg) {
         if (msg) {
@@ -79,13 +52,21 @@ class ListItems extends Component {
     renderAddItemLayer() {
         let layerid = 'addItem'
         let label = 'ADD_ITEM';
-				console.log(this.props.itemId);
-				let btnLbl = (this.props.itemId === 0)? "ADD_ITEM" : "Save";
+				if (this.props.itemList && this.state.addItemClick) {
+					let itemExist = this.props.itemList.find(e => e.itemid === this.props.itemId);
+				  if (itemExist) {
+						label = 'SAVE_ITEM';
+					} else {
+						label = "ADD_ITEM";
+					}
+
+				}
+				const renderForm = (this.state.addItemClick) ? <AddItem /> : <div></div>;
 		return (<LayerMask layerid={layerid} header={label} key={layerid}
 										onOkClick={this.handleAddItem.bind(this)}
                     onCancelClick={this.handleCancelClick.bind(this)}
-                    actionbtn={btnLbl}>
-                    <AddItem />
+                    actionbtn={label}>
+                    {renderForm}
                 </LayerMask>);
     }
 
@@ -148,17 +129,14 @@ class ListItems extends Component {
 
 	renderListContent(items) {
 		const { authenticated } = this.props;
-		//console.log(authenticated);
-        if (!items) {
-            return(<div> </div>);
-        }
+    if (!items) {
+      return(<div> </div>);
+    }
 		if (items.length > 0) {
-					//console.log(this.props.items);
-					let userItems = [];
-						if (this.props.items) {
-							userItems = this.props.items.list.split(",");
-						}
-
+			let userItems = [];
+			if (this.props.items) {
+				userItems = this.props.items.list.split(",");
+			}
 			return (<div>
             {items.map((item) => {
                 const findItem = userItems.find(function(element) {
@@ -170,7 +148,7 @@ class ListItems extends Component {
                         </Link>
                     ) : (<Link className="btn-sm btn-default" data-toggle="modal" data-target="#addItem"
                             onClick={()=> this.handleAddForm(item.itemid) } >
-                            <Translation text="WALMAR_ALREADY" />
+                            <Translation text="VIEW_ITEM" />
                         </Link>);
                 return(<div className="panel panel-default blockche" key={item.itemid}>
                         <div className="panel-body">
@@ -201,27 +179,23 @@ class ListItems extends Component {
 		}
 	}
 
-    rentderFoundItems() {
-        //console.log(this.props);
-        const {totalItems, preformSearch, loadingSpinner } = this.props;
-				//console.log(totalItems);
-				//console.log(this.props.formSearch.itemPage);
-        let maxPage = Math.ceil( totalItems /this.props.formSearch.itemPage);
-        if (preformSearch && !loadingSpinner) {
-            return (<div className="row">
-                <div className="col-sm-4"> Total Items: {totalItems} </div>
-                <div className="col-sm-4"> <a href="#" onClick={()=> this.handleChangePage(maxPage, "FIRST") } ><span className="glyphicon glyphicon-step-backward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "PRIOR") }><span className="glyphicon glyphicon-backward"></span></a>
-                    &nbsp;<Translation text="WALMAR_PAGE" />:{this.props.formSearch.pageNum} /{maxPage}
-                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "NEXT") }><span className="glyphicon glyphicon-forward"></span></a>
-                    &nbsp;<a href="#" onClick={()=> this.handleChangePage(maxPage, "LAST") }><span className="glyphicon glyphicon-step-forward"></span></a>
-                </div>
-            </div>);
-        }
-        return(<div></div>);
-    }
+		navChangePage = ( newPage ) => {
+			this.props.dispatch(change(searchWalmart, 'pageNum', newPage));
+			setTimeout(() => { this.props.dispatch(submit(searchWalmart)); }, 2500);
+		}
+		renderPageNavigator() {
+			const {pageNum, itemPage } = this.props.formSearch;
+			const {preformSearch, loadingSpinner, totalItems,  } = this.props;
+			if (preformSearch && !loadingSpinner) {
+				return (<PageNavigator totalItems={totalItems} pageNumber={pageNum} itemsPerPage={itemPage} ChangePage={this.navChangePage} />);
+			} else {
+				return (<div></div>);
+			}
+		}
+
     render() {
-        const {itemSearch, preformSearch, loadingSpinner } = this.props;
+        const {itemSearch, preformSearch, loadingSpinner, addItem, totalItems,  } = this.props;
+
         if ( loadingSpinner &&  preformSearch) {
             return (<div className='loader'><Translation text="Loading" />...</div>);
         } else {
@@ -229,19 +203,20 @@ class ListItems extends Component {
             return (<div className="panel panel-default">
                 <div className="panel-body">
                     {this.renderAddItemLayer()}
-                    {this.rentderFoundItems()}
+										{this.renderPageNavigator()}
                     {this.renderListContent(itemSearch)}
                 </div>
             </div>);
         }
     }
 }
-
+//{this.rentderFoundItems()}
 function mapStateToProps(state) {
   return {
     loadingSpinner: state.walmartSearch.searchSpinner,
     itemSearch: state.walmartSearch.itemSearch,
-		itemId: state.walmartItem.itemInfo.id,
+		itemId: state.walmartItem.itemInfo.itemid,
+		itemList: state.walmart.itemList,
     items: state.walmart.items,
     preformSearch: state.walmartSearch.preformSearch,
     formSearch: state.walmartSearch.formSearch,

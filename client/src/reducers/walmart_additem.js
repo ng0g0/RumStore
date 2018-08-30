@@ -43,14 +43,14 @@ function terra2attribute(object) {
 }
 
 function convertTerraItem(item, dbitem, itemDB) {
-	console.log(itemDB);
+	//console.log(itemDB);
   const itemid = item.productId.usItemId;
 	const price = (item.offers) ? item.offers[0].pricesInfo.priceMap.CURRENT.price : 0;
 	const stock = (item.offers) ? item.offers[0].productAvailability.availabilityStatus : "not available";
 	const asib = (dbitem) ? dbitem.asib : "N/A";
 	const noty = (dbitem) ? dbitem.noty : [];
 	const id = (dbitem) ? dbitem.id : ((itemDB.itemid === itemid) ? itemDB.id : 0);
-  console.log(id);
+  //console.log(id);
 	const attributes = (dbitem) ? dbitem.attributes : {};
 	let obj = {
 		 asib: asib,
@@ -84,6 +84,7 @@ export default function (state = INITIAL_STATE, action) {
             addItem: true
         });
 	case RECV_ITEM_2_FORM:
+
         let itemX = convertTerraItem(action.data.product, null, itemDB );
         return Object.assign({}, state, {
             itemInfo: itemX,
