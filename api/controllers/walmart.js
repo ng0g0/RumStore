@@ -642,7 +642,7 @@ exports.WalmartNotification = function() {
                             let items= updateArray.filter(x => x.email === name);
                                 html += `'<p>Hello ${name}</p>`;
                                 console.log(`User ${name}`);
-                                html +=`<p>Following Items was updated</p>
+                                html +=`<p>Following Items were updated</p>
                                   <table border="1">
                                     <tr>
                                       <td>ASIN</td>
