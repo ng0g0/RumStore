@@ -288,15 +288,15 @@ exports.getUserUpdateItems = function (req, res, next) {
   const usrId = req.user.uid;
   var obj;
 
-  let itemsSql = "select itemid, webid, webstore,'['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue||'\",\"oldValue\":\"'||oldvalue||'\"}',',')||']' itemDet "+
-                " from ( select itemid, webid, detdate, dettype, oldvalue, detvalue, webstore  "+
-                "    from  (select lead(t.detvalue) OVER (PARTITION BY z.itemid, t.dettype ORDER BY t.detdate DESC) as oldvalue, t.dettype, t.detvalue, t.detdate, "+
+  let itemsSql = "select itemid, webid, webstore,'['||string_agg( '{\"dettype\":\"'||dettype||'\",\"detvalue\":\"'||detvalue||'\",\"oldValue\":\"'||oldvalue||'\",\"detdate\":\"'||detdate||'\"}',',')||']' itemDet, itemname "+
+                " from ( select itemid, webid, detdate, dettype, oldvalue, detvalue, webstore, itemname  "+
+                "    from  (select lead(t.detvalue) OVER (PARTITION BY z.itemid, t.dettype ORDER BY t.detdate DESC) as oldvalue, t.dettype, t.detvalue, t.detdate, z.itemname,"+
                 "              rank() OVER (PARTITION BY z.itemid, t.dettype ORDER BY t.detdate desc) as drang ,z.itemid,  z.webid, z.webstore "+
                 "            from rs_items z,UNNEST(itemdetails) as t(dettype,detvalue,detdate), rbm_user u "+
                 "            where u.usrid=z.usrid and u.active = 1 and u.usrid = $1 "+
                 "            and array_length(z.notification , array_ndims(z.notification))>0 ) x "+
                 "    where oldvalue != detvalue and  drang = 1 ) y "+
-                " GROUP BY itemid, webid, webstore ";
+                " GROUP BY itemid, webid, webstore,itemname ";
 
   	db.many(itemsSql, [usrId])
 	.then(items=> {

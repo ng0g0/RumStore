@@ -6,7 +6,7 @@ import { bestItems } from '../../actions/walmart';
 import {bindActionCreators} from 'redux';
 import DataGrid from '../template/data-grid';
 import PriceIndicator from '../template/price-indicator';
-
+import dayjs from 'dayjs';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -33,22 +33,11 @@ class Dashboard extends Component {
 
 		return ( <div>
             <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-12">
                     <div className="panel panel-primary">
                         <div className="panel-heading">Latest Updates</div>
                         <div className="panel-body">
                         {this.renderUpdateItems()}
-                        </div>
-                    </div>
-                </div>
-                <div className="col-sm-6">
-                    <div className="panel panel-primary">
-                        <div className="panel-heading">Top 5 Selling Items</div>
-                        <div className="panel-body">
-                            <DataGrid data={this.props.walmartBest} 
-                            spinner= {this.props.loadingWalmartBest }
-                            columns = {columGrid}
-                            />
                         </div>
                     </div>
                 </div>
@@ -71,6 +60,18 @@ class Dashboard extends Component {
             </div>
 		</div>);
     }
+    
+                  /*<div className="col-sm-6">
+                    <div className="panel panel-primary">
+                        <div className="panel-heading">Top 5 Selling Items</div>
+                        <div className="panel-body">
+                            <DataGrid data={this.props.walmartBest} 
+                            spinner= {this.props.loadingWalmartBest }
+                            columns = {columGrid}
+                            />
+                        </div>
+                    </div>
+                </div>*/ 
 
     renderWalmartBest() {
       if ( this.props.loadingWalmartBest ) {
@@ -85,15 +86,19 @@ class Dashboard extends Component {
          let detLength = 12/details.length;
         return(<div className="row">
             {details.map((det, index) => {
+                let upDate = dayjs(det.detdate).format('YYYY-MM-DD HH:mm:ss');
                 let value = (det.dettype === "stock") ? (det.detvalue === "1")? "In-Stock": "Out-Stock" : det.detvalue;
                 let indicator  = (Number.parseFloat(det.detvalue)  >  Number.parseFloat(det.oldValue) ) ? 1 : 0 ;
-              return (<div className={`col-sm-${detLength}`} key={index}>
-                 <div className="row">{det.dettype} </div>
-                 <div className="row">
-                  {value}
-                  <PriceIndicator indicator={indicator} />
+              return (<div className="col-sm-6" key={index}>
+                <div className="panel panel-info blockche">
+                  <div className="panel-heading">Date: {upDate}</div>
+                  <div className="panel-body">
+                    <div className="col-sm-5">{det.dettype}</div>
+                    <div className="col-sm-5">{value}</div>
+                    <div className="col-sm-2"><PriceIndicator indicator={indicator} /></div>
                  </div>
-              </div>)
+                </div>
+              </div>);
             })}
         </div>);
     }
@@ -110,8 +115,9 @@ class Dashboard extends Component {
                     var details = JSON.parse(item.itemdet);
                     console.log(details);
                    return( <div className="row" key={index}>
-                        <div className="col-sm-3">{item.webstore}</div>
-                        <div className="col-sm-3">{item.webid}</div>
+                        <div className="col-sm-2">{item.webstore}</div>
+                        <div className="col-sm-2">{item.webid}</div>
+                        <div className="col-sm-2 itemNames">{item.itemname}</div>
                         <div className="col-sm-6">{this.renderUpdateDetails(details)}</div>
                    </div>
                    );

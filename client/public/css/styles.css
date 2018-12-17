@@ -88,6 +88,10 @@ body {
     fill: black;
 }
 
+.itemNames {
+  word-wrap: break-word;
+}
+
 .item{
 text-align:center;
 }
