@@ -22,6 +22,8 @@ function generateToken(user) {
   });
 };
 
+
+
 exports.findUser = function(userName, callback) {
 	let finUserSql = "select usrid,username as email, password, firstname, lastname, usrrole as role" + 
 	                 " from rbm_user where username = $1 and active = 1";
@@ -219,9 +221,39 @@ exports.verifyToken = function (req, res, next) {
 		});	
 };
 
+
+exports.emailMaintenance = function () {
+   let findUsers = "select username as email "+
+	    " FROM rbm_user where active = 1";
+    db.many(findUsers, [])
+	.then(users=> {
+        curDate = new Date().toISOString().slice(0, 19);
+        const newDate = curDate.replace("T", " ");
+
+        users.forEach((user) => {
+            const subject = 'RumStore Maintenance ';
+            let html = '';
+            const name = user.email;
+            html += `'<p>Hello ${name}</p>`;
+            html += `'<p>Update Date:  ${newDate}</p>`;
+            html += `You are receiving this email because you are subscribed to RumStore notifications.<br><br>`;
+            html += `WebSite will be under Maintenance next hours <br>`;
+            html += `Best Regards <br>`;
+            html += `RumStore Admin <br>`;
+            MailSender.sendEmail(name, subject, html);        
+        });
+        return 'OK';
+    })
+    .catch(error=> {
+      console.log(error);
+	  return 'NOK';
+	});
+                       
+}
 //======================================
 //   View Profile
 // =====================================
+
 
 
 exports.viewProfile = function (req, res, next) {

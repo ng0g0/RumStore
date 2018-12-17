@@ -89,12 +89,19 @@ app.get('*', (req, res) => {
 });
 
 console.log(process.env.NODE_ENV);
-
 const port = process.env.PORT || config.port;
 app.listen(port);
-WalmartScheduler.runSchedure();
+
+const maintenance  = 0;
+if (maintenance === 1) {
+    UserController.emailMaintenance();
+} else {
+  WalmartScheduler.runSchedure();
 WalmartScheduler.runCleanUp();
-WalmartScheduler.runWalmartDailyUpdate();
+WalmartScheduler.runWalmartDailyUpdate();  
+}
+
+
 //WalmartController.WalmartCleanUp();
 //WalmartController.WalmartDailyUpdate();
 //WalmartController.WalmartNotification();

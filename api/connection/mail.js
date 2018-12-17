@@ -13,7 +13,7 @@ const smtpTransport = nodemailer.createTransport({
         secure: false,
         auth: {
             user: 'dani@kia-bg.com',
-            pass: 'Rumostore%80'
+            pass: 'Rm%12-St&953-Ne'
         },
         tls: {
             rejectUnauthorized:false
