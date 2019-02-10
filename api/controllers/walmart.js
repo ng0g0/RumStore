@@ -103,18 +103,18 @@ exports.getWalmartTerra = function (req, res, next) {
   let options = { url: url };
   let obj;
   return request(options, function (error, response, body) {
-    try {
-          obj = JSON.parse(body);
-    } catch(e) {
+    if (IsJsonString(body)) {
+      const  obj = JSON.parse(body);
+      if (obj.errors) {
         console.log(body);
-        res.status(200).json({ message: e});
+        res.status(200).json({ message: obj.errors.message });
+      } else {
+        res.status(200).json(obj);
+      }
     }
-    if (obj.errors) {
-       console.log(body);
-       res.status(200).json({ message: obj.errors.message });
-    } else {
-      res.status(200).json(obj);
-    }
+    else {
+       res.status(200).json({ message: 'Error with Server'});
+    }    
   }).on('error', function(err) {
       console.log('ERROR');
       console.log(err)
