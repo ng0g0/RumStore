@@ -6,7 +6,7 @@ const WalmartScheduler = require('../schedule/walmart');
 
 var QRE = pgp.errors.QueryResultError;
 var qrec = pgp.errors.queryResultErrorCode;
-var walmar_key = 'upxrg7rpj4hjew5jbjwqhwkf';
+var walmar_key = '9qb3theuczf2v9vesyjnsyx6';
 
 const MailSender = require('./mail');
 
